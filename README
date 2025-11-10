@@ -1,0 +1,7 @@
+Cactus Code Thorn CameraSetup
+Author(s)    : Noelle Feist <njf4697@rit.edu>
+Maintainer(s): Noelle Feist <njf4697@rit.edu>
+Licence      : GPL
+--------------------------------------------------------------------------------
+
+This thorn creates initial position and velocities for geodesic integration based on camera parameters defined by the user. The implementation follows https://arxiv.org/pdf/1410.7775.

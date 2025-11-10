@@ -1,0 +1,44 @@
+# Parameter definitions for thorn RaytracingX
+# =====================================================
+
+private:
+
+CCTK_REAL vertical_fov "Vertical field of view (in degrees)" STEERABLE = ALWAYS
+{
+    (0.:360.) "Any real number 0<vertical_fov<360"
+} 45.
+
+CCTK_REAL horizontal_fov "Horizontal field of view (in degrees)" STEERABLE = ALWAYS
+{
+    (0.:360.) "Any real number 0<vertical_fov<360"
+} 45.
+
+INT num_pixels_width "Number of pixels across image width" STEERABLE = ALWAYS
+{
+    (0:* "Any positive integer"
+} 500
+
+INT num_pixels_height "Number of pixels across image height" STEERABLE = ALWAYS
+{
+    (0:* "Any positive integer"
+} 500
+
+CCTK_REAL[3] camera_pos "Camera Position (in units of M)" STEERABLE = ALWAYS
+{
+    *:* :: "Any real number"
+} [30., 0., 6.]
+
+CCTK_REAL[3] camera_vel "Camera velocity" STEERABLE = ALWAYS
+{
+  *:* :: "Any real number"
+} [0., 0., 0.]
+
+CCTK_REAL[3] camera_point "Camera pointing direction" STEERABLE = ALWAYS
+{
+  *:* :: "Any real number"
+} [1., 0., -0.2]
+
+CCTK_REAL[3] camera_right "Camera right direction" STEERABLE = ALWAYS
+{
+  *:* :: "Any real number"
+} [-1., 0., 0., 0.]

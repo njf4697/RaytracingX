@@ -1,0 +1,5 @@
+# Interface definition for thorn RaytracingX
+# ====================================================
+
+IMPLEMENTS: RaytracingX
+INHERITS:   Grid, ADMBaseX
