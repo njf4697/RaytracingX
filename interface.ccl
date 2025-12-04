@@ -2,4 +2,4 @@
 # ====================================================
 
 IMPLEMENTS: RaytracingX
-INHERITS:   Grid, ADMBaseX
+INHERITS:   ADMBaseX
