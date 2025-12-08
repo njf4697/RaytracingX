@@ -108,7 +108,7 @@ void interpolateMetricAtPoint(CCTK_ARGUMENTS, const CCTK_REAL x, const CCTK_REAL
                                                                                                                             NUM_GRID_ARRAYS, output_array_type_codes, output_arrays);
     assert(status >= 0);
 
-    metric_at_point.metric[0] = output_arrays[0][0]; // \alpha
+    metric_at_point.metric[0] = (CCTK_REAL) output_arrays[0][0]; // \alpha
     metric_at_point.metric[1] = output_arrays[1][0]*output_arrays[4][0] + output_arrays[2][0]*output_arrays[5][0] + output_arrays[3][0]*output_arrays[6][0]; // g_{0j} = \beta_j = \gamma_{ij} \beta^i
     metric_at_point.metric[2] = output_arrays[1][0]*output_arrays[5][0] + output_arrays[2][0]*output_arrays[7][0] + output_arrays[3][0]*output_arrays[8][0];
     metric_at_point.metric[3] = output_arrays[1][0]*output_arrays[6][0] + output_arrays[2][0]*output_arrays[8][0] + output_arrays[3][0]*output_arrays[9][0];
