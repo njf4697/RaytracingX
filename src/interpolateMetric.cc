@@ -1,7 +1,7 @@
 #include "raytracingx.h"
 
 #define NUM_INTERP_POINTS 1
-#define NUM-GRID_ARRAYS 10
+#define NUM_GRID_ARRAYS 10
 
 void inverseSpatialMetric(CCTK_REAL* inv_spatial_metric, const Metric m) { //find \gamma^{ij}
     CCTK_REAL inv_det_g = 1/(m.metric[4]*m.metric[7]*m.metric[9]+2.*m.metric[5]*m.metric[6]*m.metric[8]-m.metric[6]*m.metric[6]*m.metric[7]-m.metric[8]*m.metric[8]*m.metric[4]-m.metric[5]*m.metric[5]*m.metric[9]);
