@@ -64,8 +64,8 @@ void createGeodesicInitialConditions(CCTK_ARGUMENTS, GeodesicInitialConditions* 
     CCTK_REAL e3[4];
     gramSchmidtProcess(CCTK_PASS_CTOC, e0, e1, e2, e3, metric); //create orthonormal basis for camera POV
 
-    CCTK_REAL alpha_h = PI / 180 * horizontal_fov; //convert FOV to radians
-    CCTK_REAL alpha_v = PI / 180 * vertical_fov;
+    CCTK_REAL alpha_h = 3.1415926536 / 180 * horizontal_fov; //convert FOV to radians
+    CCTK_REAL alpha_v = 3.1415926536 / 180 * vertical_fov;
 
     //TODO: make parallel for GPU
     #pragma omp parallel for
@@ -82,7 +82,7 @@ void createGeodesicInitialConditions(CCTK_ARGUMENTS, GeodesicInitialConditions* 
             chi[2] = C*e0[2] - e1[2] - b_adj*e2[2] - a_adj*e3[2];
             chi[3] = C*e0[3] - e1[3] - b_adj*e2[3] - a_adj*e3[3];
 
-            CCTK_REAL* chi_lower[4];
+            CCTK_REAL chi_lower[4];
             vectorToOneForm(chi_lower, chi, metric);
             geodesicArr[i*num_pixels_width + j].initPos[0] = camera_pos[0]; 
             geodesicArr[i*num_pixels_width + j].initPos[1] = camera_pos[1]; 

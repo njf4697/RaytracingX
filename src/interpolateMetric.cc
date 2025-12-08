@@ -1,5 +1,32 @@
 #include "raytracingx.h"
 
+#define NUM_INTERP_POINTS 1
+
+void inverseSpatialMetric(CCTK_REAL* inv_spatial_metric, const Metric m) { //find \gamma^{ij}
+    CCTK_REAL inv_det_g = 1/(m.metric[4]*m.metric[7]*m.metric[9]+2.*m.metric[5]*m.metric[6]*m.metric[8]-m.metric[6]*m.metric[6]*m.metric[7]-m.metric[8]*m.metric[8]*m.metric[4]-m.metric[5]*m.metric[5]*m.metric[9]);
+    inv_spatial_metric[0] = (m.metric[3]*m.metric[5]-m.metric[4]*m.metric[4])*inv_det_g;
+    inv_spatial_metric[1] = (m.metric[4]*m.metric[2]-m.metric[1]*m.metric[5])*inv_det_g;
+    inv_spatial_metric[2] = (m.metric[1]*m.metric[4]-m.metric[2]*m.metric[3])*inv_det_g;
+    inv_spatial_metric[3] = (m.metric[0]*m.metric[5]-m.metric[2]*m.metric[2])*inv_det_g;
+    inv_spatial_metric[4] = (m.metric[2]*m.metric[1]-m.metric[0]*m.metric[4])*inv_det_g;
+    inv_spatial_metric[5] = (m.metric[0]*m.metric[3]-m.metric[1]*m.metric[1])*inv_det_g;
+}
+
+void calculateInverseMetric(Metric m) { //find g^{\mu\nu}
+    CCTK_REAL h[6];
+    inverseSpatialMetric(h, m);  //\gamma^{ij}
+    m.metric_inv[0] = 1/(pow(m.metric[0],2));
+    m.metric_inv[1] = m.metric_inv[0]*m.beta_up[0];
+    m.metric_inv[2] = m.metric_inv[0]*m.beta_up[1];
+    m.metric_inv[3] = m.metric_inv[0]*m.beta_up[2];
+    m.metric_inv[4] = h[0]-m.metric_inv[1]*m.beta_up[0];
+    m.metric_inv[5] = h[1]-m.metric_inv[1]*m.beta_up[1];
+    m.metric_inv[6] = h[2]-m.metric_inv[1]*m.beta_up[2];
+    m.metric_inv[7] = h[3]-m.metric_inv[2]*m.beta_up[1];
+    m.metric_inv[8] = h[4]-m.metric_inv[2]*m.beta_up[2];
+    m.metric_inv[9] = h[5]-m.metric_inv[3]*m.beta_up[2];
+}
+
 void interpolateMetricAtPoint(CCTK_ARGUMENTS, const CCTK_REAL x, const CCTK_REAL y, const CCTK_REAL z, Metric metric_at_point) {
 
     //uses 4th-order generalized polynomial interpolation to find the spacetime quantities at given position
@@ -8,7 +35,6 @@ void interpolateMetricAtPoint(CCTK_ARGUMENTS, const CCTK_REAL x, const CCTK_REAL
     DECLARE_CCTK_ARGUMENTS
     DECLARE_CCTK_PARAMETERS
 
-    int NUM_INTERP_POINTS = 1;
     int NUM_GRID_ARRAYS = 10;
 
     CCTK_REAL interp_x[NUM_INTERP_POINTS];
@@ -59,7 +85,7 @@ void interpolateMetricAtPoint(CCTK_ARGUMENTS, const CCTK_REAL x, const CCTK_REAL
     CCTK_REAL gyz_interp[NUM_INTERP_POINTS];
     CCTK_REAL gzz_interp[NUM_INTERP_POINTS];
 
-    void output_arrays[NUM_GRID_ARRAYS];
+    void* output_arrays[NUM_GRID_ARRAYS];
     output_arrays[0] = (void*) alp_interp;
     output_arrays[1] = (void*) betax_interp;
     output_arrays[2] = (void*) betay_interp;
@@ -75,7 +101,7 @@ void interpolateMetricAtPoint(CCTK_ARGUMENTS, const CCTK_REAL x, const CCTK_REAL
     assert(operator_handle >= 0);
 
     int coord_system_handle = CCTK_CoordSystemHandle("cart3d");
-    assert(coord_sys_handle >= 0);
+    assert(coord_system_handle >= 0);
 
     const cGH *GH;
     int status = CCTK_InterpGridArrays(GH, 3, operator_handle, Util_TableCreateFromString("order=4"), coord_system_handle, NUM_INTERP_POINTS, CCTK_VARIABLE_REAL, interp_coords, 
@@ -100,29 +126,4 @@ void interpolateMetricAtPoint(CCTK_ARGUMENTS, const CCTK_REAL x, const CCTK_REAL
     metric_at_point.metric0pr = sqrt(pow(metric_at_point.metric[0],2) - metric_at_point.metric[1]*metric_at_point.beta_up[0] - metric_at_point.metric[2]*metric_at_point.beta_up[1] - metric_at_point.metric[3]*metric_at_point.beta_up[2]); //g_{00}
 
     calculateInverseMetric(metric_at_point); //get g^{\mu\nu}
-}
-
-void inverseSpatialMetric(CCTK_REAL* inv_spatial_metric, const Metric m) { //find \gamma^{ij}
-    CCTK_REAL inv_det_g = 1/(m.metric[4]*m.metric[7]*m.metric[9]+2.*m.metric[5]*m.metric[6]*m.metric[8]-m.metric[6]*m.metric[6]*m.metric[7]-m.metric[8]*m.metric[8]*m.metric[4]-m.metric[5]*m.metric[5]*m.metric[9]);
-    inv_spatial_metric[0] = (m.metric[3]*m.metric[5]-m.metric[4]*m.metric[4])*inv_det_g;
-    inv_spatial_metric[1] = (m.metric[4]*m.metric[2]-m.metric[1]*m.metric[5])*inv_det_g;
-    inv_spatial_metric[2] = (m.metric[1]*m.metric[4]-m.metric[2]*m.metric[3])*inv_det_g;
-    inv_spatial_metric[3] = (m.metric[0]*m.metric[5]-m.metric[2]*m.metric[2])*inv_det_g;
-    inv_spatial_metric[4] = (m.metric[2]*m.metric[1]-m.metric[0]*m.metric[4])*inv_det_g
-    inv_spatial_metric[5] = (m.metric[0]*m.metric[3]-m.metric[1]*m.metric[1])*inv_det_g;
-}
-
-void calculateInverseMetric(Metric m) { //find g^{\mu\nu}
-    CCTK_REAL h[6];
-    inverseSpatialMetric(h, m);  //\gamma^{ij}
-    m.metric_inv[0] = 1/(pow(m.metric[0],2));
-    m.metric_inv[1] = m.metric_inv[0]*m.beta_up[0];
-    m.metric_inv[2] = m.metric_inv[0]*m.beta_up[1];
-    m.metric_inv[3] = m.metric_inv[0]*m.beta_up[2];
-    m.metric_inv[4] = h[0]-m.metric_inv[1]*m.beta_up[0];
-    m.metric_inv[5] = h[1]-m.metric_inv[1]*m.beta_up[1];
-    m.metric_inv[6] = h[2]-m.metric_inv[1]*m.beta_up[2];
-    m.metric_inv[7] = h[3]-m.metric_inv[2]*m.beta_up[1];
-    m.metric_inv[8] = h[4]-m.metric_inv[2]*m.beta_up[2];
-    m.metric_inv[9] = h[5]-m.metric_inv[3]*m.beta_up[2];
 }
