@@ -1,6 +1,7 @@
 #include "raytracingx.h"
 
 #define NUM_INTERP_POINTS 1
+#define NUM-GRID_ARRAYS 10
 
 void inverseSpatialMetric(CCTK_REAL* inv_spatial_metric, const Metric m) { //find \gamma^{ij}
     CCTK_REAL inv_det_g = 1/(m.metric[4]*m.metric[7]*m.metric[9]+2.*m.metric[5]*m.metric[6]*m.metric[8]-m.metric[6]*m.metric[6]*m.metric[7]-m.metric[8]*m.metric[8]*m.metric[4]-m.metric[5]*m.metric[5]*m.metric[9]);
@@ -35,8 +36,6 @@ void interpolateMetricAtPoint(CCTK_ARGUMENTS, const CCTK_REAL x, const CCTK_REAL
     DECLARE_CCTK_ARGUMENTS
     DECLARE_CCTK_PARAMETERS
 
-    int NUM_GRID_ARRAYS = 10;
-
     CCTK_REAL interp_x[NUM_INTERP_POINTS];
     CCTK_REAL interp_y[NUM_INTERP_POINTS];
     CCTK_REAL interp_z[NUM_INTERP_POINTS];
@@ -45,10 +44,10 @@ void interpolateMetricAtPoint(CCTK_ARGUMENTS, const CCTK_REAL x, const CCTK_REAL
     interp_y[0] = y;
     interp_z[0] = z;
 
-    const void* interp_coords[3];
-    interp_coords[0] = (const void*) interp_x;
-    interp_coords[1] = (const void*) interp_y;
-    interp_coords[2] = (const void*) interp_z;
+    const CCTK_REAL* interp_coords[3];
+    interp_coords[0] = (const CCTK_REAL*) interp_x;
+    interp_coords[1] = (const CCTK_REAL*) interp_y;
+    interp_coords[2] = (const CCTK_REAL*) interp_z;
 
     CCTK_INT variable_indices[NUM_GRID_ARRAYS];
     variable_indices[0] = CCTK_VarIndex("ADMBaseX::alp");
@@ -85,17 +84,17 @@ void interpolateMetricAtPoint(CCTK_ARGUMENTS, const CCTK_REAL x, const CCTK_REAL
     CCTK_REAL gyz_interp[NUM_INTERP_POINTS];
     CCTK_REAL gzz_interp[NUM_INTERP_POINTS];
 
-    void* output_arrays[NUM_GRID_ARRAYS];
-    output_arrays[0] = (void*) alp_interp;
-    output_arrays[1] = (void*) betax_interp;
-    output_arrays[2] = (void*) betay_interp;
-    output_arrays[3] = (void*) betaz_interp;
-    output_arrays[4] = (void*) gxx_interp;
-    output_arrays[5] = (void*) gxy_interp;
-    output_arrays[6] = (void*) gxz_interp;
-    output_arrays[7] = (void*) gyy_interp;
-    output_arrays[8] = (void*) gyz_interp;
-    output_arrays[9] = (void*) gzz_interp;
+    CCTK_REAL* output_arrays[NUM_GRID_ARRAYS];
+    output_arrays[0] = (CCTK_REAL*) alp_interp;
+    output_arrays[1] = (CCTK_REAL*) betax_interp;
+    output_arrays[2] = (CCTK_REAL*) betay_interp;
+    output_arrays[3] = (CCTK_REAL*) betaz_interp;
+    output_arrays[4] = (CCTK_REAL*) gxx_interp;
+    output_arrays[5] = (CCTK_REAL*) gxy_interp;
+    output_arrays[6] = (CCTK_REAL*) gxz_interp;
+    output_arrays[7] = (CCTK_REAL*) gyy_interp;
+    output_arrays[8] = (CCTK_REAL*) gyz_interp;
+    output_arrays[9] = (CCTK_REAL*) gzz_interp;
 
     int operator_handle = CCTK_InterpHandle("generalized polynomial interpolation");
     assert(operator_handle >= 0);
