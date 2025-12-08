@@ -29,16 +29,16 @@ void gramSchmidtProcess(CCTK_ARGUMENTS, CCTK_REAL* e0, CCTK_REAL* e1, CCTK_REAL*
     
 
     CCTK_REAL* projv1_onto_u0;
-    projv1_onto_u0 = projectUontoV(projv1_onto_u0, v1, u0, metric);
+    projectUontoV(projv1_onto_u0, v1, u0, metric);
     u1[0] = v1[0] - projv1_onto_u0[0];
     u1[1] = v1[1] - projv1_onto_u0[1];
     u1[2] = v1[2] - projv1_onto_u0[2];
     u1[3] = v1[3] - projv1_onto_u0[3];
 
     CCTK_REAL* projv2_onto_u0;
-    projv2_onto_u0 = projectUontoV(projv2_onto_u0, v2, u0, metric);
+    projectUontoV(projv2_onto_u0, v2, u0, metric);
     CCTK_REAL* projv2_onto_u1;
-    projv2_onto_u1 = projectUontoV(projv2_onto_u1, v2, u1, metric);
+    projectUontoV(projv2_onto_u1, v2, u1, metric);
     u2[0] = v2[0] - projv2_onto_u0[0] - projv2_onto_u1[0];
     u2[1] = v2[1] - projv2_onto_u0[1] - projv2_onto_u1[1];
     u2[2] = v2[2] - projv2_onto_u0[2] - projv2_onto_u1[2];
@@ -56,7 +56,7 @@ void createGeodesicInitialConditions(CCTK_ARGUMENTS, GeodesicInitialConditions* 
     DECLARE_CCTK_PARAMETERS
 
     Metric metric;
-    interpolateMetricAtPoint(CCTK_PASS_CTOC, camera_pos[0], camera_pos[1], camera_pos[2], metric) //interpolate metric values and store in Metric struct
+    interpolateMetricAtPoint(CCTK_PASS_CTOC, camera_pos[0], camera_pos[1], camera_pos[2], metric); //interpolate metric values and store in Metric struct
 
     CCTK_REAL e0[4];
     CCTK_REAL e1[4];
@@ -64,8 +64,8 @@ void createGeodesicInitialConditions(CCTK_ARGUMENTS, GeodesicInitialConditions* 
     CCTK_REAL e3[4];
     gramSchmidtProcess(CCTK_PASS_CTOC, e0, e1, e2, e3, metric); //create orthonormal basis for camera POV
 
-    CCTK_REAL alpha_h = CCTK_PI / 180 * horizontal_fov; //convert FOV to radians
-    CCTK_REAL alpha_v = CCTK_PI / 180 * vertical_fov;
+    CCTK_REAL alpha_h = PI / 180 * horizontal_fov; //convert FOV to radians
+    CCTK_REAL alpha_v = PI / 180 * vertical_fov;
 
     //TODO: make parallel for GPU
     #pragma omp parallel for
@@ -74,22 +74,22 @@ void createGeodesicInitialConditions(CCTK_ARGUMENTS, GeodesicInitialConditions* 
             CCTK_REAL a_adj = (2.0 * i / num_pixels_width - 1)*tan(alpha_h / 2.0); // a_{adj} = (2a-1)tan(\alpha_h/2)
             CCTK_REAL b_adj = (2.0 * j / num_pixels_height - 1)*tan(alpha_v / 2.0); // b_{adj} = (2b-1)tan(\alpha_v/2)
 
-            CCTK_REAL C = sqrt(1 + b_adj**2 + a_adj**2);
+            CCTK_REAL C = sqrt(1 + pow(b_adj,2) + pow(a_adj,2));
 
-            CCTK_REAL* chi[4];
+            CCTK_REAL chi[4];
             chi[0] = C*e0[0] - e1[0] - b_adj*e2[0] - a_adj*e3[0];
             chi[1] = C*e0[1] - e1[1] - b_adj*e2[1] - a_adj*e3[1];
             chi[2] = C*e0[2] - e1[2] - b_adj*e2[2] - a_adj*e3[2];
             chi[3] = C*e0[3] - e1[3] - b_adj*e2[3] - a_adj*e3[3];
 
             CCTK_REAL* chi_lower[4];
-            vectorToOneForm(chi_lower, chi, metric, metric0pr);
+            vectorToOneForm(chi_lower, chi, metric);
             geodesicArr[i*num_pixels_width + j].initPos[0] = camera_pos[0]; 
             geodesicArr[i*num_pixels_width + j].initPos[1] = camera_pos[1]; 
             geodesicArr[i*num_pixels_width + j].initPos[2] = camera_pos[2]; 
-            geodesicArr[i*num_pixels_width + j].initVel[0] = chi_lower[0] / (metric[0]*chi[0]); 
-            geodesicArr[i*num_pixels_width + j].initVel[1] = chi_lower[1] / (metric[0]*chi[0]); 
-            geodesicArr[i*num_pixels_width + j].initVel[2] = chi_lower[2] / (metric[0]*chi[0]); 
+            geodesicArr[i*num_pixels_width + j].initVel[0] = chi_lower[0] / (metric.metric[0]*chi[0]); 
+            geodesicArr[i*num_pixels_width + j].initVel[1] = chi_lower[1] / (metric.metric[0]*chi[0]); 
+            geodesicArr[i*num_pixels_width + j].initVel[2] = chi_lower[2] / (metric.metric[0]*chi[0]); 
         }
     }
  }

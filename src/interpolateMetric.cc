@@ -19,7 +19,7 @@ void interpolateMetricAtPoint(CCTK_ARGUMENTS, const CCTK_REAL x, const CCTK_REAL
     interp_y[0] = y;
     interp_z[0] = z;
 
-    const void interp_coords[3];
+    const void* interp_coords[3];
     interp_coords[0] = (const void*) interp_x;
     interp_coords[1] = (const void*) interp_y;
     interp_coords[2] = (const void*) interp_z;
@@ -72,13 +72,13 @@ void interpolateMetricAtPoint(CCTK_ARGUMENTS, const CCTK_REAL x, const CCTK_REAL
     output_arrays[9] = (void*) gzz_interp;
 
     int operator_handle = CCTK_InterpHandle("generalized polynomial interpolation");
-    assert(operator >= 0);
+    assert(operator_handle >= 0);
 
     int coord_system_handle = CCTK_CoordSystemHandle("cart3d");
-    assert(coord_sys >= 0)
+    assert(coord_sys_handle >= 0);
 
     const cGH *GH;
-    int status = CCTK_InterpGridArrays(GH, 3, operator_handle, Util_TableCreateFromString("order=4"), coord_system_handle, N_INTERP_POINTS, CCTK_VARIABLE_REAL, interp_coords, 
+    int status = CCTK_InterpGridArrays(GH, 3, operator_handle, Util_TableCreateFromString("order=4"), coord_system_handle, NUM_INTERP_POINTS, CCTK_VARIABLE_REAL, interp_coords, 
                                                                                                                             NUM_GRID_ARRAYS, variable_indices,
                                                                                                                             NUM_GRID_ARRAYS, output_array_type_codes, output_arrays);
     assert(status >= 0);
@@ -97,9 +97,9 @@ void interpolateMetricAtPoint(CCTK_ARGUMENTS, const CCTK_REAL x, const CCTK_REAL
     metric_at_point.beta_up[0] = output_arrays[1][0]; //\beta^i
     metric_at_point.beta_up[1] = output_arrays[2][0];
     metric_at_point.beta_up[2] = output_arrays[3][0];
-    metric_at_point.metric0pr = sqrt(metric_at_point.metric[0]**2 - metric_at_point.metric[1]*metric_at_point.beta_up[0] - metric_at_point.metric[2]*metric_at_point.beta_up[1] - metric_at_point.metric[3]*metric_at_point.beta_up[2]); //g_{00}
+    metric_at_point.metric0pr = sqrt(pow(metric_at_point.metric[0],2) - metric_at_point.metric[1]*metric_at_point.beta_up[0] - metric_at_point.metric[2]*metric_at_point.beta_up[1] - metric_at_point.metric[3]*metric_at_point.beta_up[2]); //g_{00}
 
-    calculateInverseMetric(metric); //get g^{\mu\nu}
+    calculateInverseMetric(metric_at_point); //get g^{\mu\nu}
 }
 
 void inverseSpatialMetric(CCTK_REAL* inv_spatial_metric, const Metric m) { //find \gamma^{ij}
@@ -113,9 +113,9 @@ void inverseSpatialMetric(CCTK_REAL* inv_spatial_metric, const Metric m) { //fin
 }
 
 void calculateInverseMetric(Metric m) { //find g^{\mu\nu}
-    CCTK_REAL* h[6];
+    CCTK_REAL h[6];
     inverseSpatialMetric(h, m);  //\gamma^{ij}
-    m.metric_inv[0] = 1/(m.metric[0]**2);
+    m.metric_inv[0] = 1/(pow(m.metric[0],2));
     m.metric_inv[1] = m.metric_inv[0]*m.beta_up[0];
     m.metric_inv[2] = m.metric_inv[0]*m.beta_up[1];
     m.metric_inv[3] = m.metric_inv[0]*m.beta_up[2];
