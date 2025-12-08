@@ -1,9 +1,12 @@
 #include "raytracingx.h"
 
 extern "C" void createImage(CCTK_ARGUMENTS) {
+    DECLARE_CCTK_ARGUMENTS
+    DECLARE_CCTK_PARAMETERS
+
     int N_TOTAL_PIXELS = num_pixels_width * num_pixels_height;
 
-    geodesicInitialConditions geodesicArr[N_TOTAL_PIXELS];
+    GeodesicInitialConditions geodesicArr[N_TOTAL_PIXELS];
     createGeodesicInitialConditions(CCTK_PASS_CTOC, geodesicArr);
 
     //evolveGeodesics()
@@ -17,12 +20,12 @@ void gramSchmidtProcess(CCTK_ARGUMENTS, CCTK_REAL* e0, CCTK_REAL* e1, CCTK_REAL*
 
     //notation borrowed from https://en.wikipedia.org/wiki/Gram%E2%80%93Schmidt_process
 
-    CCTK_REAL* u0[4] = {getTimeComponentOf4Velocity(camera_vel[0], camera_vel[1], camera_vel[2], metric), camera_vel[0], camera_vel[1], camera_vel[2]}; // u0=v0 is 4-velocity of camera
-    CCTK_REAL* u1[4];
-    CCTK_REAL* u2[4];
-    CCTK_REAL* u3[4];
-    CCTK_REAL* v1[4] = {0, camera_point[0], camera_point[1], camera_point[2]}; //v1 is camera pointing direciton
-    CCTK_REAL* v2[4] = {0, camera_right[0], camera_right[1], camera_right[2]}; //v2 is camera right direction
+    CCTK_REAL u0[4] = {getTimeComponentOf4Velocity(camera_vel[0], camera_vel[1], camera_vel[2], metric), camera_vel[0], camera_vel[1], camera_vel[2]}; // u0=v0 is 4-velocity of camera
+    CCTK_REAL u1[4];
+    CCTK_REAL u2[4];
+    CCTK_REAL u3[4];
+    CCTK_REAL v1[4] = {0, camera_point[0], camera_point[1], camera_point[2]}; //v1 is camera pointing direciton
+    CCTK_REAL v2[4] = {0, camera_right[0], camera_right[1], camera_right[2]}; //v2 is camera right direction
     
 
     CCTK_REAL* projv1_onto_u0;
@@ -55,10 +58,10 @@ void createGeodesicInitialConditions(CCTK_ARGUMENTS, GeodesicInitialConditions* 
     Metric metric;
     interpolateMetricAtPoint(CCTK_PASS_CTOC, camera_pos[0], camera_pos[1], camera_pos[2], metric) //interpolate metric values and store in Metric struct
 
-    CCTK_REAL* e0[4];
-    CCTK_REAL* e1[4];
-    CCTK_REAL* e2[4];
-    CCTK_REAL* e3[4];
+    CCTK_REAL e0[4];
+    CCTK_REAL e1[4];
+    CCTK_REAL e2[4];
+    CCTK_REAL e3[4];
     gramSchmidtProcess(CCTK_PASS_CTOC, e0, e1, e2, e3, metric); //create orthonormal basis for camera POV
 
     CCTK_REAL alpha_h = CCTK_PI / 180 * horizontal_fov; //convert FOV to radians

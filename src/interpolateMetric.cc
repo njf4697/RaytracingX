@@ -19,7 +19,7 @@ void interpolateMetricAtPoint(CCTK_ARGUMENTS, const CCTK_REAL x, const CCTK_REAL
     interp_y[0] = y;
     interp_z[0] = z;
 
-    const void* interp_coords[3];
+    const void interp_coords[3];
     interp_coords[0] = (const void*) interp_x;
     interp_coords[1] = (const void*) interp_y;
     interp_coords[2] = (const void*) interp_z;
@@ -48,18 +48,18 @@ void interpolateMetricAtPoint(CCTK_ARGUMENTS, const CCTK_REAL x, const CCTK_REAL
     output_array_type_codes[8] = CCTK_VARIABLE_REAL;
     output_array_type_codes[9] = CCTK_VARIABLE_REAL;
 
-    CCTK_REAL* alp_interp[NUM_INTERP_POINTS];
-    CCTK_REAL* betax_interp[NUM_INTERP_POINTS];
-    CCTK_REAL* betay_interp[NUM_INTERP_POINTS];
-    CCTK_REAL* betaz_interp[NUM_INTERP_POINTS];
-    CCTK_REAL* gxx_interp[NUM_INTERP_POINTS];
-    CCTK_REAL* gxy_interp[NUM_INTERP_POINTS];
-    CCTK_REAL* gxz_interp[NUM_INTERP_POINTS];
-    CCTK_REAL* gyy_interp[NUM_INTERP_POINTS];
-    CCTK_REAL* gyz_interp[NUM_INTERP_POINTS];
-    CCTK_REAL* gzz_interp[NUM_INTERP_POINTS];
+    CCTK_REAL alp_interp[NUM_INTERP_POINTS];
+    CCTK_REAL betax_interp[NUM_INTERP_POINTS];
+    CCTK_REAL betay_interp[NUM_INTERP_POINTS];
+    CCTK_REAL betaz_interp[NUM_INTERP_POINTS];
+    CCTK_REAL gxx_interp[NUM_INTERP_POINTS];
+    CCTK_REAL gxy_interp[NUM_INTERP_POINTS];
+    CCTK_REAL gxz_interp[NUM_INTERP_POINTS];
+    CCTK_REAL gyy_interp[NUM_INTERP_POINTS];
+    CCTK_REAL gyz_interp[NUM_INTERP_POINTS];
+    CCTK_REAL gzz_interp[NUM_INTERP_POINTS];
 
-    void* output_arrays[NUM_GRID_ARRAYS];
+    void output_arrays[NUM_GRID_ARRAYS];
     output_arrays[0] = (void*) alp_interp;
     output_arrays[1] = (void*) betax_interp;
     output_arrays[2] = (void*) betay_interp;
