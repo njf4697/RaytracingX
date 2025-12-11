@@ -1,4 +1,5 @@
 #include "raytracingx.h"
+#include <stdio.h>
 
 extern "C" void raytraceImage(CCTK_ARGUMENTS) {
     DECLARE_CCTK_ARGUMENTS
@@ -81,6 +82,8 @@ void createGeodesicInitialConditions(CCTK_ARGUMENTS, GeodesicInitialConditions* 
             chi[1] = C*e0[1] - e1[1] - b_adj*e2[1] - a_adj*e3[1];
             chi[2] = C*e0[2] - e1[2] - b_adj*e2[2] - a_adj*e3[2];
             chi[3] = C*e0[3] - e1[3] - b_adj*e2[3] - a_adj*e3[3];
+
+            printf("i=%i, j=%i, chi=[%0.2f, %0.2f, %0.2f, %0.2f]",i,j,chi[0],chi[1],chi[2],chi[3])
 
             CCTK_REAL chi_lower[4];
             vectorToOneForm(chi_lower, chi, metric);
