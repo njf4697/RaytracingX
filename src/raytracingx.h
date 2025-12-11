@@ -19,7 +19,7 @@ struct Metric { //struct that contains information about the metric interpolated
 };
 
 //scheduled
-extern "C" int raytraceImage(CCTK_ARGUMENTS); //raytraceImage.cc
+extern "C" void raytraceImage(CCTK_ARGUMENTS); //raytraceImage.cc
 
 //nonscheduled
 void gramSchmidtProcess(CCTK_ARGUMENTS, CCTK_REAL* e0, CCTK_REAL* e1, CCTK_REAL* e2, CCTK_REAL* e3, const Metric metric); //raytraceImage.cc
