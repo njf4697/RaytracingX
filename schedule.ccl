@@ -1,2 +1,7 @@
 # Schedule definition for thorn RaytracingX
 # ===================================================
+
+SCHEDULE createImage at CCTK_SHUTDOWN {
+    LANG: C
+    OPTIONS: GLOBAL
+} "create image via raytracing"
