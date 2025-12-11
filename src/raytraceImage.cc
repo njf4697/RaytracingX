@@ -1,6 +1,6 @@
 #include "raytracingx.h"
 
-extern "C" void createImage(CCTK_ARGUMENTS) {
+extern "C" void raytraceImage(CCTK_ARGUMENTS) {
     DECLARE_CCTK_ARGUMENTS
     DECLARE_CCTK_PARAMETERS
 
