@@ -117,7 +117,7 @@ void interpolateMetricAtPoint(CCTK_ARGUMENTS, const CCTK_REAL x, const CCTK_REAL
     int param_table_handle = Util_TableCreateFromString("order=3");
     if (param_table_handle < 0) {
     CCTK_VWarn(0, __LINE__, __FILE__, CCTK_THORNSTRING,
-               "bad interpolator parameter(s) \"%s\"!", interpolator_pars);
+               "bad interpolator parameter(s) \"%s\"!", "order=3");
     }
 
     Util_TableSetIntArray(param_table_handle, NUM_GRID_ARRAYS,
