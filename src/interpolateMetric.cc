@@ -104,8 +104,30 @@ void interpolateMetricAtPoint(CCTK_ARGUMENTS, const CCTK_REAL x, const CCTK_REAL
     //int coord_system_handle = CCTK_CoordSystemHandle("cart3d");
     //assert(coord_system_handle >= 0);
 
+    CCTK_INT operand_indices[NUM_GRID_ARRAYS];
+    for (int i = 0; i < NUM_GRID_ARRAYS; i++) {
+      operand_indices[i] = i;
+    }
+
+    CCTK_INT operation_codes[NUM_GRID_ARRAYS];
+    for (int i = 0; i < NUM_GRID_ARRAYS; i++) {
+      operation_codes[i] = 0;
+    }
+
+    int param_table_handle = Util_TableCreateFromString("order=3");
+    if (param_table_handle < 0) {
+    CCTK_VWarn(0, __LINE__, __FILE__, CCTK_THORNSTRING,
+               "bad interpolator parameter(s) \"%s\"!", interpolator_pars);
+    }
+
+    Util_TableSetIntArray(param_table_handle, NUM_GRID_ARRAYS,
+                          operand_indices, "operand_indices");
+
+    Util_TableSetIntArray(param_table_handle, NUM_GRID_ARRAYS,
+                        operation_codes, "operation_codes");
+
     const cGH *GH;
-    int status = CCTK_InterpGridArrays(GH, 3, operator_handle, Util_TableCreateFromString("order=3"), coord_system_handle, NUM_INTERP_POINTS, CCTK_VARIABLE_REAL, interp_coords, 
+    int status = CCTK_InterpGridArrays(GH, 3, operator_handle, param_table_handle, coord_system_handle, NUM_INTERP_POINTS, CCTK_VARIABLE_REAL, interp_coords, 
                                                                                                                             NUM_GRID_ARRAYS, variable_indices,
                                                                                                                             NUM_GRID_ARRAYS, output_array_type_codes, output_arrays);
     assert(status >= 0);
