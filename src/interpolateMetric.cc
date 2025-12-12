@@ -96,7 +96,7 @@ void interpolateMetricAtPoint(CCTK_ARGUMENTS, const CCTK_REAL x, const CCTK_REAL
     output_arrays[8] = (void*) gyz_interp;
     output_arrays[9] = (void*) gzz_interp;
 
-    int operator_handle = CCTK_InterpHandle("generalized polynomial interpolation");
+    int operator_handle = CCTK_InterpHandle("uniform cartesian");
     assert(operator_handle >= 0);
 
     int coord_system_handle = CCTK_CoordSystemHandle("cart3d");
