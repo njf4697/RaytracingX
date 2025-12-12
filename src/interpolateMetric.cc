@@ -105,7 +105,7 @@ void interpolateMetricAtPoint(CCTK_ARGUMENTS, const CCTK_REAL x, const CCTK_REAL
     //assert(coord_system_handle >= 0);
 
     const cGH *GH;
-    int status = CCTK_InterpGridArrays(GH, 3, operator_handle, Util_TableCreateFromString("order=4"), coord_system_handle, NUM_INTERP_POINTS, CCTK_VARIABLE_REAL, interp_coords, 
+    int status = CCTK_InterpGridArrays(GH, 3, operator_handle, Util_TableCreateFromString("order=3"), coord_system_handle, NUM_INTERP_POINTS, CCTK_VARIABLE_REAL, interp_coords, 
                                                                                                                             NUM_GRID_ARRAYS, variable_indices,
                                                                                                                             NUM_GRID_ARRAYS, output_array_type_codes, output_arrays);
     assert(status >= 0);
