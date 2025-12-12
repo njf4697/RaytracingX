@@ -95,12 +95,14 @@ void interpolateMetricAtPoint(CCTK_ARGUMENTS, const CCTK_REAL x, const CCTK_REAL
     output_arrays[7] = (void*) gyy_interp;
     output_arrays[8] = (void*) gyz_interp;
     output_arrays[9] = (void*) gzz_interp;
-
-    int operator_handle = CCTK_InterpHandle("uniform cartesian");
-    assert(operator_handle >= 0);
-
-    int coord_system_handle = CCTK_CoordSystemHandle("cart3d");
-    assert(coord_system_handle >= 0);
+    
+    int operator_handle = 0; //not used by CarpetX
+    //int operator_handle = CCTK_InterpHandle("uniform cartesian");
+    //assert(operator_handle >= 0);
+    
+    int coord_system_handle = 0; //not used by CarpetX
+    //int coord_system_handle = CCTK_CoordSystemHandle("cart3d");
+    //assert(coord_system_handle >= 0);
 
     const cGH *GH;
     int status = CCTK_InterpGridArrays(GH, 3, operator_handle, Util_TableCreateFromString("order=4"), coord_system_handle, NUM_INTERP_POINTS, CCTK_VARIABLE_REAL, interp_coords, 
