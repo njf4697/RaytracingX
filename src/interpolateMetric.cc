@@ -45,12 +45,12 @@ void interpolateMetricAtPoint(CCTK_ARGUMENTS, const CCTK_REAL x, const CCTK_REAL
     interp_y[0] = y;
     interp_z[0] = z;
 
-    assert(x > xmin);
-    assert(x < xmax);
-    assert(y > ymin);
-    assert(y < ymax);
-    assert(z > zmin);
-    assert(z < zmax);
+    //assert(x > xmin);
+    //assert(x < xmax);
+    //assert(y > ymin);
+    //assert(y < ymax);
+    //assert(z > zmin);
+    //assert(z < zmax);
 
     const void* interp_coords[3];
     interp_coords[0] = (const CCTK_REAL*) interp_x;
@@ -122,12 +122,13 @@ void interpolateMetricAtPoint(CCTK_ARGUMENTS, const CCTK_REAL x, const CCTK_REAL
       operation_codes[i] = 0;
     }
 
-    std::string orderstr = "order=" + std::to_string(interpolation_order); //from CarpetX
+    //std::string orderstr = "order=" + std::to_string(interpolation_order); //from CarpetX
+    std::string orderstr = "3";
 
-    int param_table_handle = Util_TableCreateFromString(orderstr);
+    int param_table_handle = Util_TableCreateFromString(orderstr.c_str());
     if (param_table_handle < 0) {
     CCTK_VWarn(0, __LINE__, __FILE__, CCTK_THORNSTRING,
-               "bad interpolator parameter(s) \"%s\"!", orderstr);
+               "bad interpolator parameter(s) \"%s\"!", orderstr.c_str());
     }
 
     Util_TableSetIntArray(param_table_handle, NUM_GRID_ARRAYS,
