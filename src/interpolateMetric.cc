@@ -123,7 +123,7 @@ void interpolateMetricAtPoint(CCTK_ARGUMENTS, const CCTK_REAL x, const CCTK_REAL
     }
 
     //std::string orderstr = "order=" + std::to_string(interpolation_order); //from CarpetX
-    std::string orderstr = "3";
+    std::string orderstr = "order=4";
 
     int param_table_handle = Util_TableCreateFromString(orderstr.c_str());
     if (param_table_handle < 0) {
