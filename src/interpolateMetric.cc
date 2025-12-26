@@ -137,15 +137,13 @@ void interpolateMetricAtPoint(CCTK_ARGUMENTS, const CCTK_REAL x, const CCTK_REAL
     Util_TableSetIntArray(param_table_handle, NUM_GRID_ARRAYS,
                         operation_codes, "operation_codes");
 
-    printf("test1");
+    printf("x: " + std::to_string(x) + ", y: " + std::to_string(y) + ", z: " + std::to_string(z));
 
     const cGH *GH;
     int status = CCTK_InterpGridArrays(GH, 3, operator_handle, param_table_handle, coord_system_handle, NUM_INTERP_POINTS, CCTK_VARIABLE_REAL, interp_coords, 
                                                                                                                             NUM_GRID_ARRAYS, variable_indices,
                                                                                                                             NUM_GRID_ARRAYS, output_array_type_codes, output_arrays);
     assert(status >= 0);
-
-    printf("test2");
     
     CCTK_REAL* alp_interp_filled = (CCTK_REAL*) output_arrays[0];
     CCTK_REAL* betax_interp_filled = (CCTK_REAL*) output_arrays[1];
