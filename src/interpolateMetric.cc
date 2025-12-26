@@ -53,9 +53,9 @@ void interpolateMetricAtPoint(CCTK_ARGUMENTS, const CCTK_REAL x, const CCTK_REAL
     //assert(z < zmax);
 
     const void* interp_coords[3];
-    interp_coords[0] = (const CCTK_REAL*) interp_x;
-    interp_coords[1] = (const CCTK_REAL*) interp_y;
-    interp_coords[2] = (const CCTK_REAL*) interp_z;
+    interp_coords[0] = (const void*) interp_x;
+    interp_coords[1] = (const void*) interp_y;
+    interp_coords[2] = (const void*) interp_z;
 
     CCTK_INT variable_indices[NUM_GRID_ARRAYS];
     variable_indices[0] = CCTK_VarIndex("ADMBaseX::alp");
