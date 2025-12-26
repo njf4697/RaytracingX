@@ -56,25 +56,25 @@ void interpolateMetricAtPoint(CCTK_ARGUMENTS, const CCTK_REAL x, const CCTK_REAL
 
     CCTK_INT variable_indices[NUM_GRID_ARRAYS];
     variable_indices[0] = CCTK_VarIndex("ADMBaseX::alp");
-    assert(variable_indices[0] >= 0)
+    assert(variable_indices[0] >= 0);
     variable_indices[1] = CCTK_VarIndex("ADMBaseX::betax");
-    assert(variable_indices[1] >= 0)
+    assert(variable_indices[1] >= 0);
     variable_indices[2] = CCTK_VarIndex("ADMBaseX::betay");
-    assert(variable_indices[2] >= 0)
+    assert(variable_indices[2] >= 0);
     variable_indices[3] = CCTK_VarIndex("ADMBaseX::betaz");
-    assert(variable_indices[3] >= 0)
+    assert(variable_indices[3] >= 0);
     variable_indices[4] = CCTK_VarIndex("ADMBaseX::gxx");
-    assert(variable_indices[4] >= 0)
+    assert(variable_indices[4] >= 0);
     variable_indices[5] = CCTK_VarIndex("ADMBaseX::gxy");
-    assert(variable_indices[5] >= 0)
+    assert(variable_indices[5] >= 0);
     variable_indices[6] = CCTK_VarIndex("ADMBaseX::gxz");
-    assert(variable_indices[6] >= 0)
+    assert(variable_indices[6] >= 0);
     variable_indices[7] = CCTK_VarIndex("ADMBaseX::gyy");
-    assert(variable_indices[7] >= 0)
+    assert(variable_indices[7] >= 0);
     variable_indices[8] = CCTK_VarIndex("ADMBaseX::gyz");
-    assert(variable_indices[8] >= 0)
+    assert(variable_indices[8] >= 0);
     variable_indices[9] = CCTK_VarIndex("ADMBaseX::gzz");
-    assert(variable_indices[9] >= 0)
+    assert(variable_indices[9] >= 0);
 
     //not used by CarpetX:
     //static const CCTK_INT output_array_type_codes[NUM_GRID_ARRAYS] = {CCTK_VARIABLE_REAL, CCTK_VARIABLE_REAL, CCTK_VARIABLE_REAL, CCTK_VARIABLE_REAL, CCTK_VARIABLE_REAL, CCTK_VARIABLE_REAL, CCTK_VARIABLE_REAL, CCTK_VARIABLE_REAL, CCTK_VARIABLE_REAL, CCTK_VARIABLE_REAL};
