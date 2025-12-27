@@ -4,32 +4,6 @@
 #define NUM_INTERP_POINTS 1
 #define NUM_GRID_ARRAYS 10
 
-static CCTK_REAL* allocateArray(CCTK_INT num_points, const char* varname) {
-  DECLARE_CCTK_PARAMETERS
-
-  if (npoints <= 0) {
-    CCTK_WARN(0, "can't allocate array with npoints <=0");
-  }
-  if (name == NULL) {
-    CCTK_WARN(0, "give a name");
-  }
-
-  CCTK_REAL *res;
-  res = (CCTK_REAL *)malloc(sizeof(CCTK_REAL) * npoints);
-  if (res == NULL) {
-    CCTK_VWarn(0, __LINE__, __FILE__, CCTK_THORNSTRING,
-               "%s allocation for npoints=%d failed", name, (int)npoints);
-  }
-  for (int i = 0; i < npoints; i++)
-    res[i] = 0;
-  const CCTK_REAL mbyt = npoints * sizeof(CCTK_REAL) / (1024.0 * 1024.0);
-  if (verbose > 0) {
-    CCTK_VInfo(CCTK_THORNSTRING, "allocated array %s with %d elements -> %g MB",
-               name, (int)npoints, mbyt);
-  }
-  return res;
-}
-
 void inverseSpatialMetric(CCTK_REAL* inv_spatial_metric, const Metric m) { //find \gamma^{ij}
     CCTK_REAL inv_det_g = 1/(m.metric[4]*m.metric[7]*m.metric[9]+2.*m.metric[5]*m.metric[6]*m.metric[8]-m.metric[6]*m.metric[6]*m.metric[7]-m.metric[8]*m.metric[8]*m.metric[4]-m.metric[5]*m.metric[5]*m.metric[9]);
     inv_spatial_metric[0] = (m.metric[3]*m.metric[5]-m.metric[4]*m.metric[4])*inv_det_g;
@@ -118,16 +92,16 @@ void interpolateMetricAtPoint(CCTK_ARGUMENTS, const CCTK_REAL x, const CCTK_REAL
     CCTK_REAL gzz_interp[NUM_INTERP_POINTS];
 
     void* output_arrays[NUM_GRID_ARRAYS];
-    output_arrays[0] = (void*) &alp_interp;
-    output_arrays[1] = (void*) &betax_interp;
-    output_arrays[2] = (void*) &betay_interp;
-    output_arrays[3] = (void*) &betaz_interp;
-    output_arrays[4] = (void*) &gxx_interp;
-    output_arrays[5] = (void*) &gxy_interp;
-    output_arrays[6] = (void*) &gxz_interp;
-    output_arrays[7] = (void*) &gyy_interp;
-    output_arrays[8] = (void*) &gyz_interp;
-    output_arrays[9] = (void*) &gzz_interp;
+    output_arrays[0] = (void*) alp_interp;
+    output_arrays[1] = (void*) betax_interp;
+    output_arrays[2] = (void*) betay_interp;
+    output_arrays[3] = (void*) betaz_interp;
+    output_arrays[4] = (void*) gxx_interp;
+    output_arrays[5] = (void*) gxy_interp;
+    output_arrays[6] = (void*) gxz_interp;
+    output_arrays[7] = (void*) gyy_interp;
+    output_arrays[8] = (void*) gyz_interp;
+    output_arrays[9] = (void*) gzz_interp;
     
     int operator_handle = 0; //not used by CarpetX
     //int operator_handle = CCTK_InterpHandle("uniform cartesian");
