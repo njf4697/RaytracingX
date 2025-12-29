@@ -2,7 +2,7 @@
 #include <stdio.h>
 
 extern "C" void raytraceImage(CCTK_ARGUMENTS) {
-    DECLARE_CCTK_ARGUMENTS
+    DECLARE_CCTK_ARGUMENTS_raytraceImage
     DECLARE_CCTK_PARAMETERS
 
     int N_TOTAL_PIXELS = num_pixels_width * num_pixels_height;
