@@ -4,4 +4,14 @@
 SCHEDULE raytraceImage at CCTK_ANALYSIS {
     LANG: C
     OPTIONS: GLOBAL
+    READS: ADMBaseX::alp
+    READS: ADMBaseX::betax
+    READS: ADMBaseX::betay
+    READS: ADMBaseX::betaz
+    READS: ADMBaseX::gxx
+    READS: ADMBaseX::gxy
+    READS: ADMBaseX::gxz
+    READS: ADMBaseX::gyy
+    READS: ADMBaseX::gyz
+    READS: ADMBaseX::gzz
 } "create image via raytracing"
