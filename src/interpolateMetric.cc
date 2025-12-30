@@ -1,6 +1,7 @@
 #include "raytracingx.h"
 #include <string.h>
-#include <vector.h>
+#include <vector>
+#include <array>
 
 #define NUM_INTERP_POINTS 1
 #define NUM_GRID_ARRAYS 10
