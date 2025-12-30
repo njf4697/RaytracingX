@@ -128,7 +128,7 @@ void interpolateMetricAtPointNew(CCTK_ARGUMENTS, const CCTK_REAL x, const CCTK_R
     CCTK_VERROR("test");
 } 
 
-old version
+//old version
 void interpolateMetricAtPoint(CCTK_ARGUMENTS, const CCTK_REAL x, const CCTK_REAL y, const CCTK_REAL z, Metric metric_at_point) {
     DECLARE_CCTK_ARGUMENTS
     DECLARE_CCTK_PARAMETERS
