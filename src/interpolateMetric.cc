@@ -43,20 +43,22 @@ void interpolateMetricAtPoint(CCTK_ARGUMENTS, const CCTK_REAL x, const CCTK_REAL
     location_[1].push_back(y);
     location_[2].push_back(z);
 
-    std::array<std::vector<CCTK_REAL>, 3> beta_;
+    std::array<std::vector<CCTK_REAL>, 10> metric_;
 
     // Interpolation coordinates
     const void *interpCoords[3] = {
         location_[0].data(), location_[1].data(), location_[2].data()};
 
     // Interpolated variables
-    const CCTK_INT nInputArrays = 3;
+    const CCTK_INT nInputArrays = 10;
     const CCTK_INT inputArrayIndices[nInputArrays] = {
-        CCTK_VarIndex("ADMBaseX::betax"), CCTK_VarIndex("ADMBaseX::betay"),
-        CCTK_VarIndex("ADMBaseX::betaz")};
+        CCTK_VarIndex("ADMBaseX::alp"), 
+        CCTK_VarIndex("ADMBaseX::betax"), CCTK_VarIndex("ADMBaseX::betay"), CCTK_VarIndex("ADMBaseX::betaz"),
+        CCTK_VarIndex("ADMBaseX::gxx"), CCTK_VarIndex("ADMBaseX::gxy"), CCTK_VarIndex("ADMBaseX::gxz"),
+        CCTK_VarIndex("ADMBaseX::gyy"), CCTK_VarIndex("ADMBaseX::gyz"), CCTK_VarIndex("ADMBaseX::gzz"),};
 
-    CCTK_POINTER outputArrays[nInputArrays] = {beta_[0].data(), beta_[1].data(),
-                                               beta_[2].data()};
+    CCTK_POINTER outputArrays[nInputArrays] = {metric_[0].data(), metric_[1].data(), metric_[2].data(), metric_[3].data(), metric_[4].data(),
+                                               metric_[5].data(), metric_[6].data(), metric_[7].data(), metric_[8].data(), metric_[9].data()};
 
     // DriverInterpolate arguments that aren't currently used
     const int coordSystemHandle = 0;
@@ -91,12 +93,38 @@ void interpolateMetricAtPoint(CCTK_ARGUMENTS, const CCTK_REAL x, const CCTK_REAL
       CCTK_WARN(CCTK_WARN_ALERT, "Interpolation error");
     }
 
+    metric_at_point.metric[0] = metric_[0].data()[0];
+    metric_at_point.beta_up[0] = metric_[1].data()[0];
+    metric_at_point.beta_up[1] = metric_[2].data()[0];
+    metric_at_point.beta_up[2] = metric_[3].data()[0];
+    metric_at_point.metric[4] = metric_[4].data()[0];
+    metric_at_point.metric[5] = metric_[5].data()[0];
+    metric_at_point.metric[6] = metric_[6].data()[0];
+    metric_at_point.metric[7] = metric_[7].data()[0];
+    metric_at_point.metric[8] = metric_[8].data()[0];
+    metric_at_point.metric[9] = metric_[9].data()[0];
+
+    metric_at_point.metric[1] = metric_at_point.beta_up[0]*metric_at_point.metric[4] + metric_at_point.beta_up[1]*metric_at_point.metric[5] + metric_at_point.beta_up[2]*metric_at_point.metric[6];
+    metric_at_point.metric[2] = metric_at_point.beta_up[0]*metric_at_point.metric[5] + metric_at_point.beta_up[1]*metric_at_point.metric[7] + metric_at_point.beta_up[2]*metric_at_point.metric[8];
+    metric_at_point.metric[3] = metric_at_point.beta_up[0]*metric_at_point.metric[6] + metric_at_point.beta_up[1]*metric_at_point.metric[8] + metric_at_point.beta_up[2]*metric_at_point.metric[9];
+
+    metric_at_point.metric0pr = sqrt(pow(metric_at_point.metric[0],2) - metric_at_point.metric[1]*metric_at_point.beta_up[0] - metric_at_point.metric[2]*metric_at_point.beta_up[1] - metric_at_point.metric[3]*metric_at_point.beta_up[2]); //g_{00}
+
     // Destroy the parameter table
     Util_TableDestroy(paramTableHandle);
 
-    CCTK_VERROR("test completed");
+    calculateInverseMetric(metric_at_point); //get g^{\mu\nu}
+
+    printf(("camera position: x: " + std::to_string(x) + ", y: " + std::to_string(y) + ", z: " + std::to_string(z)).c_str());
+    printf(("alpha: " + std::to_string(metric_at_point.metric[0])).c_str());
+    printf(("beta: (" + std::to_string(metric_at_point.beta_up[0]) + ", " + std::to_string(metric_at_point.beta_up[1]) + ", " + std::to_string(metric_at_point.beta_up[2]) + ")").c_str());
+    printf(("metric1: (" + std::to_string(metric_at_point.metric0pr) + ", " + std::to_string(metric_at_point.metric[1]) + ", " + std::to_string(metric_at_point.metric[2]) + ", " + std::to_string(metric_at_point.metric[3]) + ")").c_str());
+    printf(("metric2: (" + std::to_string(metric_at_point.metric[1]) + ", " + std::to_string(metric_at_point.metric[4]) + ", " + std::to_string(metric_at_point.metric[5]) + ", " + std::to_string(metric_at_point.metric[6]) + ")").c_str());
+    printf(("metric3: (" + std::to_string(metric_at_point.metric[2]) + ", " + std::to_string(metric_at_point.metric[5]) + ", " + std::to_string(metric_at_point.metric[7]) + ", " + std::to_string(metric_at_point.metric[8]) + ")").c_str());
+    printf(("metric4: (" + std::to_string(metric_at_point.metric[3]) + ", " + std::to_string(metric_at_point.metric[6]) + ", " + std::to_string(metric_at_point.metric[8]) + ", " + std::to_string(metric_at_point.metric[9]) + ")").c_str());
 } 
 
+/* old version
 void interpolateMetricAtPointOld(CCTK_ARGUMENTS, const CCTK_REAL x, const CCTK_REAL y, const CCTK_REAL z, Metric metric_at_point) {
     DECLARE_CCTK_ARGUMENTS
     DECLARE_CCTK_PARAMETERS
@@ -239,3 +267,4 @@ void interpolateMetricAtPointOld(CCTK_ARGUMENTS, const CCTK_REAL x, const CCTK_R
 
     Util_TableDestroy(param_table_handle);
 }
+*/
