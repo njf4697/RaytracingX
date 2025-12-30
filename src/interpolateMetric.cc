@@ -29,11 +29,16 @@ void calculateInverseMetric(Metric m) { //find g^{\mu\nu}
     m.metric_inv[9] = h[5]-m.metric_inv[3]*m.beta_up[2];
 }
 
+//void interpolateMetricAtPoint(CCTK_ARGUMENTS, const CCTK_REAL x, const CCTK_REAL y, const CCTK_REAL z, Metric metric_at_point) {
+//    DECLARE_CCTK_ARGUMENTS
+//    DECLARE_CCTK_PARAMETERS
+//
+//    
+//
+//
+//}
+
 void interpolateMetricAtPoint(CCTK_ARGUMENTS, const CCTK_REAL x, const CCTK_REAL y, const CCTK_REAL z, Metric metric_at_point) {
-
-    //uses 4th-order generalized polynomial interpolation to find the spacetime quantities at given position
-    //see page A126 of https://www.cactuscode.org/documentation/ReferenceManual.pdf
-
     DECLARE_CCTK_ARGUMENTS
     DECLARE_CCTK_PARAMETERS
 
