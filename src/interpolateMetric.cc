@@ -110,13 +110,13 @@ void interpolateMetricAtPoint(CCTK_ARGUMENTS, const CCTK_REAL x, const CCTK_REAL
 
     metric_at_point.metric0pr = sqrt(pow(metric_at_point.metric[0],2) - metric_at_point.metric[1]*metric_at_point.beta_up[0] - metric_at_point.metric[2]*metric_at_point.beta_up[1] - metric_at_point.metric[3]*metric_at_point.beta_up[2]); //g_{00}
 
-    CCTK_VWARN(("camera position: x: " + std::to_string(x) + ", y: " + std::to_string(y) + ", z: " + std::to_string(z)).c_str());
-    CCTK_VWARN(("alpha: " + std::to_string(metric_at_point.metric[0])).c_str());
-    CCTK_VWARN(("beta: (" + std::to_string(metric_at_point.beta_up[0]) + ", " + std::to_string(metric_at_point.beta_up[1]) + ", " + std::to_string(metric_at_point.beta_up[2]) + ")").c_str());
-    CCTK_VWARN(("metric1: (" + std::to_string(metric_at_point.metric0pr) + ", " + std::to_string(metric_at_point.metric[1]) + ", " + std::to_string(metric_at_point.metric[2]) + ", " + std::to_string(metric_at_point.metric[3]) + ")").c_str());
-    CCTK_VWARN(("metric2: (" + std::to_string(metric_at_point.metric[1]) + ", " + std::to_string(metric_at_point.metric[4]) + ", " + std::to_string(metric_at_point.metric[5]) + ", " + std::to_string(metric_at_point.metric[6]) + ")").c_str());
-    CCTK_VWARN(("metric3: (" + std::to_string(metric_at_point.metric[2]) + ", " + std::to_string(metric_at_point.metric[5]) + ", " + std::to_string(metric_at_point.metric[7]) + ", " + std::to_string(metric_at_point.metric[8]) + ")").c_str());
-    CCTK_VWARN(("metric4: (" + std::to_string(metric_at_point.metric[3]) + ", " + std::to_string(metric_at_point.metric[6]) + ", " + std::to_string(metric_at_point.metric[8]) + ", " + std::to_string(metric_at_point.metric[9]) + ")").c_str());
+    CCTK_VWARN(1, ("camera position: x: " + std::to_string(x) + ", y: " + std::to_string(y) + ", z: " + std::to_string(z)).c_str());
+    CCTK_VWARN(1, ("alpha: " + std::to_string(metric_at_point.metric[0])).c_str());
+    CCTK_VWARN(1, ("beta: (" + std::to_string(metric_at_point.beta_up[0]) + ", " + std::to_string(metric_at_point.beta_up[1]) + ", " + std::to_string(metric_at_point.beta_up[2]) + ")").c_str());
+    CCTK_VWARN(1, ("metric1: (" + std::to_string(metric_at_point.metric0pr) + ", " + std::to_string(metric_at_point.metric[1]) + ", " + std::to_string(metric_at_point.metric[2]) + ", " + std::to_string(metric_at_point.metric[3]) + ")").c_str());
+    CCTK_VWARN(1, ("metric2: (" + std::to_string(metric_at_point.metric[1]) + ", " + std::to_string(metric_at_point.metric[4]) + ", " + std::to_string(metric_at_point.metric[5]) + ", " + std::to_string(metric_at_point.metric[6]) + ")").c_str());
+    CCTK_VWARN(1, ("metric3: (" + std::to_string(metric_at_point.metric[2]) + ", " + std::to_string(metric_at_point.metric[5]) + ", " + std::to_string(metric_at_point.metric[7]) + ", " + std::to_string(metric_at_point.metric[8]) + ")").c_str());
+    CCTK_VWARN(1, ("metric4: (" + std::to_string(metric_at_point.metric[3]) + ", " + std::to_string(metric_at_point.metric[6]) + ", " + std::to_string(metric_at_point.metric[8]) + ", " + std::to_string(metric_at_point.metric[9]) + ")").c_str());
 
     // Destroy the parameter table
     Util_TableDestroy(paramTableHandle);
