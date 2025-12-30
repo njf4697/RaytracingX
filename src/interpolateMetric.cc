@@ -124,6 +124,8 @@ void interpolateMetricAtPoint(CCTK_ARGUMENTS, const CCTK_REAL x, const CCTK_REAL
     Util_TableDestroy(paramTableHandle);
 
     calculateInverseMetric(metric_at_point); //get g^{\mu\nu}
+
+    CCTK_VERROR("test");
 } 
 
 /* old version
