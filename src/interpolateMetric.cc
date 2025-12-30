@@ -1,5 +1,6 @@
 #include "raytracingx.h"
 #include <string.h>
+#include <vector.h>
 
 #define NUM_INTERP_POINTS 1
 #define NUM_GRID_ARRAYS 10
@@ -29,16 +30,73 @@ void calculateInverseMetric(Metric m) { //find g^{\mu\nu}
     m.metric_inv[9] = h[5]-m.metric_inv[3]*m.beta_up[2];
 }
 
-//void interpolateMetricAtPoint(CCTK_ARGUMENTS, const CCTK_REAL x, const CCTK_REAL y, const CCTK_REAL z, Metric metric_at_point) {
-//    DECLARE_CCTK_ARGUMENTS
-//    DECLARE_CCTK_PARAMETERS
-//
-//    
-//
-//
-//}
-
 void interpolateMetricAtPoint(CCTK_ARGUMENTS, const CCTK_REAL x, const CCTK_REAL y, const CCTK_REAL z, Metric metric_at_point) {
+    DECLARE_CCTK_ARGUMENTS
+    DECLARE_CCTK_PARAMETERS
+
+    // Only Processor 0 interpolates
+    const CCTK_INT nPoints = (CCTK_MyProc(cctkGH) == 0) ? 1 : 0;
+
+    std::array<std::vector<CCTK_REAL>, 3> location_;
+    location_[0].push_back(x);
+    location_[1].push_back(y);
+    location_[2].push_back(z);
+
+    std::array<std::vector<CCTK_REAL>, 3> beta_;
+
+    // Interpolation coordinates
+    const void *interpCoords[3] = {
+        location_[0].data(), location_[1].data(), location_[2].data()};
+
+    // Interpolated variables
+    const CCTK_INT nInputArrays = 3;
+    const CCTK_INT inputArrayIndices[nInputArrays] = {
+        CCTK_VarIndex("ADMBaseX::betax"), CCTK_VarIndex("ADMBaseX::betay"),
+        CCTK_VarIndex("ADMBaseX::betaz")};
+
+    CCTK_POINTER outputArrays[nInputArrays] = {beta_[0].data(), beta_[1].data(),
+                                               beta_[2].data()};
+
+    // DriverInterpolate arguments that aren't currently used
+    const int coordSystemHandle = 0;
+    const CCTK_INT interpCoordsTypeCode = 0;
+    const CCTK_INT outputArrayTypes[1] = {0};
+
+    const int interpHandle = CCTK_InterpHandle("CarpetX");
+    if (interpHandle < 0) {
+      CCTK_WARN(CCTK_WARN_ALERT, "Can't get interpolation handle");
+      return;
+    }
+
+    // Create parameter table for interpolation
+    const int paramTableHandle = Util_TableCreate(UTIL_TABLE_FLAGS_DEFAULT);
+    if (paramTableHandle < 0) {
+      CCTK_VERROR("Can't create parameter table: %d", paramTableHandle);
+    }
+
+    // Set interpolation order in the parameter table
+    int ierr = Util_TableSetInt(paramTableHandle, 1, "order");
+    if (ierr < 0) {
+      CCTK_VERROR("Can't set order in parameter table: %d", ierr);
+    }
+
+    // Perform the interpolation
+    ierr = DriverInterpolate(cctkGH, 3, interpHandle, paramTableHandle,
+                             coordSystemHandle, nPoints, interpCoordsTypeCode,
+                             interpCoords, nInputArrays, inputArrayIndices,
+                             nInputArrays, outputArrayTypes, outputArrays);
+
+    if (ierr < 0) {
+      CCTK_WARN(CCTK_WARN_ALERT, "Interpolation error");
+    }
+
+    // Destroy the parameter table
+    Util_TableDestroy(paramTableHandle);
+
+    CCTK_VERROR("test completed");
+} 
+
+void interpolateMetricAtPointOld(CCTK_ARGUMENTS, const CCTK_REAL x, const CCTK_REAL y, const CCTK_REAL z, Metric metric_at_point) {
     DECLARE_CCTK_ARGUMENTS
     DECLARE_CCTK_PARAMETERS
 
@@ -177,4 +235,6 @@ void interpolateMetricAtPoint(CCTK_ARGUMENTS, const CCTK_REAL x, const CCTK_REAL
     metric_at_point.metric0pr = sqrt(pow(metric_at_point.metric[0],2) - metric_at_point.metric[1]*metric_at_point.beta_up[0] - metric_at_point.metric[2]*metric_at_point.beta_up[1] - metric_at_point.metric[3]*metric_at_point.beta_up[2]); //g_{00}
 
     calculateInverseMetric(metric_at_point); //get g^{\mu\nu}
+
+    Util_TableDestroy(param_table_handle);
 }
