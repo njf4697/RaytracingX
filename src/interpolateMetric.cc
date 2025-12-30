@@ -83,6 +83,8 @@ void interpolateMetricAtPoint(CCTK_ARGUMENTS, const CCTK_REAL x, const CCTK_REAL
       CCTK_VERROR("Can't set order in parameter table: %d", ierr);
     }
 
+    printf(("camera position: x: " + std::to_string(x) + ", y: " + std::to_string(y) + ", z: " + std::to_string(z)).c_str());
+
     // Perform the interpolation
     ierr = DriverInterpolate(cctkGH, 3, interpHandle, paramTableHandle,
                              coordSystemHandle, nPoints, interpCoordsTypeCode,
