@@ -31,7 +31,7 @@ void calculateInverseMetric(Metric m) { //find g^{\mu\nu}
     m.metric_inv[9] = h[5]-m.metric_inv[3]*m.beta_up[2];
 }
 
-void interpolateMetricAtPoint(CCTK_ARGUMENTS, const CCTK_REAL x, const CCTK_REAL y, const CCTK_REAL z, Metric metric_at_point) {
+void interpolateMetricAtPointNew(CCTK_ARGUMENTS, const CCTK_REAL x, const CCTK_REAL y, const CCTK_REAL z, Metric metric_at_point) {
     DECLARE_CCTK_ARGUMENTS
     DECLARE_CCTK_PARAMETERS
 
@@ -128,8 +128,8 @@ void interpolateMetricAtPoint(CCTK_ARGUMENTS, const CCTK_REAL x, const CCTK_REAL
     CCTK_VERROR("test");
 } 
 
-/* old version
-void interpolateMetricAtPointOld(CCTK_ARGUMENTS, const CCTK_REAL x, const CCTK_REAL y, const CCTK_REAL z, Metric metric_at_point) {
+old version
+void interpolateMetricAtPoint(CCTK_ARGUMENTS, const CCTK_REAL x, const CCTK_REAL y, const CCTK_REAL z, Metric metric_at_point) {
     DECLARE_CCTK_ARGUMENTS
     DECLARE_CCTK_PARAMETERS
 
@@ -270,5 +270,6 @@ void interpolateMetricAtPointOld(CCTK_ARGUMENTS, const CCTK_REAL x, const CCTK_R
     calculateInverseMetric(metric_at_point); //get g^{\mu\nu}
 
     Util_TableDestroy(param_table_handle);
+
+    CCTK_VERROR("test");
 }
-*/
