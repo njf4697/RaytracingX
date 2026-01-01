@@ -35,9 +35,13 @@ void interpolateMetricAtPoint(CCTK_ARGUMENTS, const CCTK_REAL x, const CCTK_REAL
     DECLARE_CCTK_ARGUMENTS
     DECLARE_CCTK_PARAMETERS
 
+    if (x < CarpetX::xmin || x > CarpetX::xmax || y < CarpetX::ymin || y > CarpetX::ymax || z < CarpetX::zmin || z > CarpetX::zmax) {
+      CCTK_VERROR("Camera Location Out of Bounds");
+    }
+
     // Only Processor 0 interpolates
     const CCTK_INT nPoints = (CCTK_MyProc(cctkGH) == 0) ? 1 : 0;
-    printf(std::to_string(cctkGH));
+    printf(std::to_string(cctkGH).c_str());
 
     std::array<std::vector<CCTK_REAL>, 3> location_;
     location_[0].push_back(x);
