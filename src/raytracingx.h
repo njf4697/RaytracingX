@@ -40,16 +40,12 @@ struct Metric { //struct that contains information about the metric interpolated
         metric_inv[1] = metric_inv[0]*beta_up[0];
         metric_inv[2] = metric_inv[0]*beta_up[1];
         metric_inv[3] = metric_inv[0]*beta_up[2];
-        metric_inv[4] = inv_det_g[0]-metric_inv[1]*beta_up[0];
-        metric_inv[5] = inv_det_g[1]-metric_inv[1]*beta_up[1];
-        metric_inv[6] = inv_det_g[2]-metric_inv[1]*beta_up[2];
-        metric_inv[7] = inv_det_g[3]-metric_inv[2]*beta_up[1];
-        metric_inv[8] = inv_det_g[4]-metric_inv[2]*beta_up[2];
-        metric_inv[9] = inv_det_g[5]-metric_inv[3]*beta_up[2];
-    }
-
-    void calculateBetaUp() {
-
+        metric_inv[4] = inv_spatial_metric[0]-metric_inv[1]*beta_up[0];
+        metric_inv[5] = inv_spatial_metric[1]-metric_inv[1]*beta_up[1];
+        metric_inv[6] = inv_spatial_metric[2]-metric_inv[1]*beta_up[2];
+        metric_inv[7] = inv_spatial_metric[3]-metric_inv[2]*beta_up[1];
+        metric_inv[8] = inv_spatial_metric[4]-metric_inv[2]*beta_up[2];
+        metric_inv[9] = inv_spatial_metric[5]-metric_inv[3]*beta_up[2];
     }
 };
 
