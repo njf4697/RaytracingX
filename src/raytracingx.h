@@ -19,12 +19,37 @@ struct Metric { //struct that contains information about the metric interpolated
     CCTK_REAL beta_up[3]; // \beta^i
 
     std::string to_string() {
-        return "alpha: " + std::to_string(metric.metric[0]) + "\n";
-               "beta: (" + std::to_string(metric.beta_up[0]) + ", " + std::to_string(metric.beta_up[1]) + ", " + std::to_string(metric.beta_up[2]) + ")";
-               "metric: " + std::to_string(metric.metric0pr) + ", " + std::to_string(metric.metric[1]) + ", " + std::to_string(metric.metric[2]) + ", " + std::to_string(metric.metric[3]) + "\n";
-               "        " + std::to_string(metric.metric[1]) + ", " + std::to_string(metric.metric[4]) + ", " + std::to_string(metric.metric[5]) + ", " + std::to_string(metric.metric[6]) + "\n";
-               "        " + std::to_string(metric.metric[2]) + ", " + std::to_string(metric.metric[5]) + ", " + std::to_string(metric.metric[7]) + ", " + std::to_string(metric.metric[8]) + "\n";
-               "        " + std::to_string(metric.metric[3]) + ", " + std::to_string(metric.metric[6]) + ", " + std::to_string(metric.metric[8]) + ", " + std::to_string(metric.metric[9]);
+        return "alpha: " + std::to_string(metric[0]) + "\n";
+               "beta: (" + std::to_string(beta_up[0]) + ", " + std::to_string(beta_up[1]) + ", " + std::to_string(beta_up[2]) + ")";
+               "metric: " + std::to_string(metric0pr) + ", " + std::to_string(metric[1]) + ", " + std::to_string(metric[2]) + ", " + std::to_string(metric[3]) + "\n";
+               "        " + std::to_string(metric[1]) + ", " + std::to_string(metric[4]) + ", " + std::to_string(metric[5]) + ", " + std::to_string(metric[6]) + "\n";
+               "        " + std::to_string(metric[2]) + ", " + std::to_string(metric[5]) + ", " + std::to_string(metric[7]) + ", " + std::to_string(metric[8]) + "\n";
+               "        " + std::to_string(metric[3]) + ", " + std::to_string(metric[6]) + ", " + std::to_string(metric[8]) + ", " + std::to_string(metric[9]);
+    }
+
+    void fillInverseMetric() {
+        CCTK_REAL inv_det_g = 1/(m.metric[4]*m.metric[7]*m.metric[9]+2.*m.metric[5]*m.metric[6]*m.metric[8]-m.metric[6]*m.metric[6]*m.metric[7]-m.metric[8]*m.metric[8]*m.metric[4]-m.metric[5]*m.metric[5]*m.metric[9]);
+        inv_spatial_metric[0] = (m.metric[3]*m.metric[5]-m.metric[4]*m.metric[4])*inv_det_g;
+        inv_spatial_metric[1] = (m.metric[4]*m.metric[2]-m.metric[1]*m.metric[5])*inv_det_g;
+        inv_spatial_metric[2] = (m.metric[1]*m.metric[4]-m.metric[2]*m.metric[3])*inv_det_g;
+        inv_spatial_metric[3] = (m.metric[0]*m.metric[5]-m.metric[2]*m.metric[2])*inv_det_g;
+        inv_spatial_metric[4] = (m.metric[2]*m.metric[1]-m.metric[0]*m.metric[4])*inv_det_g;
+        inv_spatial_metric[5] = (m.metric[0]*m.metric[3]-m.metric[1]*m.metric[1])*inv_det_g;
+
+        m.metric_inv[0] = 1/(pow(m.metric[0],2));
+        m.metric_inv[1] = m.metric_inv[0]*m.beta_up[0];
+        m.metric_inv[2] = m.metric_inv[0]*m.beta_up[1];
+        m.metric_inv[3] = m.metric_inv[0]*m.beta_up[2];
+        m.metric_inv[4] = inv_det_g[0]-m.metric_inv[1]*m.beta_up[0];
+        m.metric_inv[5] = inv_det_g[1]-m.metric_inv[1]*m.beta_up[1];
+        m.metric_inv[6] = inv_det_g[2]-m.metric_inv[1]*m.beta_up[2];
+        m.metric_inv[7] = inv_det_g[3]-m.metric_inv[2]*m.beta_up[1];
+        m.metric_inv[8] = inv_det_g[4]-m.metric_inv[2]*m.beta_up[2];
+        m.metric_inv[9] = inv_det_g[5]-m.metric_inv[3]*m.beta_up[2];
+    }
+
+    void calculateBetaUp() {
+        
     }
 };
 

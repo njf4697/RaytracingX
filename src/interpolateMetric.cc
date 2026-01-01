@@ -5,31 +5,6 @@
 #define NUM_INTERP_POINTS 1
 #define NUM_GRID_ARRAYS 10
 
-void inverseSpatialMetric(CCTK_REAL* inv_spatial_metric, const Metric m) { //find \gamma^{ij}
-    CCTK_REAL inv_det_g = 1/(m.metric[4]*m.metric[7]*m.metric[9]+2.*m.metric[5]*m.metric[6]*m.metric[8]-m.metric[6]*m.metric[6]*m.metric[7]-m.metric[8]*m.metric[8]*m.metric[4]-m.metric[5]*m.metric[5]*m.metric[9]);
-    inv_spatial_metric[0] = (m.metric[3]*m.metric[5]-m.metric[4]*m.metric[4])*inv_det_g;
-    inv_spatial_metric[1] = (m.metric[4]*m.metric[2]-m.metric[1]*m.metric[5])*inv_det_g;
-    inv_spatial_metric[2] = (m.metric[1]*m.metric[4]-m.metric[2]*m.metric[3])*inv_det_g;
-    inv_spatial_metric[3] = (m.metric[0]*m.metric[5]-m.metric[2]*m.metric[2])*inv_det_g;
-    inv_spatial_metric[4] = (m.metric[2]*m.metric[1]-m.metric[0]*m.metric[4])*inv_det_g;
-    inv_spatial_metric[5] = (m.metric[0]*m.metric[3]-m.metric[1]*m.metric[1])*inv_det_g;
-}
-
-void calculateInverseMetric(Metric m) { //find g^{\mu\nu}
-    CCTK_REAL h[6];
-    inverseSpatialMetric(h, m);  //\gamma^{ij}
-    m.metric_inv[0] = 1/(pow(m.metric[0],2));
-    m.metric_inv[1] = m.metric_inv[0]*m.beta_up[0];
-    m.metric_inv[2] = m.metric_inv[0]*m.beta_up[1];
-    m.metric_inv[3] = m.metric_inv[0]*m.beta_up[2];
-    m.metric_inv[4] = h[0]-m.metric_inv[1]*m.beta_up[0];
-    m.metric_inv[5] = h[1]-m.metric_inv[1]*m.beta_up[1];
-    m.metric_inv[6] = h[2]-m.metric_inv[1]*m.beta_up[2];
-    m.metric_inv[7] = h[3]-m.metric_inv[2]*m.beta_up[1];
-    m.metric_inv[8] = h[4]-m.metric_inv[2]*m.beta_up[2];
-    m.metric_inv[9] = h[5]-m.metric_inv[3]*m.beta_up[2];
-}
-
 void interpolateMetricAtPoint(CCTK_ARGUMENTS, const CCTK_REAL x, const CCTK_REAL y, const CCTK_REAL z, Metric metric_at_point) {
     DECLARE_CCTK_ARGUMENTS
     DECLARE_CCTK_PARAMETERS
@@ -121,7 +96,7 @@ void interpolateMetricAtPoint(CCTK_ARGUMENTS, const CCTK_REAL x, const CCTK_REAL
     // Destroy the parameter table
     Util_TableDestroy(paramTableHandle);
 
-    calculateInverseMetric(metric_at_point); //get g^{\mu\nu}
+    metric_at_point.fillInvMetric(); //get g^{\mu\nu}
 } 
 
 /* old version
