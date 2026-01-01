@@ -29,6 +29,7 @@ struct Metric { //struct that contains information about the metric interpolated
 
     void fillInverseMetric() {
         CCTK_REAL inv_det_g = 1/(metric[4]*metric[7]*metric[9]+2.*metric[5]*metric[6]*metric[8]-metric[6]*metric[6]*metric[7]-metric[8]*metric[8]*metric[4]-metric[5]*metric[5]*metric[9]);
+        CCTK_REAL inv_spatial_metric[6];
         inv_spatial_metric[0] = (metric[3]*metric[5]-metric[4]*metric[4])*inv_det_g;
         inv_spatial_metric[1] = (metric[4]*metric[2]-metric[1]*metric[5])*inv_det_g;
         inv_spatial_metric[2] = (metric[1]*metric[4]-metric[2]*metric[3])*inv_det_g;
