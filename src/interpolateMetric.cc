@@ -31,12 +31,13 @@ void calculateInverseMetric(Metric m) { //find g^{\mu\nu}
     m.metric_inv[9] = h[5]-m.metric_inv[3]*m.beta_up[2];
 }
 
-void interpolateMetricAtPointNew(CCTK_ARGUMENTS, const CCTK_REAL x, const CCTK_REAL y, const CCTK_REAL z, Metric metric_at_point) {
+void interpolateMetricAtPoint(CCTK_ARGUMENTS, const CCTK_REAL x, const CCTK_REAL y, const CCTK_REAL z, Metric metric_at_point) {
     DECLARE_CCTK_ARGUMENTS
     DECLARE_CCTK_PARAMETERS
 
     // Only Processor 0 interpolates
     const CCTK_INT nPoints = (CCTK_MyProc(cctkGH) == 0) ? 1 : 0;
+    printf(std::to_string(cctkGH));
 
     std::array<std::vector<CCTK_REAL>, 3> location_;
     location_[0].push_back(x);
@@ -124,12 +125,10 @@ void interpolateMetricAtPointNew(CCTK_ARGUMENTS, const CCTK_REAL x, const CCTK_R
     Util_TableDestroy(paramTableHandle);
 
     calculateInverseMetric(metric_at_point); //get g^{\mu\nu}
-
-    CCTK_VERROR("test");
 } 
 
-//old version
-void interpolateMetricAtPoint(CCTK_ARGUMENTS, const CCTK_REAL x, const CCTK_REAL y, const CCTK_REAL z, Metric metric_at_point) {
+/* old version
+void interpolateMetricAtPointOld(CCTK_ARGUMENTS, const CCTK_REAL x, const CCTK_REAL y, const CCTK_REAL z, Metric metric_at_point) {
     DECLARE_CCTK_ARGUMENTS
     DECLARE_CCTK_PARAMETERS
 
@@ -270,6 +269,5 @@ void interpolateMetricAtPoint(CCTK_ARGUMENTS, const CCTK_REAL x, const CCTK_REAL
     calculateInverseMetric(metric_at_point); //get g^{\mu\nu}
 
     Util_TableDestroy(param_table_handle);
-
-    CCTK_VERROR("test");
 }
+*/
