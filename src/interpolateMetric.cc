@@ -96,7 +96,7 @@ void interpolateMetricAtPoint(CCTK_ARGUMENTS, const CCTK_REAL x, const CCTK_REAL
     // Destroy the parameter table
     Util_TableDestroy(paramTableHandle);
 
-    metric_at_point.fillInvMetric(); //get g^{\mu\nu}
+    metric_at_point.fillInverseMetric(); //get g^{\mu\nu}
 } 
 
 /* old version
