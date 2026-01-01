@@ -1,6 +1,7 @@
 #include <cctk.h>
 #include <cctk_Arguments.h>
 #include <cctk_Parameters.h>
+#include <string.h>
 #include "util_Table.h"
 
 #ifndef RAYTRACINGX
@@ -16,6 +17,15 @@ struct Metric { //struct that contains information about the metric interpolated
     CCTK_REAL metric_inv[10]; // {g^{00}, g^{01}, g^{02}, g^{03}, g^{11}, g^{12}, g^{13}, g^{22}, g^{23}, g^{33}}
     CCTK_REAL metric0pr; // = sqrt(\alpha^2 + \beta_i\beta^i)
     CCTK_REAL beta_up[3]; // \beta^i
+
+    std::string to_string() {
+        return "alpha: " + std::to_string(metric.metric[0]) + "\n";
+               "beta: (" + std::to_string(metric.beta_up[0]) + ", " + std::to_string(metric.beta_up[1]) + ", " + std::to_string(metric.beta_up[2]) + ")";
+               "metric: " + std::to_string(metric.metric0pr) + ", " + std::to_string(metric.metric[1]) + ", " + std::to_string(metric.metric[2]) + ", " + std::to_string(metric.metric[3]) + "\n";
+               "        " + std::to_string(metric.metric[1]) + ", " + std::to_string(metric.metric[4]) + ", " + std::to_string(metric.metric[5]) + ", " + std::to_string(metric.metric[6]) + "\n";
+               "        " + std::to_string(metric.metric[2]) + ", " + std::to_string(metric.metric[5]) + ", " + std::to_string(metric.metric[7]) + ", " + std::to_string(metric.metric[8]) + "\n";
+               "        " + std::to_string(metric.metric[3]) + ", " + std::to_string(metric.metric[6]) + ", " + std::to_string(metric.metric[8]) + ", " + std::to_string(metric.metric[9]);
+    }
 };
 
 //scheduled

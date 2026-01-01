@@ -1,5 +1,4 @@
 #include "raytracingx.h"
-#include <string.h>
 #include <vector>
 #include <array>
 
@@ -41,7 +40,7 @@ void interpolateMetricAtPoint(CCTK_ARGUMENTS, const CCTK_REAL x, const CCTK_REAL
 
     // Only Processor 0 interpolates
     const CCTK_INT nPoints = (CCTK_MyProc(cctkGH) == 0) ? 1 : 0;
-    printf(std::to_string((int) cctkGH).c_str());
+    printf(std::to_string(CCTK_MyProc(cctkGH)).c_str());
 
     std::array<std::vector<CCTK_REAL>, 3> location_;
     location_[0].push_back(x);
@@ -118,12 +117,6 @@ void interpolateMetricAtPoint(CCTK_ARGUMENTS, const CCTK_REAL x, const CCTK_REAL
     metric_at_point.metric0pr = sqrt(pow(metric_at_point.metric[0],2) - metric_at_point.metric[1]*metric_at_point.beta_up[0] - metric_at_point.metric[2]*metric_at_point.beta_up[1] - metric_at_point.metric[3]*metric_at_point.beta_up[2]); //g_{00}
 
     printf(("camera position: x: " + std::to_string(x) + ", y: " + std::to_string(y) + ", z: " + std::to_string(z)).c_str());
-    printf(("alpha: " + std::to_string(metric_at_point.metric[0])).c_str());
-    printf(("beta: (" + std::to_string(metric_at_point.beta_up[0]) + ", " + std::to_string(metric_at_point.beta_up[1]) + ", " + std::to_string(metric_at_point.beta_up[2]) + ")").c_str());
-    printf(("metric1: (" + std::to_string(metric_at_point.metric0pr) + ", " + std::to_string(metric_at_point.metric[1]) + ", " + std::to_string(metric_at_point.metric[2]) + ", " + std::to_string(metric_at_point.metric[3]) + ")").c_str());
-    printf(("metric2: (" + std::to_string(metric_at_point.metric[1]) + ", " + std::to_string(metric_at_point.metric[4]) + ", " + std::to_string(metric_at_point.metric[5]) + ", " + std::to_string(metric_at_point.metric[6]) + ")").c_str());
-    printf(("metric3: (" + std::to_string(metric_at_point.metric[2]) + ", " + std::to_string(metric_at_point.metric[5]) + ", " + std::to_string(metric_at_point.metric[7]) + ", " + std::to_string(metric_at_point.metric[8]) + ")").c_str());
-    printf(("metric4: (" + std::to_string(metric_at_point.metric[3]) + ", " + std::to_string(metric_at_point.metric[6]) + ", " + std::to_string(metric_at_point.metric[8]) + ", " + std::to_string(metric_at_point.metric[9]) + ")").c_str());
 
     // Destroy the parameter table
     Util_TableDestroy(paramTableHandle);
