@@ -28,28 +28,28 @@ struct Metric { //struct that contains information about the metric interpolated
     }
 
     void fillInverseMetric() {
-        CCTK_REAL inv_det_g = 1/(m.metric[4]*m.metric[7]*m.metric[9]+2.*m.metric[5]*m.metric[6]*m.metric[8]-m.metric[6]*m.metric[6]*m.metric[7]-m.metric[8]*m.metric[8]*m.metric[4]-m.metric[5]*m.metric[5]*m.metric[9]);
-        inv_spatial_metric[0] = (m.metric[3]*m.metric[5]-m.metric[4]*m.metric[4])*inv_det_g;
-        inv_spatial_metric[1] = (m.metric[4]*m.metric[2]-m.metric[1]*m.metric[5])*inv_det_g;
-        inv_spatial_metric[2] = (m.metric[1]*m.metric[4]-m.metric[2]*m.metric[3])*inv_det_g;
-        inv_spatial_metric[3] = (m.metric[0]*m.metric[5]-m.metric[2]*m.metric[2])*inv_det_g;
-        inv_spatial_metric[4] = (m.metric[2]*m.metric[1]-m.metric[0]*m.metric[4])*inv_det_g;
-        inv_spatial_metric[5] = (m.metric[0]*m.metric[3]-m.metric[1]*m.metric[1])*inv_det_g;
+        CCTK_REAL inv_det_g = 1/(metric[4]*metric[7]*metric[9]+2.*metric[5]*metric[6]*metric[8]-metric[6]*metric[6]*metric[7]-metric[8]*metric[8]*metric[4]-metric[5]*metric[5]*metric[9]);
+        inv_spatial_metric[0] = (metric[3]*metric[5]-metric[4]*metric[4])*inv_det_g;
+        inv_spatial_metric[1] = (metric[4]*metric[2]-metric[1]*metric[5])*inv_det_g;
+        inv_spatial_metric[2] = (metric[1]*metric[4]-metric[2]*metric[3])*inv_det_g;
+        inv_spatial_metric[3] = (metric[0]*metric[5]-metric[2]*metric[2])*inv_det_g;
+        inv_spatial_metric[4] = (metric[2]*metric[1]-metric[0]*metric[4])*inv_det_g;
+        inv_spatial_metric[5] = (metric[0]*metric[3]-metric[1]*metric[1])*inv_det_g;
 
-        m.metric_inv[0] = 1/(pow(m.metric[0],2));
-        m.metric_inv[1] = m.metric_inv[0]*m.beta_up[0];
-        m.metric_inv[2] = m.metric_inv[0]*m.beta_up[1];
-        m.metric_inv[3] = m.metric_inv[0]*m.beta_up[2];
-        m.metric_inv[4] = inv_det_g[0]-m.metric_inv[1]*m.beta_up[0];
-        m.metric_inv[5] = inv_det_g[1]-m.metric_inv[1]*m.beta_up[1];
-        m.metric_inv[6] = inv_det_g[2]-m.metric_inv[1]*m.beta_up[2];
-        m.metric_inv[7] = inv_det_g[3]-m.metric_inv[2]*m.beta_up[1];
-        m.metric_inv[8] = inv_det_g[4]-m.metric_inv[2]*m.beta_up[2];
-        m.metric_inv[9] = inv_det_g[5]-m.metric_inv[3]*m.beta_up[2];
+        metric_inv[0] = 1/(pow(metric[0],2));
+        metric_inv[1] = metric_inv[0]*beta_up[0];
+        metric_inv[2] = metric_inv[0]*beta_up[1];
+        metric_inv[3] = metric_inv[0]*beta_up[2];
+        metric_inv[4] = inv_det_g[0]-metric_inv[1]*beta_up[0];
+        metric_inv[5] = inv_det_g[1]-metric_inv[1]*beta_up[1];
+        metric_inv[6] = inv_det_g[2]-metric_inv[1]*beta_up[2];
+        metric_inv[7] = inv_det_g[3]-metric_inv[2]*beta_up[1];
+        metric_inv[8] = inv_det_g[4]-metric_inv[2]*beta_up[2];
+        metric_inv[9] = inv_det_g[5]-metric_inv[3]*beta_up[2];
     }
 
     void calculateBetaUp() {
-        
+
     }
 };
 
