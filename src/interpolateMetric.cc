@@ -62,7 +62,7 @@ void interpolateMetricAtPoint(CCTK_ARGUMENTS, const CCTK_REAL x, const CCTK_REAL
 
     // Perform the interpolation
     ierr = DriverInterpolate(cctkGH, 3, interpHandle, paramTableHandle,
-                             coordSystemHandle, nPoints, interpCoordsTypeCode,
+                             coordSystemHandle, NUM_INTERP_POINTS, interpCoordsTypeCode,
                              interpCoords, nInputArrays, inputArrayIndices,
                              nInputArrays, outputArrayTypes, outputArrays);
 
