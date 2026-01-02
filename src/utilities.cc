@@ -64,7 +64,7 @@ CCTK_REAL getTimeComponentOf4Velocity(const CCTK_REAL vx, const CCTK_REAL vy, co
         return v0;
     }
     v0 = (-B - sqrt(B*B - 4*A*C))/(2*A);
-    v[4] = {v0, vx, vy, vz};
+    v[0] = v0;
     if (innerProduct(v, v, m) + 1 < 0.0000000001) {
         return v0;
     }
