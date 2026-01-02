@@ -21,7 +21,7 @@ void gramSchmidtProcess(CCTK_ARGUMENTS, CCTK_REAL* e0, CCTK_REAL* e1, CCTK_REAL*
 
     //notation borrowed from https://en.wikipedia.org/wiki/Gram%E2%80%93Schmidt_process
 
-    CCTK_REAL u0[4] = //{getTimeComponentOf4Velocity(camera_vel[0], camera_vel[1], camera_vel[2], metric), camera_vel[0], camera_vel[1], camera_vel[2]}; // u0=v0 is 4-velocity of camera
+    CCTK_REAL u0[4] = {getTimeComponentOf4Velocity(camera_vel[0], camera_vel[1], camera_vel[2], metric), camera_vel[0], camera_vel[1], camera_vel[2]}; // u0=v0 is 4-velocity of camera
     //CCTK_REAL u0[4] = {1, 0, 0, 0};// u0=v0 is 4-velocity of camera
     CCTK_REAL u1[4];
     CCTK_REAL u2[4];
@@ -98,7 +98,7 @@ void createGeodesicInitialConditions(CCTK_ARGUMENTS, GeodesicInitialConditions* 
             geodesicArr[i*num_pixels_width + j].initVel[1] = chi_lower[1] / (metric.alpha*chi[0]); 
             geodesicArr[i*num_pixels_width + j].initVel[2] = chi_lower[2] / (metric.alpha*chi[0]);
 
-            printf("init vel for i=" + std::to_string(i) + " and j=" + std::to_string(j) + ": (" + geodesicArr[i*num_pixels_width + j].initVel[0] + ", " + geodesicArr[i*num_pixels_width + j].initVel[0] + ", " + geodesicArr[i*num_pixels_width + j].initVel[0] + ")\n");
+            printf("init vel for i=" + std::to_string(i) + " and j=" + std::to_string(j) + ": (" + std::to_string(geodesicArr[i*num_pixels_width + j].initVel[0]) + ", " + std::to_string(geodesicArr[i*num_pixels_width + j].initVel[1]) + ", " + std::to_string(geodesicArr[i*num_pixels_width + j].initVel[2]) + ")\n");
         }
     }
  }
