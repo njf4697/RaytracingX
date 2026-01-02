@@ -88,8 +88,6 @@ void interpolateMetricAtPoint(CCTK_ARGUMENTS, const CCTK_REAL x, const CCTK_REAL
     //only use values from processer 1
     if (CCTK_MyProc(cctkGH) != 0) return; 
 
-    CCTK_VERROR("test-1");
-
     metric_at_point.alpha = metric_[0].data()[0];
     metric_at_point.beta_xup = metric_[1].data()[0];
     metric_at_point.beta_yup = metric_[2].data()[0];
