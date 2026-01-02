@@ -13,6 +13,9 @@ void interpolateMetricAtPoint(CCTK_ARGUMENTS, const CCTK_REAL x, const CCTK_REAL
     //  CCTK_VERROR("Camera Location Out of Bounds");
     //}
 
+    //only raytrace on one processor
+    const CCTK_INT nPoints = (CCTK_MyProc(cctkGH) == 0) ? 1 : 0;
+
     std::array<std::vector<CCTK_REAL>, 3> location_;
     location_[0].push_back(x);
     location_[1].push_back(y);
@@ -72,6 +75,12 @@ void interpolateMetricAtPoint(CCTK_ARGUMENTS, const CCTK_REAL x, const CCTK_REAL
       CCTK_WARN(CCTK_WARN_ALERT, "Interpolation error");
     }
 
+    // Destroy the parameter table
+    Util_TableDestroy(paramTableHandle);
+
+    //only use values from processer 1
+    if (CCTK_MyProc(cctkGH) != 0) return; 
+
     metric_at_point.alpha = metric_[0].data()[0];
     metric_at_point.beta_xup = metric_[1].data()[0];
     metric_at_point.beta_yup = metric_[2].data()[0];
@@ -92,9 +101,6 @@ void interpolateMetricAtPoint(CCTK_ARGUMENTS, const CCTK_REAL x, const CCTK_REAL
 
     //g_{tt}=\alpha^2-\beta_i\beta^i
     metric_at_point.g_tt = pow(metric_at_point.alpha,2) - metric_at_point.beta_x*metric_at_point.beta_xup - metric_at_point.beta_y*metric_at_point.beta_yup - metric_at_point.beta_z*metric_at_point.beta_zup; //g_{00}
-
-    // Destroy the parameter table
-    Util_TableDestroy(paramTableHandle);
 
     printf("test3");
 

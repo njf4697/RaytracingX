@@ -5,8 +5,6 @@ extern "C" void raytraceImage(CCTK_ARGUMENTS) {
     DECLARE_CCTK_ARGUMENTS_raytraceImage
     DECLARE_CCTK_PARAMETERS
 
-    if (CCTK_MyProc(cctkGH) != 0) return; //only raytrace on one processor
-
     int N_TOTAL_PIXELS = num_pixels_width * num_pixels_height;
 
     GeodesicInitialConditions geodesicArr[N_TOTAL_PIXELS];
