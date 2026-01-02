@@ -60,6 +60,18 @@ void interpolateMetricAtPoint(CCTK_ARGUMENTS, const CCTK_REAL x, const CCTK_REAL
 
     printf(("camera position: x: " + std::to_string(x) + ", y: " + std::to_string(y) + ", z: " + std::to_string(z)).c_str());
 
+    printf(cctkGH);
+    printf(interpHandle);
+    printf(paramTableHandle);
+    printf(coordSystemHandle);
+    printf(nPoints);
+    printf(interpCoordsTypeCode);
+    printf(interpCoords);
+    printf(nInputArrays);
+    printf(inputArrayIndicies);
+    printf(outputArrayTypes);
+    printf(outputArrays);
+
     // Perform the interpolation
     ierr = DriverInterpolate(cctkGH, 3, interpHandle, paramTableHandle,
                              coordSystemHandle, nPoints, interpCoordsTypeCode,
