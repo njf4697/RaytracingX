@@ -13,11 +13,6 @@ void interpolateMetricAtPoint(CCTK_ARGUMENTS, const CCTK_REAL x, const CCTK_REAL
     //  CCTK_VERROR("Camera Location Out of Bounds");
     //}
 
-    // Only Processor 0 interpolates
-    const CCTK_INT nPoints = (CCTK_MyProc(cctkGH) == 0) ? 1 : 0;
-
-    if (CCTK_MyProc(cctkGH) != 0) CCTK_VERROR("test0");
-
     std::array<std::vector<CCTK_REAL>, 3> location_;
     location_[0].push_back(x);
     location_[1].push_back(y);
