@@ -22,7 +22,7 @@ struct Metric { //struct that contains information about the metric interpolated
 
     std::string to_string() {
         return "alpha: " + std::to_string(alpha) + "\n" +
-               "beta: (" + std::to_string(beta_xup) + ", " + std::to_string(beta_yup) + ", " + std::to_string(beta_zup) + ")" +
+               "beta: (" + std::to_string(beta_xup) + ", " + std::to_string(beta_yup) + ", " + std::to_string(beta_zup) + ")\n" +
                "metric: " + std::to_string(g_tt) + ", " + std::to_string(beta_x) + ", " + std::to_string(beta_y) + ", " + std::to_string(beta_z) + "\n" +
                "        " + std::to_string(beta_x) + ", " + std::to_string(g_xx) + ", " + std::to_string(g_xy) + ", " + std::to_string(g_xz) + "\n" +
                "        " + std::to_string(beta_y) + ", " + std::to_string(g_xy) + ", " + std::to_string(g_yy) + ", " + std::to_string(g_yz) + "\n" +
@@ -30,10 +30,10 @@ struct Metric { //struct that contains information about the metric interpolated
     }
 
     std::string to_string_inv() {
-        return "metric inv: " + std::to_string(g_upup_tt) + ", " + std::to_string(g_upup_xx) + ", " + std::to_string(g_upup_xy) + ", " + std::to_string(g_upup_xz) + "\n" +
-               "            " + std::to_string(g_upup_xx) + ", " + std::to_string(g_upup_xx) + ", " + std::to_string(g_upup_xy) + ", " + std::to_string(g_upup_xz) + "\n" +
-               "            " + std::to_string(g_upup_xy) + ", " + std::to_string(g_upup_xy) + ", " + std::to_string(g_upup_yy) + ", " + std::to_string(g_upup_yz) + "\n" +
-               "            " + std::to_string(g_upup_xz) + ", " + std::to_string(g_upup_xz) + ", " + std::to_string(g_upup_yz) + ", " + std::to_string(g_upup_zz) + "\n";
+        return "metric inv: " + std::to_string(g_upup_tt) + ", " + std::to_string(g_upup_tx) + ", " + std::to_string(g_upup_ty) + ", " + std::to_string(g_upup_tz) + "\n" +
+               "            " + std::to_string(g_upup_tx) + ", " + std::to_string(g_upup_xx) + ", " + std::to_string(g_upup_xy) + ", " + std::to_string(g_upup_xz) + "\n" +
+               "            " + std::to_string(g_upup_ty) + ", " + std::to_string(g_upup_xy) + ", " + std::to_string(g_upup_yy) + ", " + std::to_string(g_upup_yz) + "\n" +
+               "            " + std::to_string(g_upup_tz) + ", " + std::to_string(g_upup_xz) + ", " + std::to_string(g_upup_yz) + ", " + std::to_string(g_upup_zz) + "\n";
     }
 
     void fillInverseMetric() {
@@ -46,10 +46,10 @@ struct Metric { //struct that contains information about the metric interpolated
         CCTK_REAL gamma_upup_yz = (g_xz*g_xy-g_xx*g_yz)*inv_det_g;
         CCTK_REAL gamma_upup_zz = (g_xx*g_yy-g_xy*g_xy)*inv_det_g;
 
-        g_upup_tt = 1/(pow(alpha,2));
-        g_upup_tx = g_upup_tt*beta_xup;
-        g_upup_ty = g_upup_tt*beta_yup;
-        g_upup_tz = g_upup_tt*beta_zup;
+        g_upup_tt = -1/(pow(alpha,2));
+        g_upup_tx = -g_upup_tt*beta_xup;
+        g_upup_ty = -g_upup_tt*beta_yup;
+        g_upup_tz = -g_upup_tt*beta_zup;
         g_upup_xx = gamma_upup_xx-g_upup_tx*beta_xup;
         g_upup_xy = gamma_upup_xy-g_upup_tx*beta_yup;
         g_upup_xz = gamma_upup_xz-g_upup_tx*beta_zup;
