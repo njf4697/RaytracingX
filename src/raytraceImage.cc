@@ -98,7 +98,7 @@ void createGeodesicInitialConditions(CCTK_ARGUMENTS, GeodesicInitialConditions* 
             geodesicArr[i*num_pixels_width + j].initVel[1] = chi_lower[1] / (metric.alpha*chi[0]); 
             geodesicArr[i*num_pixels_width + j].initVel[2] = chi_lower[2] / (metric.alpha*chi[0]);
 
-            printf("init vel for i=" + std::to_string(i) + " and j=" + std::to_string(j) + ": (" + std::to_string(geodesicArr[i*num_pixels_width + j].initVel[0]) + ", " + std::to_string(geodesicArr[i*num_pixels_width + j].initVel[1]) + ", " + std::to_string(geodesicArr[i*num_pixels_width + j].initVel[2]) + ")\n");
+            printf(()"init vel for i=" + std::to_string(i) + " and j=" + std::to_string(j) + ": (" + std::to_string(geodesicArr[i*num_pixels_width + j].initVel[0]) + ", " + std::to_string(geodesicArr[i*num_pixels_width + j].initVel[1]) + ", " + std::to_string(geodesicArr[i*num_pixels_width + j].initVel[2]) + ")\n").c_str());
         }
     }
  }
