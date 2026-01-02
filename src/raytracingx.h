@@ -21,11 +21,11 @@ struct Metric { //struct that contains information about the metric interpolated
     CCTK_REAL g_upup_tt, g_upup_tx, g_upup_ty, g_upup_tz, g_upup_xx, g_upup_xy, g_upup_xz, g_upup_yy, g_upup_yz, g_upup_zz; //g^{\mu\nu}
 
     std::string to_string() {
-        return "alpha: " + std::to_string(alpha) + "\n";
-               "beta: (" + std::to_string(beta_xup) + ", " + std::to_string(beta_yup) + ", " + std::to_string(beta_zup) + ")";
-               "metric: " + std::to_string(g_tt) + ", " + std::to_string(beta_x) + ", " + std::to_string(beta_y) + ", " + std::to_string(beta_z) + "\n";
-               "        " + std::to_string(beta_x) + ", " + std::to_string(g_xx) + ", " + std::to_string(g_xy) + ", " + std::to_string(g_xz) + "\n";
-               "        " + std::to_string(beta_y) + ", " + std::to_string(g_xy) + ", " + std::to_string(g_yy) + ", " + std::to_string(g_yz) + "\n";
+        return "alpha: " + std::to_string(alpha) + "\n" +
+               "beta: (" + std::to_string(beta_xup) + ", " + std::to_string(beta_yup) + ", " + std::to_string(beta_zup) + ")" +
+               "metric: " + std::to_string(g_tt) + ", " + std::to_string(beta_x) + ", " + std::to_string(beta_y) + ", " + std::to_string(beta_z) + "\n" +
+               "        " + std::to_string(beta_x) + ", " + std::to_string(g_xx) + ", " + std::to_string(g_xy) + ", " + std::to_string(g_xz) + "\n" +
+               "        " + std::to_string(beta_y) + ", " + std::to_string(g_xy) + ", " + std::to_string(g_yy) + ", " + std::to_string(g_yz) + "\n" +
                "        " + std::to_string(beta_z) + ", " + std::to_string(g_xz) + ", " + std::to_string(g_yz) + ", " + std::to_string(g_zz);
     }
 

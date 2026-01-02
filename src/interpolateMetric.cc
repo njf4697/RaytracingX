@@ -68,15 +68,13 @@ void interpolateMetricAtPoint(CCTK_ARGUMENTS, const CCTK_REAL x, const CCTK_REAL
       CCTK_VERROR("Can't set order in parameter table: %d", ierr);
     }
 
-    printf(("camera position: x: " + std::to_string(x) + ", y: " + std::to_string(y) + ", z: " + std::to_string(z)).c_str());
+    printf(("camera position: x: " + std::to_string(x) + ", y: " + std::to_string(y) + ", z: " + std::to_string(z) + "\n").c_str());
 
     // Perform the interpolation
     ierr = DriverInterpolate(cctkGH, 3, interpHandle, paramTableHandle,
                              coordSystemHandle, nPoints, interpCoordsTypeCode,
                              interpCoords, nInputArrays, inputArrayIndices,
                              nInputArrays, outputArrayTypes, outputArrays);
-
-    printf("test1");
 
     if (ierr < 0) {
       CCTK_WARN(CCTK_WARN_ALERT, "Interpolation error");
@@ -99,8 +97,6 @@ void interpolateMetricAtPoint(CCTK_ARGUMENTS, const CCTK_REAL x, const CCTK_REAL
     metric_at_point.g_yz = metric_[8].data()[0];
     metric_at_point.g_zz = metric_[9].data()[0];
 
-    printf("test2");
-
     //\beta_i = \gamma_ij*\beta^j
     metric_at_point.beta_x = metric_at_point.beta_xup*metric_at_point.g_xx + metric_at_point.beta_yup*metric_at_point.g_xy + metric_at_point.beta_zup*metric_at_point.g_xz;
     metric_at_point.beta_y = metric_at_point.beta_xup*metric_at_point.g_xy + metric_at_point.beta_yup*metric_at_point.g_yy + metric_at_point.beta_zup*metric_at_point.g_yz;
@@ -109,11 +105,7 @@ void interpolateMetricAtPoint(CCTK_ARGUMENTS, const CCTK_REAL x, const CCTK_REAL
     //g_{tt}=\alpha^2-\beta_i\beta^i
     metric_at_point.g_tt = pow(metric_at_point.alpha,2) - metric_at_point.beta_x*metric_at_point.beta_xup - metric_at_point.beta_y*metric_at_point.beta_yup - metric_at_point.beta_z*metric_at_point.beta_zup; //g_{00}
 
-    printf("test3");
-
     metric_at_point.fillInverseMetric(); //get g^{\mu\nu}
-
-    printf("test4");
 
     printf(metric_at_point.to_string().c_str());
 } 
