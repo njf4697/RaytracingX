@@ -29,16 +29,16 @@ void gramSchmidtProcess(CCTK_ARGUMENTS, CCTK_REAL* e0, CCTK_REAL* e1, CCTK_REAL*
     CCTK_REAL v2[4] = {0, camera_right[0], camera_right[1], camera_right[2]}; //v2 is camera right direction
     
 
-    CCTK_REAL* projv1_onto_u0;
+    CCTK_REAL projv1_onto_u0[4];
     projectUontoV(projv1_onto_u0, v1, u0, metric);
     u1[0] = v1[0] - projv1_onto_u0[0];
     u1[1] = v1[1] - projv1_onto_u0[1];
     u1[2] = v1[2] - projv1_onto_u0[2];
     u1[3] = v1[3] - projv1_onto_u0[3];
 
-    CCTK_REAL* projv2_onto_u0;
+    CCTK_REAL projv2_onto_u0[4];
     projectUontoV(projv2_onto_u0, v2, u0, metric);
-    CCTK_REAL* projv2_onto_u1;
+    CCTK_REAL projv2_onto_u1[4];
     projectUontoV(projv2_onto_u1, v2, u1, metric);
     u2[0] = v2[0] - projv2_onto_u0[0] - projv2_onto_u1[0];
     u2[1] = v2[1] - projv2_onto_u0[1] - projv2_onto_u1[1];
