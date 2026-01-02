@@ -18,11 +18,11 @@ struct Metric { //struct that contains information about the metric interpolated
     CCTK_REAL g_xx, g_xy, g_xz, g_yy, g_yz, g_zz; //g_{ii} <-> \gamma_{ii}
     CCTK_REAL g_tt; //\sqrt{\alpha^2 + \beta_i\beta^i}
     CCTK_REAL beta_xup, beta_yup, beta_zup; //beta^i = \beta_j\gamma_{ij}
-    CCTK_REAL g_upup_tt, g_upup_tx, g_upup_ty, g_upup_tz, g_upup_xx, g_upup_xy, g_upup_xz, g_upup_yy, g_upup_yz, g_upup_yz, g_upup_zz; //g^{\mu\nu}
+    CCTK_REAL g_upup_tt, g_upup_tx, g_upup_ty, g_upup_tz, g_upup_xx, g_upup_xy, g_upup_xz, g_upup_yy, g_upup_yz, g_upup_zz; //g^{\mu\nu}
 
     std::string to_string() {
         return "alpha: " + std::to_string(alpha) + "\n";
-               "beta: (" + std::to_string(beta_xup) + ", " + std::to_string(beta_yup) + ", " + std::to_string(beta_up[2]) + ")";
+               "beta: (" + std::to_string(beta_xup) + ", " + std::to_string(beta_yup) + ", " + std::to_string(beta_zup) + ")";
                "metric: " + std::to_string(g_tt) + ", " + std::to_string(beta_x) + ", " + std::to_string(beta_y) + ", " + std::to_string(beta_z) + "\n";
                "        " + std::to_string(beta_x) + ", " + std::to_string(g_xx) + ", " + std::to_string(g_xy) + ", " + std::to_string(g_xz) + "\n";
                "        " + std::to_string(beta_y) + ", " + std::to_string(g_xy) + ", " + std::to_string(g_yy) + ", " + std::to_string(g_yz) + "\n";
@@ -42,13 +42,13 @@ struct Metric { //struct that contains information about the metric interpolated
         g_upup_tt = 1/(pow(alpha,2));
         g_upup_tx = g_upup_tt*beta_xup;
         g_upup_ty = g_upup_tt*beta_yup;
-        g_upup_tz = g_upup_tt*beta_up[2];
+        g_upup_tz = g_upup_tt*beta_zup;
         g_upup_xx = gamma_upup_xx-g_upup_tx*beta_xup;
         g_upup_xy = gamma_upup_xy-g_upup_tx*beta_yup;
-        g_upup_xz = gamma_upup_xz-g_upup_tx*beta_up[2];
+        g_upup_xz = gamma_upup_xz-g_upup_tx*beta_zup;
         g_upup_yy = gamma_upup_yy-g_upup_ty*beta_yup;
-        g_upup_yz = gamma_upup_yz-g_upup_ty*beta_up[2];
-        g_upup_zz = gamma_upup_zz-g_upup_tz*beta_up[2];
+        g_upup_yz = gamma_upup_yz-g_upup_ty*beta_zup;
+        g_upup_zz = gamma_upup_zz-g_upup_tz*beta_zup;
     }
 };
 
