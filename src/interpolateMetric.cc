@@ -101,6 +101,8 @@ void interpolateMetricAtPoint(CCTK_ARGUMENTS, const CCTK_REAL x, const CCTK_REAL
     metric_at_point.fillInverseMetric(); //get g^{\mu\nu}
 
     printf("test4");
+
+    printf(metric_at_point.to_string().c_str());
 } 
 
 /* old version
