@@ -59,12 +59,16 @@ void createGeodesicInitialConditions(CCTK_ARGUMENTS, GeodesicInitialConditions* 
     Metric metric;
     interpolateMetricAtPoint(CCTK_PASS_CTOC, camera_pos[0], camera_pos[1], camera_pos[2], metric); //interpolate metric values and store in Metric struct
 
-    printf("test5");
+    //only use values from processer 1
+    if (CCTK_MyProc(cctkGH) != 0) return; 
+
+    CCTK_VERROR("test5")
 
     CCTK_REAL e0[4];
     CCTK_REAL e1[4];
     CCTK_REAL e2[4];
     CCTK_REAL e3[4];
+
     gramSchmidtProcess(CCTK_PASS_CTOC, e0, e1, e2, e3, metric); //create orthonormal basis for camera POV
 
     CCTK_REAL alpha_h = 3.1415926536 / 180 * horizontal_fov; //convert FOV to radians
