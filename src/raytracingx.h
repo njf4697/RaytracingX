@@ -13,40 +13,42 @@ struct GeodesicInitialConditions { //struct to contain information for the initi
 };
 
 struct Metric { //struct that contains information about the metric interpolated at a point
-    CCTK_REAL metric[10]; // {\alpha, \beta_0, \beta_1, \beta_2, \gamma_{11}, \gamma_{12}, \gamma_{13}, \gamma_{22}, \gamma_{23}, \gamma_{33}}
-    CCTK_REAL metric_inv[10]; // {g^{00}, g^{01}, g^{02}, g^{03}, g^{11}, g^{12}, g^{13}, g^{22}, g^{23}, g^{33}}
-    CCTK_REAL metric0pr; // = sqrt(\alpha^2 + \beta_i\beta^i)
-    CCTK_REAL beta_up[3]; // \beta^i
+    CCTK_REAL alpha;
+    CCTK_REAL beta_x, beta_y, beta_z; //g_{tx}, g_{ty}, g_{tz}
+    CCTK_REAL g_xx, g_xy, g_xz, g_yy, g_yz, g_zz; //g_{ii} <-> \gamma_{ii}
+    CCTK_REAL g_tt; //\sqrt{\alpha^2 + \beta_i\beta^i}
+    CCTK_REAL beta_xup, beta_yup, beta_zup; //beta^i = \beta_j\gamma_{ij}
+    CCTK_REAL g_upup_tt, g_upup_tx, g_upup_ty, g_upup_tz, g_upup_xx, g_upup_xy, g_upup_xz, g_upup_yy, g_upup_yz, g_upup_yz, g_upup_zz; //g^{\mu\nu}
 
     std::string to_string() {
-        return "alpha: " + std::to_string(metric[0]) + "\n";
-               "beta: (" + std::to_string(beta_up[0]) + ", " + std::to_string(beta_up[1]) + ", " + std::to_string(beta_up[2]) + ")";
-               "metric: " + std::to_string(metric0pr) + ", " + std::to_string(metric[1]) + ", " + std::to_string(metric[2]) + ", " + std::to_string(metric[3]) + "\n";
-               "        " + std::to_string(metric[1]) + ", " + std::to_string(metric[4]) + ", " + std::to_string(metric[5]) + ", " + std::to_string(metric[6]) + "\n";
-               "        " + std::to_string(metric[2]) + ", " + std::to_string(metric[5]) + ", " + std::to_string(metric[7]) + ", " + std::to_string(metric[8]) + "\n";
-               "        " + std::to_string(metric[3]) + ", " + std::to_string(metric[6]) + ", " + std::to_string(metric[8]) + ", " + std::to_string(metric[9]);
+        return "alpha: " + std::to_string(alpha) + "\n";
+               "beta: (" + std::to_string(beta_xup) + ", " + std::to_string(beta_yup) + ", " + std::to_string(beta_up[2]) + ")";
+               "metric: " + std::to_string(g_tt) + ", " + std::to_string(beta_x) + ", " + std::to_string(beta_y) + ", " + std::to_string(beta_z) + "\n";
+               "        " + std::to_string(beta_x) + ", " + std::to_string(g_xx) + ", " + std::to_string(g_xy) + ", " + std::to_string(g_xz) + "\n";
+               "        " + std::to_string(beta_y) + ", " + std::to_string(g_xy) + ", " + std::to_string(g_yy) + ", " + std::to_string(g_yz) + "\n";
+               "        " + std::to_string(beta_z) + ", " + std::to_string(g_xz) + ", " + std::to_string(g_yz) + ", " + std::to_string(g_zz);
     }
 
     void fillInverseMetric() {
-        CCTK_REAL inv_det_g = 1/(metric[4]*metric[7]*metric[9]+2.*metric[5]*metric[6]*metric[8]-metric[6]*metric[6]*metric[7]-metric[8]*metric[8]*metric[4]-metric[5]*metric[5]*metric[9]);
-        CCTK_REAL inv_spatial_metric[6];
-        inv_spatial_metric[0] = (metric[3]*metric[5]-metric[4]*metric[4])*inv_det_g;
-        inv_spatial_metric[1] = (metric[4]*metric[2]-metric[1]*metric[5])*inv_det_g;
-        inv_spatial_metric[2] = (metric[1]*metric[4]-metric[2]*metric[3])*inv_det_g;
-        inv_spatial_metric[3] = (metric[0]*metric[5]-metric[2]*metric[2])*inv_det_g;
-        inv_spatial_metric[4] = (metric[2]*metric[1]-metric[0]*metric[4])*inv_det_g;
-        inv_spatial_metric[5] = (metric[0]*metric[3]-metric[1]*metric[1])*inv_det_g;
+        //find inverse via normal matrix inverse (adjoint method)
+        CCTK_REAL inv_det_g = 1/(g_xx*g_yy*g_zz+2.*g_xy*g_xz*g_yz-g_xz*g_xz*g_yy-g_yz*g_yz*g_xx-g_xy*g_xy*g_zz);
+        CCTK_REAL gamma_upup_xx = (g_yy*g_zz-g_yz*g_yz)*inv_det_g;
+        CCTK_REAL gamma_upup_xy = (g_xz*g_yz-g_xy*g_zz)*inv_det_g;
+        CCTK_REAL gamma_upup_xz = (g_xy*g_yz-g_yy*g_xz)*inv_det_g;
+        CCTK_REAL gamma_upup_yy = (g_xx*g_zz-g_xz*g_xz)*inv_det_g;
+        CCTK_REAL gamma_upup_yz = (g_xz*g_xy-g_xx*g_yz)*inv_det_g;
+        CCTK_REAL gamma_upup_zz = (g_xx*g_yy-g_xy*g_xy)*inv_det_g;
 
-        metric_inv[0] = 1/(pow(metric[0],2));
-        metric_inv[1] = metric_inv[0]*beta_up[0];
-        metric_inv[2] = metric_inv[0]*beta_up[1];
-        metric_inv[3] = metric_inv[0]*beta_up[2];
-        metric_inv[4] = inv_spatial_metric[0]-metric_inv[1]*beta_up[0];
-        metric_inv[5] = inv_spatial_metric[1]-metric_inv[1]*beta_up[1];
-        metric_inv[6] = inv_spatial_metric[2]-metric_inv[1]*beta_up[2];
-        metric_inv[7] = inv_spatial_metric[3]-metric_inv[2]*beta_up[1];
-        metric_inv[8] = inv_spatial_metric[4]-metric_inv[2]*beta_up[2];
-        metric_inv[9] = inv_spatial_metric[5]-metric_inv[3]*beta_up[2];
+        g_upup_tt = 1/(pow(alpha,2));
+        g_upup_tx = g_upup_tt*beta_xup;
+        g_upup_ty = g_upup_tt*beta_yup;
+        g_upup_tz = g_upup_tt*beta_up[2];
+        g_upup_xx = gamma_upup_xx-g_upup_tx*beta_xup;
+        g_upup_xy = gamma_upup_xy-g_upup_tx*beta_yup;
+        g_upup_xz = gamma_upup_xz-g_upup_tx*beta_up[2];
+        g_upup_yy = gamma_upup_yy-g_upup_ty*beta_yup;
+        g_upup_yz = gamma_upup_yz-g_upup_ty*beta_up[2];
+        g_upup_zz = gamma_upup_zz-g_upup_tz*beta_up[2];
     }
 };
 

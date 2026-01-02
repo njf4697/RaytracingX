@@ -77,24 +77,26 @@ void interpolateMetricAtPoint(CCTK_ARGUMENTS, const CCTK_REAL x, const CCTK_REAL
       CCTK_WARN(CCTK_WARN_ALERT, "Interpolation error");
     }
 
-    metric_at_point.metric[0] = metric_[0].data()[0];
-    metric_at_point.beta_up[0] = metric_[1].data()[0];
-    metric_at_point.beta_up[1] = metric_[2].data()[0];
-    metric_at_point.beta_up[2] = metric_[3].data()[0];
-    metric_at_point.metric[4] = metric_[4].data()[0];
-    metric_at_point.metric[5] = metric_[5].data()[0];
-    metric_at_point.metric[6] = metric_[6].data()[0];
-    metric_at_point.metric[7] = metric_[7].data()[0];
-    metric_at_point.metric[8] = metric_[8].data()[0];
-    metric_at_point.metric[9] = metric_[9].data()[0];
+    metric_at_point.alpha = metric_[0].data()[0];
+    metric_at_point.beta_xup = metric_[1].data()[0];
+    metric_at_point.beta_yup = metric_[2].data()[0];
+    metric_at_point.beta_zup = metric_[3].data()[0];
+    metric_at_point.g_xx = metric_[4].data()[0];
+    metric_at_point.g_xy = metric_[5].data()[0];
+    metric_at_point.g_xz = metric_[6].data()[0];
+    metric_at_point.g_yy = metric_[7].data()[0];
+    metric_at_point.g_yz = metric_[8].data()[0];
+    metric_at_point.g_zz = metric_[9].data()[0];
 
     printf("test2");
 
-    metric_at_point.metric[1] = metric_at_point.beta_up[0]*metric_at_point.metric[4] + metric_at_point.beta_up[1]*metric_at_point.metric[5] + metric_at_point.beta_up[2]*metric_at_point.metric[6];
-    metric_at_point.metric[2] = metric_at_point.beta_up[0]*metric_at_point.metric[5] + metric_at_point.beta_up[1]*metric_at_point.metric[7] + metric_at_point.beta_up[2]*metric_at_point.metric[8];
-    metric_at_point.metric[3] = metric_at_point.beta_up[0]*metric_at_point.metric[6] + metric_at_point.beta_up[1]*metric_at_point.metric[8] + metric_at_point.beta_up[2]*metric_at_point.metric[9];
+    //\beta_i = \gamma_ij*\beta^j
+    metric_at_point.beta_x = metric_at_point.beta_xup*metric_at_point.g_xx + metric_at_point.beta_yup*metric_at_point.g_xy + metric_at_point.beta_zup*metric_at_point.g_xz;
+    metric_at_point.beta_y = metric_at_point.beta_xup*metric_at_point.g_xy + metric_at_point.beta_yup*metric_at_point.g_yy + metric_at_point.beta_zup*metric_at_point.g_yz;
+    metric_at_point.beta_z = metric_at_point.beta_xup*metric_at_point.g_xz + metric_at_point.beta_yup*metric_at_point.g_yz + metric_at_point.beta_zup*metric_at_point.g_zz;
 
-    metric_at_point.metric0pr = sqrt(pow(metric_at_point.metric[0],2) - metric_at_point.metric[1]*metric_at_point.beta_up[0] - metric_at_point.metric[2]*metric_at_point.beta_up[1] - metric_at_point.metric[3]*metric_at_point.beta_up[2]); //g_{00}
+    //g_{tt}=\alpha^2-\beta_i\beta^i
+    metric_at_point.g_tt = pow(metric_at_point.alpha,2) - metric_at_point.beta_x*metric_at_point.beta_xup - metric_at_point.beta_y*metric_at_point.beta_yup - metric_at_point.beta_z*metric_at_point.beta_zup; //g_{00}
 
     // Destroy the parameter table
     Util_TableDestroy(paramTableHandle);
@@ -229,21 +231,21 @@ void interpolateMetricAtPointOld(CCTK_ARGUMENTS, const CCTK_REAL x, const CCTK_R
     CCTK_REAL* gyz_interp_filled = (CCTK_REAL*) output_arrays[8];
     CCTK_REAL* gzz_interp_filled = (CCTK_REAL*) output_arrays[9];
 
-    metric_at_point.metric[0] = alp_interp_filled[0]; // \alpha
-    metric_at_point.metric[1] = betax_interp_filled[0]*gxx_interp_filled[0] + betay_interp_filled[0]*gxy_interp_filled[0] + betaz_interp_filled[0]*gxz_interp_filled[0]; // g_{0j} = \beta_j = \gamma_{ij} \beta^i
-    metric_at_point.metric[2] = betax_interp_filled[0]*gxy_interp_filled[0] + betay_interp_filled[0]*gyy_interp_filled[0] + betaz_interp_filled[0]*gyz_interp_filled[0];
-    metric_at_point.metric[3] = betax_interp_filled[0]*gxz_interp_filled[0] + betay_interp_filled[0]*gyz_interp_filled[0] + betaz_interp_filled[0]*gzz_interp_filled[0];
-    metric_at_point.metric[4] = gxx_interp_filled[0]; // g_{xx}
-    metric_at_point.metric[5] = gxy_interp_filled[0]; // g_{xy}
-    metric_at_point.metric[6] = gxz_interp_filled[0]; // g_{xz}
-    metric_at_point.metric[7] = gyy_interp_filled[0]; // g_{yy}
-    metric_at_point.metric[8] = gyz_interp_filled[0]; // g_{yz}
-    metric_at_point.metric[9] = gzz_interp_filled[0]; // g_{zz}
+    metric_at_point.alpha = alp_interp_filled[0]; // \alpha
+    metric_at_point.beta_x = betax_interp_filled[0]*gxx_interp_filled[0] + betay_interp_filled[0]*gxy_interp_filled[0] + betaz_interp_filled[0]*gxz_interp_filled[0]; // g_{0j} = \beta_j = \gamma_{ij} \beta^i
+    metric_at_point.beta_y = betax_interp_filled[0]*gxy_interp_filled[0] + betay_interp_filled[0]*gyy_interp_filled[0] + betaz_interp_filled[0]*gyz_interp_filled[0];
+    metric_at_point.beta_z = betax_interp_filled[0]*gxz_interp_filled[0] + betay_interp_filled[0]*gyz_interp_filled[0] + betaz_interp_filled[0]*gzz_interp_filled[0];
+    metric_at_point.g_xx = gxx_interp_filled[0]; // g_{xx}
+    metric_at_point.g_xy = gxy_interp_filled[0]; // g_{xy}
+    metric_at_point.g_xz = gxz_interp_filled[0]; // g_{xz}
+    metric_at_point.g_yy = gyy_interp_filled[0]; // g_{yy}
+    metric_at_point.g_yz = gyz_interp_filled[0]; // g_{yz}
+    metric_at_point.g_zz = gzz_interp_filled[0]; // g_{zz}
 
-    metric_at_point.beta_up[0] = betax_interp_filled[0]; //\beta^i
-    metric_at_point.beta_up[1] = betay_interp_filled[0];
-    metric_at_point.beta_up[2] = betaz_interp_filled[0];
-    metric_at_point.metric0pr = sqrt(pow(metric_at_point.metric[0],2) - metric_at_point.metric[1]*metric_at_point.beta_up[0] - metric_at_point.metric[2]*metric_at_point.beta_up[1] - metric_at_point.metric[3]*metric_at_point.beta_up[2]); //g_{00}
+    metric_at_point.beta_xup = betax_interp_filled[0]; //\beta^i
+    metric_at_point.beta_yup = betay_interp_filled[0];
+    metric_at_point.beta_zup = betaz_interp_filled[0];
+    metric_at_point.g_tt = sqrt(pow(metric_at_point.alpha,2) - metric_at_point.beta_x*metric_at_point.beta_xup - metric_at_point.beta_y*metric_at_point.beta_yup - metric_at_point.beta_z*metric_at_point.beta_zup); //g_{00}
 
     calculateInverseMetric(metric_at_point); //get g^{\mu\nu}
 
