@@ -103,9 +103,10 @@ void interpolateMetricAtPoint(CCTK_ARGUMENTS, const CCTK_REAL x, const CCTK_REAL
     metric_at_point.beta_z = metric_at_point.beta_xup*metric_at_point.g_xz + metric_at_point.beta_yup*metric_at_point.g_yz + metric_at_point.beta_zup*metric_at_point.g_zz;
 
     //g_{tt}=\alpha^2-\beta_i\beta^i
-    metric_at_point.g_tt = pow(metric_at_point.alpha,2) - metric_at_point.beta_x*metric_at_point.beta_xup - metric_at_point.beta_y*metric_at_point.beta_yup - metric_at_point.beta_z*metric_at_point.beta_zup; //g_{00}
+    metric_at_point.g_tt = -pow(metric_at_point.alpha,2) + metric_at_point.beta_x*metric_at_point.beta_xup + metric_at_point.beta_y*metric_at_point.beta_yup + metric_at_point.beta_z*metric_at_point.beta_zup; //g_{00}
 
     metric_at_point.fillInverseMetric(); //get g^{\mu\nu}
 
     printf(metric_at_point.to_string().c_str());
+    printf(metric_at_point.to_string_inv().c_str());
 } 
