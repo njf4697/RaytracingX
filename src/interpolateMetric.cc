@@ -2,9 +2,6 @@
 #include <vector>
 #include <array>
 
-#define NUM_INTERP_POINTS 1
-#define NUM_GRID_ARRAYS 10
-
 void interpolateMetricAtPoint(CCTK_ARGUMENTS, const CCTK_REAL x, const CCTK_REAL y, const CCTK_REAL z, Metric metric_at_point) {
     DECLARE_CCTK_ARGUMENTS
     DECLARE_CCTK_PARAMETERS
@@ -33,7 +30,7 @@ void interpolateMetricAtPoint(CCTK_ARGUMENTS, const CCTK_REAL x, const CCTK_REAL
         CCTK_VarIndex("ADMBaseX::alp"), 
         CCTK_VarIndex("ADMBaseX::betax"), CCTK_VarIndex("ADMBaseX::betay"), CCTK_VarIndex("ADMBaseX::betaz"),
         CCTK_VarIndex("ADMBaseX::gxx"), CCTK_VarIndex("ADMBaseX::gxy"), CCTK_VarIndex("ADMBaseX::gxz"),
-        CCTK_VarIndex("ADMBaseX::gyy"), CCTK_VarIndex("ADMBaseX::gyz"), CCTK_VarIndex("ADMBaseX::gzz"),};
+        CCTK_VarIndex("ADMBaseX::gyy"), CCTK_VarIndex("ADMBaseX::gyz"), CCTK_VarIndex("ADMBaseX::gzz")};
 
     CCTK_POINTER outputArrays[nInputArrays] = {metric_[0].data(), metric_[1].data(), metric_[2].data(), metric_[3].data(), metric_[4].data(),
                                                metric_[5].data(), metric_[6].data(), metric_[7].data(), metric_[8].data(), metric_[9].data()};

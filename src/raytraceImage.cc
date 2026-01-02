@@ -62,7 +62,7 @@ void createGeodesicInitialConditions(CCTK_ARGUMENTS, GeodesicInitialConditions* 
     //only use values from processer 1
     if (CCTK_MyProc(cctkGH) != 0) return; 
 
-    CCTK_VERROR("test5")
+    CCTK_VERROR("test5");
 
     CCTK_REAL e0[4];
     CCTK_REAL e1[4];
