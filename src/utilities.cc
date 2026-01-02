@@ -60,7 +60,15 @@ CCTK_REAL getTimeComponentOf4Velocity(const CCTK_REAL vx, const CCTK_REAL vy, co
                                                     m.g_zz*vz*vz + 1;
     CCTK_REAL v0 = (-B + sqrt(B*B - 4*A*C))/(2*A);
     CCTK_REAL v[4] = {v0, vx, vy, vz};
-    assert(innerProduct(v, v, m) + 1 < 0.00001);
+    if (innerProduct(v, v, m) + 1 < 0.0000000001) {
+        return v0;
+    }
+    CCTK_REAL v0 = (-B - sqrt(B*B - 4*A*C))/(2*A);
+    CCTK_REAL v[4] = {v0, vx, vy, vz};
+    if (innerProduct(v, v, m) + 1 < 0.0000000001) {
+        return v0;
+    }
     
-    return v0;
+    CCTK_VERROR("RaytracingX: Problem encountered with calculating the time component of the camera's 4-velocity from the 3-velocity");
+    return -1;
 }
