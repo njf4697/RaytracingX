@@ -41,7 +41,7 @@ void interpolateMetricAtPoint(CCTK_ARGUMENTS, const CCTK_REAL x, const CCTK_REAL
     // DriverInterpolate arguments that aren't currently used
     const int coordSystemHandle = 0;
     const CCTK_INT interpCoordsTypeCode = 0;
-    const CCTK_INT outputArrayTypes[1] = {0};
+    const CCTK_INT outputArrayTypes[10] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
     const int interpHandle = CCTK_InterpHandle("CarpetX");
     if (interpHandle < 0) {
@@ -80,6 +80,8 @@ void interpolateMetricAtPoint(CCTK_ARGUMENTS, const CCTK_REAL x, const CCTK_REAL
 
     //only use values from processer 1
     if (CCTK_MyProc(cctkGH) != 0) return; 
+
+    CCTK_VERROR("test-1");
 
     metric_at_point.alpha = metric_[0].data()[0];
     metric_at_point.beta_xup = metric_[1].data()[0];
