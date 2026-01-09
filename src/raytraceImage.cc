@@ -69,6 +69,11 @@ void createGeodesicInitialConditions(CCTK_ARGUMENTS, GeodesicInitialConditions* 
     CCTK_REAL e3[4];
     gramSchmidtProcess(CCTK_PASS_CTOC, e0, e1, e2, e3, metric); //create orthonormal basis for camera POV
 
+    prinf(("e0: (" + std::to_string(e0[0]) + ", " + std::to_string(e0[1]) + ", " + std::to_string(e0[2]) + ", " + std::to_string(e0[3]) + ")\n").c_str());
+    prinf(("e1: (" + std::to_string(e1[0]) + ", " + std::to_string(e1[1]) + ", " + std::to_string(e1[2]) + ", " + std::to_string(e1[3]) + ")\n").c_str());
+    prinf(("e2: (" + std::to_string(e2[0]) + ", " + std::to_string(e2[1]) + ", " + std::to_string(e2[2]) + ", " + std::to_string(e2[3]) + ")\n").c_str());
+    prinf(("e3: (" + std::to_string(e3[0]) + ", " + std::to_string(e3[1]) + ", " + std::to_string(e3[2]) + ", " + std::to_string(e3[3]) + ")\n").c_str());
+    
     CCTK_REAL alpha_h = 3.1415926536 / 180 * horizontal_fov; //convert FOV to radians
     CCTK_REAL alpha_v = 3.1415926536 / 180 * vertical_fov;
 
