@@ -31,26 +31,26 @@ void gramSchmidtProcess(CCTK_ARGUMENTS, CCTK_REAL* e0, CCTK_REAL* e1, CCTK_REAL*
     
 
     CCTK_REAL projv1_onto_u0[4];
-    projectUontoV(projv1_onto_u0, v1, u0, metric);
+    projectUontoV(projv1_onto_u0, v1, u0, &metric);
     u1[0] = v1[0] - projv1_onto_u0[0];
     u1[1] = v1[1] - projv1_onto_u0[1];
     u1[2] = v1[2] - projv1_onto_u0[2];
     u1[3] = v1[3] - projv1_onto_u0[3];
 
     CCTK_REAL projv2_onto_u0[4];
-    projectUontoV(projv2_onto_u0, v2, u0, metric);
+    projectUontoV(projv2_onto_u0, v2, u0, &metric);
     CCTK_REAL projv2_onto_u1[4];
-    projectUontoV(projv2_onto_u1, v2, u1, metric);
+    projectUontoV(projv2_onto_u1, v2, u1, &metric);
     u2[0] = v2[0] - projv2_onto_u0[0] - projv2_onto_u1[0];
     u2[1] = v2[1] - projv2_onto_u0[1] - projv2_onto_u1[1];
     u2[2] = v2[2] - projv2_onto_u0[2] - projv2_onto_u1[2];
     u2[3] = v2[3] - projv2_onto_u0[3] - projv2_onto_u1[3];
 
-    normalize(e0, u0, metric); //e0 should be unit vector in direction of camera 4-vellocity
-    normalize(e1, u1, metric); //e1 is (more or less) unit vector in camera facting direction
-    normalize(e2, u2, metric); //e2 is (more or less) unit vector in from the center of the camera to the right edge
+    normalize(e0, u0, &metric); //e0 should be unit vector in direction of camera 4-vellocity
+    normalize(e1, u1, &metric); //e1 is (more or less) unit vector in camera facting direction
+    normalize(e2, u2, &metric); //e2 is (more or less) unit vector in from the center of the camera to the right edge
 
-    generalizedCrossProduct(e3, e0, e1, e2, metric); //e3 is an normalized vector orthogonal to e0, e1, e2, e3
+    generalizedCrossProduct(e3, e0, e1, e2, &metric); //e3 is an normalized vector orthogonal to e0, e1, e2, e3
 }
 
 void createGeodesicInitialConditions(CCTK_ARGUMENTS, GeodesicInitialConditions* geodesicArr) { //fills geodesicArr with geodesic initial conditions for each pixel (see https://arxiv.org/pdf/1410.7775)
@@ -58,7 +58,7 @@ void createGeodesicInitialConditions(CCTK_ARGUMENTS, GeodesicInitialConditions* 
     DECLARE_CCTK_PARAMETERS
 
     Metric metric;
-    interpolateMetricAtPoint(CCTK_PASS_CTOC, camera_pos[0], camera_pos[1], camera_pos[2], metric); //interpolate metric values and store in Metric struct
+    interpolateMetricAtPoint(CCTK_PASS_CTOC, camera_pos[0], camera_pos[1], camera_pos[2], &metric); //interpolate metric values and store in Metric struct
 
     //only use values from processer 1
     if (CCTK_MyProc(cctkGH) != 0) return; 
@@ -67,7 +67,7 @@ void createGeodesicInitialConditions(CCTK_ARGUMENTS, GeodesicInitialConditions* 
     CCTK_REAL e1[4];
     CCTK_REAL e2[4];
     CCTK_REAL e3[4];
-    gramSchmidtProcess(CCTK_PASS_CTOC, e0, e1, e2, e3, metric); //create orthonormal basis for camera POV
+    gramSchmidtProcess(CCTK_PASS_CTOC, e0, e1, e2, e3, &metric); //create orthonormal basis for camera POV
 
     printf(("e0: (" + std::to_string(e0[0]) + ", " + std::to_string(e0[1]) + ", " + std::to_string(e0[2]) + ", " + std::to_string(e0[3]) + ")\n").c_str());
     printf(("e1: (" + std::to_string(e1[0]) + ", " + std::to_string(e1[1]) + ", " + std::to_string(e1[2]) + ", " + std::to_string(e1[3]) + ")\n").c_str());
