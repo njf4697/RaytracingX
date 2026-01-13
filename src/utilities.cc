@@ -14,7 +14,7 @@ void generalizedCrossProduct(CCTK_REAL* X, const CCTK_REAL* U, const CCTK_REAL* 
     temp[1] =  U[3]*V[0]*W[2] + -U[2]*V[0]*W[3] + -U[3]*V[2]*W[0] +  U[0]*V[2]*W[3] +  U[2]*V[3]*W[0] + -U[0]*V[3]*W[2];
     temp[2] = -U[3]*V[0]*W[1] +  U[1]*V[0]*W[3] +  U[3]*V[1]*W[0] + -U[0]*V[1]*W[3] + -U[1]*V[3]*W[0] +  U[0]*V[3]*W[1];
     temp[3] =  U[2]*V[0]*W[1] + -U[1]*V[0]*W[2] + -U[2]*V[1]*W[0] +  U[0]*V[1]*W[2] +  U[1]*V[2]*W[0] + -U[0]*V[2]*W[1];
-    oneFormToVector(X, temp, m);
+    oneFormToVector(X, temp, *m);
 }
 
 void oneFormToVector(CCTK_REAL* X_vector, const CCTK_REAL* X_oneform, const Metric* m) { //X^\nu = g^{\mu\nu} X_\mu
