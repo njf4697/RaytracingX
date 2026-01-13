@@ -1,6 +1,7 @@
 #include "raytracingx.h"
 
 CCTK_REAL innerProduct(const CCTK_REAL* U, const CCTK_REAL* V, const Metric m) { //return g_{\mu\nu} U^\nu V\nu
+    printf(("g^tt: " + std::to_string(m.g_tt) + ")\n").c_str());
     return m.g_tt*U[0]*V[0] + m.beta_x*U[1]*V[0] + m.beta_y*U[2]*V[0] + m.beta_z*U[3]*V[0]
          + m.beta_x*U[0]*V[1] + m.g_xx*U[1]*V[1] + m.g_xy*U[2]*V[1] + m.g_xz*U[3]*V[1]
          + m.beta_y*U[0]*V[2] + m.g_xy*U[1]*V[2] + m.g_yy*U[2]*V[2] + m.g_yz*U[3]*V[2]
