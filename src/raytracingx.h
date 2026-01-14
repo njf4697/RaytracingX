@@ -65,7 +65,7 @@ extern "C" void raytraceImage(CCTK_ARGUMENTS); //raytraceImage.cc
 //nonscheduled
 void gramSchmidtProcess(CCTK_ARGUMENTS, CCTK_REAL* e0, CCTK_REAL* e1, CCTK_REAL* e2, CCTK_REAL* e3, const Metric* metric); //raytraceImage.cc
 void createGeodesicInitialConditions(CCTK_ARGUMENTS, GeodesicInitialConditions* geodesicArr); //raytraceImage.cc
-void interpolateMetricAtPoint(CCTK_ARGUMENTS, const CCTK_REAL x, const CCTK_REAL y, const CCTK_REAL z, Metric metric_at_point); //interpolateMetric.cc
+void interpolateMetricAtPoint(CCTK_ARGUMENTS, const CCTK_REAL x, const CCTK_REAL y, const CCTK_REAL z, Metric* metric_at_point); //interpolateMetric.cc
 CCTK_REAL innerProduct(const CCTK_REAL* U, const CCTK_REAL* V, const Metric* m); //utilities.cc
 void generalizedCrossProduct(CCTK_REAL* X, const CCTK_REAL* U, const CCTK_REAL* V, const CCTK_REAL* W, const Metric* m); //utilities.cc
 void oneFormToVector(CCTK_REAL* X_vector, const CCTK_REAL* X_oneform, const Metric* m); //utilities.cc
