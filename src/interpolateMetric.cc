@@ -2,7 +2,7 @@
 #include <vector>
 #include <array>
 
-void interpolateMetricAtPoint(CCTK_ARGUMENTS, const CCTK_REAL x, const CCTK_REAL y, const CCTK_REAL z, Metric metric_at_point) {
+void interpolateMetricAtPoint(CCTK_ARGUMENTS, const CCTK_REAL x, const CCTK_REAL y, const CCTK_REAL z, Metric* metric_at_point) {
     DECLARE_CCTK_ARGUMENTS
     DECLARE_CCTK_PARAMETERS
 
@@ -86,27 +86,27 @@ void interpolateMetricAtPoint(CCTK_ARGUMENTS, const CCTK_REAL x, const CCTK_REAL
     //only use values from processer 1
     if (CCTK_MyProc(cctkGH) != 0) return; 
 
-    metric_at_point.alpha = metric_[0].data()[0];
-    metric_at_point.beta_xup = metric_[1].data()[0];
-    metric_at_point.beta_yup = metric_[2].data()[0];
-    metric_at_point.beta_zup = metric_[3].data()[0];
-    metric_at_point.g_xx = metric_[4].data()[0];
-    metric_at_point.g_xy = metric_[5].data()[0];
-    metric_at_point.g_xz = metric_[6].data()[0];
-    metric_at_point.g_yy = metric_[7].data()[0];
-    metric_at_point.g_yz = metric_[8].data()[0];
-    metric_at_point.g_zz = metric_[9].data()[0];
+    metric_at_point->alpha = metric_[0].data()[0];
+    metric_at_point->beta_xup = metric_[1].data()[0];
+    metric_at_point->beta_yup = metric_[2].data()[0];
+    metric_at_point->beta_zup = metric_[3].data()[0];
+    metric_at_point->g_xx = metric_[4].data()[0];
+    metric_at_point->g_xy = metric_[5].data()[0];
+    metric_at_point->g_xz = metric_[6].data()[0];
+    metric_at_point->g_yy = metric_[7].data()[0];
+    metric_at_point->g_yz = metric_[8].data()[0];
+    metric_at_point->g_zz = metric_[9].data()[0];
 
     //\beta_i = \gamma_ij*\beta^j
-    metric_at_point.beta_x = metric_at_point.beta_xup*metric_at_point.g_xx + metric_at_point.beta_yup*metric_at_point.g_xy + metric_at_point.beta_zup*metric_at_point.g_xz;
-    metric_at_point.beta_y = metric_at_point.beta_xup*metric_at_point.g_xy + metric_at_point.beta_yup*metric_at_point.g_yy + metric_at_point.beta_zup*metric_at_point.g_yz;
-    metric_at_point.beta_z = metric_at_point.beta_xup*metric_at_point.g_xz + metric_at_point.beta_yup*metric_at_point.g_yz + metric_at_point.beta_zup*metric_at_point.g_zz;
+    metric_at_point->beta_x = metric_at_point->beta_xup*metric_at_point->g_xx + metric_at_point->beta_yup*metric_at_point->g_xy + metric_at_point->beta_zup*metric_at_point->g_xz;
+    metric_at_point->beta_y = metric_at_point->beta_xup*metric_at_point->g_xy + metric_at_point->beta_yup*metric_at_point->g_yy + metric_at_point->beta_zup*metric_at_point->g_yz;
+    metric_at_point->beta_z = metric_at_point->beta_xup*metric_at_point->g_xz + metric_at_point->beta_yup*metric_at_point->g_yz + metric_at_point->beta_zup*metric_at_point->g_zz;
 
     //g_{tt}=\alpha^2-\beta_i\beta^i
-    metric_at_point.g_tt = -pow(metric_at_point.alpha,2) + metric_at_point.beta_x*metric_at_point.beta_xup + metric_at_point.beta_y*metric_at_point.beta_yup + metric_at_point.beta_z*metric_at_point.beta_zup; //g_{00}
+    metric_at_point->g_tt = -pow(metric_at_point->alpha,2) + metric_at_point->beta_x*metric_at_point->beta_xup + metric_at_point->beta_y*metric_at_point->beta_yup + metric_at_point->beta_z*metric_at_point->beta_zup; //g_{00}
 
-    metric_at_point.fillInverseMetric(); //get g^{\mu\nu}
+    metric_at_point->fillInverseMetric(); //get g^{\mu\nu}
 
-    printf(metric_at_point.to_string().c_str());
-    printf(metric_at_point.to_string_inv().c_str());
+    printf(metric_at_point->to_string().c_str());
+    printf(metric_at_point->to_string_inv().c_str());
 } 

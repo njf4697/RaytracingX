@@ -95,7 +95,7 @@ void createGeodesicInitialConditions(CCTK_ARGUMENTS, GeodesicInitialConditions* 
             printf("i=%i, j=%i, chi=[%0.2f, %0.2f, %0.2f, %0.2f]",i,j,chi[0],chi[1],chi[2],chi[3]);
 
             CCTK_REAL chi_lower[4];
-            vectorToOneForm(chi_lower, chi, metric);
+            vectorToOneForm(chi_lower, chi, &metric);
             geodesicArr[i*num_pixels_width + j].initPos[0] = camera_pos[0]; 
             geodesicArr[i*num_pixels_width + j].initPos[1] = camera_pos[1]; 
             geodesicArr[i*num_pixels_width + j].initPos[2] = camera_pos[2]; 

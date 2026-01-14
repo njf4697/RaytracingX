@@ -32,7 +32,7 @@ void vectorToOneForm(CCTK_REAL* X_oneform, const CCTK_REAL* X_vector, const Metr
 }
 
 void projectUontoV(CCTK_REAL* X, const CCTK_REAL* U, const CCTK_REAL* V, const Metric* m) { //X^\mu = (U \cdot V) / (V \cdot V) V^\mu
-    CCTK_REAL r = innerProduct(U, V, &m) / innerProduct(V, V, m);
+    CCTK_REAL r = innerProduct(U, V, m) / innerProduct(V, V, m);
     X[0] = r*V[0];
     X[1] = r*V[1];
     X[2] = r*V[2];
