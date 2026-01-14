@@ -32,7 +32,7 @@ void vectorToOneForm(CCTK_REAL* X_oneform, const CCTK_REAL* X_vector, const Metr
 }
 
 void projectUontoV(CCTK_REAL* X, const CCTK_REAL* U, const CCTK_REAL* V, const Metric* m) { //X^\mu = (U \cdot V) / (V \cdot V) V^\mu
-    CCTK_REAL r = innerProduct(U, V, &m) / innerProduct(V, V, &m);
+    CCTK_REAL r = innerProduct(U, V, &m) / innerProduct(V, V, m);
     X[0] = r*V[0];
     X[1] = r*V[1];
     X[2] = r*V[2];
@@ -41,7 +41,7 @@ void projectUontoV(CCTK_REAL* X, const CCTK_REAL* U, const CCTK_REAL* V, const M
 
 void normalize(CCTK_REAL* X_norm, const CCTK_REAL* X, const Metric* m) { //X_{norm}^\mu = X^\mu / (X \cdot X) 
     printf(("X: (" + std::to_string(X[0]) + ", " + std::to_string(X[1]) + ", " + std::to_string(X[2]) + ", " + std::to_string(X[3]) + ")\n").c_str());
-    CCTK_REAL mag = sqrt(innerProduct(X, X, &m));
+    CCTK_REAL mag = sqrt(innerProduct(X, X, m));
     printf(("X**2: (" + std::to_string(mag) + ")\n").c_str());
     X_norm[0] = X[0] / mag;
     X_norm[1] = X[1] / mag;
@@ -63,12 +63,12 @@ CCTK_REAL getTimeComponentOf4Velocity(const CCTK_REAL vx, const CCTK_REAL vy, co
                                                     m->g_zz*vz*vz + 1;
     CCTK_REAL v0 = (-B + sqrt(B*B - 4*A*C))/(2*A);
     CCTK_REAL v[4] = {v0, vx, vy, vz};
-    if (innerProduct(v, v, &m) + 1 < 0.0000000001) {
+    if (innerProduct(v, v, m) + 1 < 0.0000000001) {
         return v0;
     }
     v0 = (-B - sqrt(B*B - 4*A*C))/(2*A);
     v[0] = v0;
-    if (innerProduct(v, v, &m) + 1 < 0.0000000001) {
+    if (innerProduct(v, v, m) + 1 < 0.0000000001) {
         return v0;
     }
     
