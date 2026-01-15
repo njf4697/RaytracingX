@@ -42,7 +42,7 @@ void projectUontoV(CCTK_REAL* X, const CCTK_REAL* U, const CCTK_REAL* V, const M
 void normalize(CCTK_REAL* X_norm, const CCTK_REAL* X, const Metric* m) { //X_{norm}^\mu = X^\mu / (X \cdot X) 
     printf(("X: (" + std::to_string(X[0]) + ", " + std::to_string(X[1]) + ", " + std::to_string(X[2]) + ", " + std::to_string(X[3]) + ")\n").c_str());
     CCTK_REAL mag = sqrt(innerProduct(X, X, m));
-    printf(("X**2: (" + std::to_string(mag) + ")\n").c_str());
+    printf(("X**2: (" + std::to_string(innerProduct(X, X, m)) + ")\n").c_str());
     X_norm[0] = X[0] / mag;
     X_norm[1] = X[1] / mag;
     X_norm[2] = X[2] / mag;
