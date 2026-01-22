@@ -2,7 +2,7 @@
 # ====================================================
 
 IMPLEMENTS: RaytracingX
-INHERITS:   ADMBaseX
+INHERITS:   ADMBaseX Driver
 
 CCTK_INT FUNCTION DriverInterpolate(
   CCTK_POINTER_TO_CONST IN cctkGH,

@@ -1,7 +1,7 @@
 # Schedule definition for thorn RaytracingX
 # ===================================================
 
-SCHEDULE raytraceImage at CCTK_INITIAL {
+SCHEDULE raytraceImage at CCTK_POSTSTEP AFTER GROUP ADMBaseX_SetADMRHS {
     LANG: C
     OPTIONS: GLOBAL
     READS: ADMBaseX::alp
