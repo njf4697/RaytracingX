@@ -42,11 +42,12 @@ void gramSchmidtProcess(CCTK_ARGUMENTS, CCTK_REAL* e0, CCTK_REAL* e1, CCTK_REAL*
     generalizedCrossProduct(e3, e0, e1, e2, metric); //e3 is an normalized vector orthogonal to e0, e1, e2, e3
 }
 
-template <typename StructType, typename ParticleContainerClass>
-void camera_initializer(ParticleContainerClass &pc, const CCTK_REAL *real_params, const CCTK_INT *int_params) {
-    CCTK_INFO("Initializing particles using the RaytracingX::camera_initializer");
+void setup_camera_initializer_reals(CCTK_ARGUMENTS, CCTK_REAL* real_params) {
     DECLARE_CCTK_ARGUMENTS
     DECLARE_CCTK_PARAMETERS
+
+    Metric metric;
+    interpolateMetricAtPoint(CCTK_PASS_CTOC, camera_pos[0], camera_pos[1], camera_pos[2], &metric); //interpolate metric values and store in Metric struct
 
     CCTK_REAL e0[4];
     CCTK_REAL e1[4];
@@ -56,6 +57,79 @@ void camera_initializer(ParticleContainerClass &pc, const CCTK_REAL *real_params
 
     CCTK_REAL alpha_h = DEG2RAD * horizontal_fov; //convert FOV to radians
     CCTK_REAL alpha_v = DEG2RAD * vertical_fov;
+
+    real_params[0] = metric.g_tt;
+    real_params[1] = metric.beta_x;
+    real_params[2] = metric.beta_y;
+    real_params[3] = metric.beta_z;
+    real_params[4] = metric.g_xx;
+    real_params[5] = metric.g_xy;
+    real_params[6] = metric.g_xz;
+    real_params[7] = metric.g_yy;
+    real_params[8] = metric.g_yz;
+    real_params[9] = metric.g_zz;
+    real_params[10] = e0[0];
+    real_params[11] = e0[1];
+    real_params[12] = e0[2];
+    real_params[13] = e0[3];
+    real_params[14] = e1[0];
+    real_params[15] = e1[1];
+    real_params[16] = e1[2];
+    real_params[17] = e1[3];
+    real_params[18] = e2[0];
+    real_params[19] = e2[1];
+    real_params[20] = e2[2];
+    real_params[21] = e2[3];
+    real_params[22] = e3[0];
+    real_params[23] = e3[1];
+    real_params[24] = e3[2];
+    real_params[25] = e3[3];
+    real_params[26] = alpha_h;
+    real_params[27] = alpha_v;
+    real_params[28] = metric.alpha;
+    real_params[29] = camera_pos[0];
+    real_params[30] = camera_pos[1];
+    real_params[31] = camera_pos[2];
+}
+
+void setup_camera_initializer_ints(CCTK_ARGUMENTS, CCTK_INT* int_params) {
+    DECLARE_CCTK_ARGUMENTS
+    DECLARE_CCTK_PARAMETERS
+
+    int_params[0] = num_pixels_width;
+    int_params[1] = num_pixels_height;
+}
+
+template <typename StructType, typename ParticleContainerClass>
+void camera_initializer(ParticleContainerClass &pc, const CCTK_REAL *real_params, const CCTK_INT *int_params) {
+    CCTK_INFO("Initializing particles using the RaytracingX::camera_initializer");
+    
+    CCTK_REAL e0[4], e1[4], e2[4], e3[4];
+    e0[0] = real_params[10];
+    e0[1] = real_params[11];
+    e0[2] = real_params[12];
+    e0[3] = real_params[13];
+    e1[0] = real_params[14];
+    e1[1] = real_params[15];
+    e1[2] = real_params[16];
+    e1[3] = real_params[17];
+    e2[0] = real_params[18];
+    e2[1] = real_params[19];
+    e2[2] = real_params[20];
+    e2[3] = real_params[21];
+    e3[0] = real_params[22];
+    e3[1] = real_params[23];
+    e3[2] = real_params[24];
+    e3[3] = real_params[25];
+    CCTK_REAL alpha_h = real_params[26];
+    CCTK_REAL alpha_v = real_params[27];
+    CCTK_REAL lapse = real_params[28];
+    CCTK_INT num_pixels_width = int_params[0];
+    CCTK_INT num_pixels_height = int_params[1];
+    CCTK_REAL camera_pos[3];
+    camera_pos[0] = real_params[29];
+    camera_pos[1] = real_params[30];
+    camera_pos[2] = real_params[31];
 
     const CCTK_INT level = 0;
     const CCTK_INT num_pixels = num_pixels_width * num_pixels_height;
@@ -93,7 +167,7 @@ void camera_initializer(ParticleContainerClass &pc, const CCTK_REAL *real_params
                 printf("i=%i, j=%i, chi=[%0.2f, %0.2f, %0.2f, %0.2f]\n",i,j,chi[0],chi[1],chi[2],chi[3]);
 
                 CCTK_REAL chi_lower[4];
-                vectorToOneForm(chi_lower, chi, &metric);
+                vectorToOneFormArr(chi_lower, chi, &metric);
 
                 ptd.id(pidx) = ParticleContainerClass::ParticleType::NextID();
                 ptd.cpu(pidx) = amrex::ParallelDescriptor::MyProc();
@@ -101,7 +175,7 @@ void camera_initializer(ParticleContainerClass &pc, const CCTK_REAL *real_params
                 ptd.pos(0, pidx) = camera_pos[0];
                 ptd.pos(1, pidx) = camera_pos[1];
                 ptd.pos(2, pidx) = camera_pos[2];
-                CCTK_REAL A = 1 / metric.alpha*chi[0];
+                CCTK_REAL A = 1 / lapse*chi[0];
                 arrdata[StructType::vx][pidx] = chi_lower[0] * A;
                 arrdata[StructType::vy][pidx] = chi_lower[1] * A;
                 arrdata[StructType::vz][pidx] = chi_lower[2] * A;
