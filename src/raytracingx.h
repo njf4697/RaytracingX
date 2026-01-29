@@ -7,11 +7,6 @@
 #ifndef RAYTRACINGX
 #define RAYTRACINGX
 
-struct GeodesicInitialConditions { //struct to contain information for the initial conditions for a geodesic
-    CCTK_REAL initPos[3]; //initial position of geodesic (X^i), see https://arxiv.org/pdf/1410.7775
-    CCTK_REAL initVel[3]; //initial position of geodesic (\Pi_i), see https://arxiv.org/pdf/1410.7775
-};
-
 struct Metric { //struct that contains information about the metric interpolated at a point
     CCTK_REAL alpha;
     CCTK_REAL beta_x, beta_y, beta_z; //g_{tx}, g_{ty}, g_{tz}
