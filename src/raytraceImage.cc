@@ -42,61 +42,6 @@ void gramSchmidtProcess(CCTK_ARGUMENTS, CCTK_REAL* e0, CCTK_REAL* e1, CCTK_REAL*
     generalizedCrossProduct(e3, e0, e1, e2, metric); //e3 is an normalized vector orthogonal to e0, e1, e2, e3
 }
 
-void createGeodesicInitialConditions(CCTK_ARGUMENTS, GeodesicInitialConditions* geodesicArr) { //fills geodesicArr with geodesic initial conditions for each pixel (see https://arxiv.org/pdf/1410.7775)
-    DECLARE_CCTK_ARGUMENTS
-    DECLARE_CCTK_PARAMETERS
-
-    Metric metric;
-    interpolateMetricAtPoint(CCTK_PASS_CTOC, camera_pos[0], camera_pos[1], camera_pos[2], &metric); //interpolate metric values and store in Metric struct
-
-    //only use values from processer 1
-    if (CCTK_MyProc(cctkGH) != 0) return; 
-
-    CCTK_REAL e0[4];
-    CCTK_REAL e1[4];
-    CCTK_REAL e2[4];
-    CCTK_REAL e3[4];
-    gramSchmidtProcess(CCTK_PASS_CTOC, e0, e1, e2, e3, &metric); //create orthonormal basis for camera POV
-
-    printf(("e0: (" + std::to_string(e0[0]) + ", " + std::to_string(e0[1]) + ", " + std::to_string(e0[2]) + ", " + std::to_string(e0[3]) + ")\n").c_str());
-    printf(("e1: (" + std::to_string(e1[0]) + ", " + std::to_string(e1[1]) + ", " + std::to_string(e1[2]) + ", " + std::to_string(e1[3]) + ")\n").c_str());
-    printf(("e2: (" + std::to_string(e2[0]) + ", " + std::to_string(e2[1]) + ", " + std::to_string(e2[2]) + ", " + std::to_string(e2[3]) + ")\n").c_str());
-    printf(("e3: (" + std::to_string(e3[0]) + ", " + std::to_string(e3[1]) + ", " + std::to_string(e3[2]) + ", " + std::to_string(e3[3]) + ")\n").c_str());
-    
-    CCTK_REAL alpha_h = 3.1415926536 / 180 * horizontal_fov; //convert FOV to radians
-    CCTK_REAL alpha_v = 3.1415926536 / 180 * vertical_fov;
-
-    //TODO: make parallel for GPU
-    #pragma omp parallel for
-    for (int i = 0; i < num_pixels_width; i++) {
-        for (int j = 0; j < num_pixels_height; j++) { //create 4-vector \chi parallel to geodesic and fill GeodesicInitialConditions struct for each pixel (see https://arxiv.org/pdf/1410.777)
-            CCTK_REAL a_adj = (2.0 * i / num_pixels_width - 1)*tan(alpha_h / 2.0); // a_{adj} = (2a-1)tan(\alpha_h/2)
-            CCTK_REAL b_adj = (2.0 * j / num_pixels_height - 1)*tan(alpha_v / 2.0); // b_{adj} = (2b-1)tan(\alpha_v/2)
-
-            CCTK_REAL C = sqrt(1 + pow(b_adj,2) + pow(a_adj,2));
-
-            CCTK_REAL chi[4];
-            chi[0] = C*e0[0] - e1[0] - b_adj*e2[0] - a_adj*e3[0];
-            chi[1] = C*e0[1] - e1[1] - b_adj*e2[1] - a_adj*e3[1];
-            chi[2] = C*e0[2] - e1[2] - b_adj*e2[2] - a_adj*e3[2];
-            chi[3] = C*e0[3] - e1[3] - b_adj*e2[3] - a_adj*e3[3];
-
-            printf("i=%i, j=%i, chi=[%0.2f, %0.2f, %0.2f, %0.2f]\n",i,j,chi[0],chi[1],chi[2],chi[3]);
-
-            CCTK_REAL chi_lower[4];
-            vectorToOneForm(chi_lower, chi, &metric);
-            geodesicArr[i*num_pixels_width + j].initPos[0] = camera_pos[0]; 
-            geodesicArr[i*num_pixels_width + j].initPos[1] = camera_pos[1]; 
-            geodesicArr[i*num_pixels_width + j].initPos[2] = camera_pos[2]; 
-            geodesicArr[i*num_pixels_width + j].initVel[0] = chi_lower[0] / (metric.alpha*chi[0]); 
-            geodesicArr[i*num_pixels_width + j].initVel[1] = chi_lower[1] / (metric.alpha*chi[0]); 
-            geodesicArr[i*num_pixels_width + j].initVel[2] = chi_lower[2] / (metric.alpha*chi[0]);
-
-            printf(("init vel for i=" + std::to_string(i) + " and j=" + std::to_string(j) + ": (" + std::to_string(geodesicArr[i*num_pixels_width + j].initVel[0]) + ", " + std::to_string(geodesicArr[i*num_pixels_width + j].initVel[1]) + ", " + std::to_string(geodesicArr[i*num_pixels_width + j].initVel[2]) + ")\n").c_str());
-        }
-    }
-}
-
 template <typename StructType, typename ParticleContainerClass>
 void camera_initializer(ParticleContainerClass &pc, const CCTK_REAL *real_params, const CCTK_INT *int_params) {
     CCTK_INFO("Initializing particles using the RaytracingX::camera_initializer");
