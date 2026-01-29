@@ -1,6 +1,4 @@
 # Configuration options for thorn RaytracingX
 # =====================================================
 
-PROVIDES raytraceImage
-{
-}
+REQUIRES AMREX
