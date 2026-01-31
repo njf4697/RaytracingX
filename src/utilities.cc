@@ -31,7 +31,7 @@ void vectorToOneForm(CCTK_REAL* X_oneform, const CCTK_REAL* X_vector, const Metr
     X_oneform[3] = X_vector[0]*m->beta_z + X_vector[1]*m->g_xz + X_vector[2]*m->g_yz + X_vector[3]*m->g_zz;
 }
 
-void vectorToOneForm(CCTK_REAL* X_oneform, const CCTK_REAL* X_vector, const CCTK_REAL* arr) { //X_\nu = g_{\mu\nu} X^\mu
+void vectorToOneFormArr(CCTK_REAL* X_oneform, const CCTK_REAL* X_vector, const CCTK_REAL* arr) { //X_\nu = g_{\mu\nu} X^\mu
     X_oneform[0] = X_vector[0]*arr[0] + X_vector[1]*arr[1] + X_vector[2]*arr[2] + X_vector[3]*arr[3];
     X_oneform[1] = X_vector[0]*arr[1] + X_vector[1]*arr[4] + X_vector[2]*arr[5] + X_vector[3]*arr[6];
     X_oneform[2] = X_vector[0]*arr[2] + X_vector[1]*arr[5] + X_vector[2]*arr[7] + X_vector[3]*arr[8];
