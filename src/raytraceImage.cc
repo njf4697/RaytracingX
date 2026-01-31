@@ -167,7 +167,7 @@ void camera_initializer(ParticleContainerClass &pc, const CCTK_REAL *real_params
                 printf("i=%i, j=%i, chi=[%0.2f, %0.2f, %0.2f, %0.2f]\n",i,j,chi[0],chi[1],chi[2],chi[3]);
 
                 CCTK_REAL chi_lower[4];
-                vectorToOneFormArr(chi_lower, chi, &metric);
+                vectorToOneFormArr(chi_lower, chi, real_params);
 
                 ptd.id(pidx) = ParticleContainerClass::ParticleType::NextID();
                 ptd.cpu(pidx) = amrex::ParallelDescriptor::MyProc();
