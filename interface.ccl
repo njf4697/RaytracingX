@@ -4,6 +4,8 @@
 IMPLEMENTS: RaytracingX
 INHERITS:   ADMBaseX AMReX ParticlesContainer PhotonsContainer
 
+INCLUDES HEADER: raytracingx.h IN raytracingx.h
+
 CCTK_INT FUNCTION DriverInterpolate(
   CCTK_POINTER_TO_CONST IN cctkGH,
   CCTK_INT IN N_dims,
