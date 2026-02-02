@@ -7,7 +7,6 @@
 #include <CParameters.h>
 
 #include <cstring>
-#include <driver.hxx>
 
 #include <cctk_Arguments.h>
 #include <cctk_Parameters.h>
