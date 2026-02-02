@@ -41,7 +41,7 @@ extern "C" void PhotonsContainer_setup(CCTK_ARGUMENTS) {
 
       auto &pc = photons.at(patch);
       pc->initialize(camera_initializer<ParticleData, PC>,
-                     real_params, int_parameters);
+                     real_params, int_params);
     }
   }
 
