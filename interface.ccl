@@ -2,11 +2,11 @@
 # ====================================================
 
 IMPLEMENTS: RaytracingX
-INHERITS:   ADMBaseX AMReX ParticlesContainer PhotonsContainer
+INHERITS:   ADMBaseX AMReX ParticlesContainer PhotonsContainer Loop
 
 USES INCLUDE HEADER: Photons.hxx
 USES INCLUDE HEADER: PhotonsContainer.hxx
-USES INCLUDE HEADER: loop_device.hxx
+#USES INCLUDE HEADER: loop_device.hxx
 USES INCLUDE HEADER: driver.hxx
 
 CCTK_INT FUNCTION DriverInterpolate(
