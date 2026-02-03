@@ -19,7 +19,7 @@
 
 using ParticleData = Photons::PhotonsData;
 using PC = Containers::PhotonsContainer<ParticleData>;
-//std::vector<std::unique_ptr<PC>> photons;
+std::vector<std::unique_ptr<PC>> photons;
 
 extern "C" void PhotonsContainer_setup(CCTK_ARGUMENTS) {
   DECLARE_CCTK_ARGUMENTS;
