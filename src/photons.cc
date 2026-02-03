@@ -142,6 +142,6 @@ extern "C" void R_PhotonsContainer_print(CCTK_ARGUMENTS) {
 
 extern "C" int R_PhotonsContainer_final_cleanup() {
   amrex::Gpu::Device::synchronize();
-  photons.clear();
+  R_photons.clear();
   return 0;
 }
