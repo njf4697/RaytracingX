@@ -69,7 +69,7 @@ void camera_initializer(ParticleContainerClass &pc, const CCTK_REAL *real_params
         assert(particle_tile.GetArrayOfStructs().size() == 0);
         particle_tile.resize(num_pixels);
         auto arrdata = particle_tile.GetStructOfArrays().realarray();
-        auto ptd = particle_tile.GetParticleTileData();
+        auto ptd = particle_tile.getParticleTileData();
 
         #pragma omp parallel for
         for (int i = 0; i < num_pixels_width; i++) {
