@@ -3,6 +3,21 @@
 #include <AMReX_MFIter.H>
 #include "AMReX_ParallelDescriptor.H"
 
+#include <AMReX_Box.H>
+#include <AMReX_Config.H>
+#include <AMReX_Math.H>
+#include <AMReX_REAL.H>
+#include <AMReX_Random.H>
+#include <AMReX_RandomEngine.H>
+#include <AMReX_Scan.H>
+#include <cctk.h>
+#include <cmath>
+#include <iostream>
+
+#include "AMReX_Array.H"
+#include "AMReX_GpuDevice.H"
+#include "Interpolator.hxx"
+
 #define DEG2RAD 0.01745329251
 
 void gramSchmidtProcess(CCTK_ARGUMENTS, CCTK_REAL* e0, CCTK_REAL* e1, CCTK_REAL* e2, CCTK_REAL* e3, const Metric* metric) { //use Gram-Schmidt Process to turn e0, e1, e2, and e3 into orthonormal vectors for the camera's POV (see https://arxiv.org/pdf/1410.7775)
