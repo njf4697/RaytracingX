@@ -65,8 +65,10 @@ void vectorToOneFormArr(CCTK_REAL* X_oneform, const CCTK_REAL* X_vector, const C
 void projectUontoV(CCTK_REAL* X, const CCTK_REAL* U, const CCTK_REAL* V, const Metric* m); //utilities.cc
 void normalize(CCTK_REAL* X_norm, const CCTK_REAL* X, const Metric* m); //utilities.cc
 CCTK_REAL getTimeComponentOf4Velocity(const CCTK_REAL vx, const CCTK_REAL vy, const CCTK_REAL vz, const Metric* m); //utilities.cc
+namespace R_photons_init {
 template <typename StructType, typename ParticleContainerClass>
 void camera_initializer(ParticleContainerClass &pc, const CCTK_REAL *real_params, const CCTK_INT *int_params);
+}
 void setup_camera_initializer_ints(CCTK_ARGUMENTS, CCTK_INT* int_params);
 void setup_camera_initializer_reals(CCTK_ARGUMENTS, CCTK_REAL* real_params);
 

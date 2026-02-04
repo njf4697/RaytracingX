@@ -3,21 +3,6 @@
 #include <AMReX_MFIter.H>
 #include "AMReX_ParallelDescriptor.H"
 
-#include <AMReX_Box.H>
-#include <AMReX_Config.H>
-#include <AMReX_Math.H>
-#include <AMReX_REAL.H>
-#include <AMReX_Random.H>
-#include <AMReX_RandomEngine.H>
-#include <AMReX_Scan.H>
-#include <cctk.h>
-#include <cmath>
-#include <iostream>
-
-#include "AMReX_Array.H"
-#include "AMReX_GpuDevice.H"
-#include "Interpolator.hxx"
-
 #define DEG2RAD 0.01745329251
 
 void gramSchmidtProcess(CCTK_ARGUMENTS, CCTK_REAL* e0, CCTK_REAL* e1, CCTK_REAL* e2, CCTK_REAL* e3, const Metric* metric) { //use Gram-Schmidt Process to turn e0, e1, e2, and e3 into orthonormal vectors for the camera's POV (see https://arxiv.org/pdf/1410.7775)
@@ -115,6 +100,8 @@ void setup_camera_initializer_ints(CCTK_ARGUMENTS, CCTK_INT* int_params) {
     int_params[1] = num_pixels_height;
 }
 
+namespace R_photons_init {
+
 template <typename StructType, typename ParticleContainerClass>
 void camera_initializer(ParticleContainerClass &pc, const CCTK_REAL *real_params, const CCTK_INT *int_params) {
     CCTK_INFO("Initializing particles using the RaytracingX::camera_initializer");
@@ -205,4 +192,6 @@ void camera_initializer(ParticleContainerClass &pc, const CCTK_REAL *real_params
 
         iteration++;
     }
+}
+
 }
