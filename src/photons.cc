@@ -41,7 +41,7 @@ extern "C" void PhotonsContainesetup(CCTK_ARGUMENTS) {
       photons.push_back(std::make_unique<PC>(patchdata.amrcore.get()));
 
       auto &pc = photons.at(patch);
-      pc->initialize(photons_init::camera_initializer<ParticleData, PC>,
+      pc->initialize(camera_initializer<ParticleData, PC>,
                      real_params, int_params);
     }
   }
