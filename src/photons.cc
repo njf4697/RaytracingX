@@ -40,7 +40,7 @@ extern "C" void R_PhotonsContainer_setup(CCTK_ARGUMENTS) {
     if (r_photons.size() < CarpetX::ghext->num_patches()) {
       r_photons.push_back(std::make_unique<PC>(patchdata.amrcore.get()));
 
-      auto &pc = photons.at(patch);
+      auto &pc = r_photons.at(patch);
       pc->initialize(camera_initializer<ParticleData, PC>,
                      real_params, int_params);
     }
