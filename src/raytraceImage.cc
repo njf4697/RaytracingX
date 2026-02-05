@@ -100,6 +100,8 @@ void setup_camera_initializer_ints(CCTK_ARGUMENTS, CCTK_INT* int_params) {
     int_params[1] = num_pixels_height;
 }
 
+namespace r_photons_init {
+
 template <typename StructType, typename ParticleContainerClass>
 void camera_initializer(ParticleContainerClass &pc, const CCTK_REAL *real_params, const CCTK_INT *int_params) {
     CCTK_INFO("Initializing particles using the RaytracingX::camera_initializer");
@@ -190,4 +192,6 @@ void camera_initializer(ParticleContainerClass &pc, const CCTK_REAL *real_params
 
         iteration++;
     }
+}
+
 }
