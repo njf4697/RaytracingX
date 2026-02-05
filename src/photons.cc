@@ -22,7 +22,7 @@ using ParticleData = Photons::PhotonsData;
 using PC = Containers::PhotonsContainer<ParticleData>;
 std::vector<std::unique_ptr<PC>> photons;
 
-extern "C" void PhotonsContainesetup(CCTK_ARGUMENTS) {
+extern "C" void PhotonsContainer_setup(CCTK_ARGUMENTS) {
   DECLARE_CCTK_ARGUMENTS;
   DECLARE_CCTK_PARAMETERS;
 
@@ -61,7 +61,7 @@ extern "C" void PhotonsContainesetup(CCTK_ARGUMENTS) {
   }
 }
 
-extern "C" void PhotonsContaineevolve(CCTK_ARGUMENTS) {
+extern "C" void PhotonsContainer_evolve(CCTK_ARGUMENTS) {
   DECLARE_CCTK_PARAMETERS;
   DECLARE_CCTK_ARGUMENTS;
 
@@ -127,7 +127,7 @@ extern "C" void PhotonsContaineevolve(CCTK_ARGUMENTS) {
   }
 }
 
-extern "C" void PhotonsContaineprint(CCTK_ARGUMENTS) {
+extern "C" void PhotonsContainer_print(CCTK_ARGUMENTS) {
   DECLARE_CCTK_PARAMETERS;
 
   CCTK_INFO("Printing particles to files");
@@ -141,7 +141,7 @@ extern "C" void PhotonsContaineprint(CCTK_ARGUMENTS) {
   }
 }
 
-extern "C" int PhotonsContainefinal_cleanup() {
+extern "C" int PhotonsContainer_final_cleanup() {
   amrex::Gpu::Device::synchronize();
   photons.clear();
   return 0;
