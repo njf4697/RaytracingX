@@ -20,9 +20,9 @@
 
 using ParticleData = Photons::PhotonsData;
 using PC = Containers::PhotonsContainer<ParticleData>;
-std::vector<std::unique_ptr<PC>> photons;
+std::vector<std::unique_ptr<PC>> r_photons;
 
-extern "C" void PhotonsContainer_setup(CCTK_ARGUMENTS) {
+extern "C" void R_PhotonsContainer_setup(CCTK_ARGUMENTS) {
   DECLARE_CCTK_ARGUMENTS;
   DECLARE_CCTK_PARAMETERS;
 
@@ -37,8 +37,8 @@ extern "C" void PhotonsContainer_setup(CCTK_ARGUMENTS) {
 
   for (int patch = 0; patch < CarpetX::ghext->num_patches(); ++patch) {
     const auto &patchdata = CarpetX::ghext->patchdata.at(patch);
-    if (photons.size() < CarpetX::ghext->num_patches()) {
-      photons.push_back(std::make_unique<PC>(patchdata.amrcore.get()));
+    if (r_photons.size() < CarpetX::ghext->num_patches()) {
+      r_photons.push_back(std::make_unique<PC>(patchdata.amrcore.get()));
 
       auto &pc = photons.at(patch);
       pc->initialize(camera_initializer<ParticleData, PC>,
@@ -47,7 +47,7 @@ extern "C" void PhotonsContainer_setup(CCTK_ARGUMENTS) {
   }
 
   for (int patch = 0; patch < CarpetX::ghext->num_patches(); ++patch) {
-    auto &pc = photons.at(patch);
+    auto &pc = r_photons.at(patch);
     auto &pd = CarpetX::ghext->patchdata.at(patch);
     for (int lev = 0; lev < pd.leveldata.size(); ++lev) {
 
@@ -61,7 +61,7 @@ extern "C" void PhotonsContainer_setup(CCTK_ARGUMENTS) {
   }
 }
 
-extern "C" void PhotonsContainer_evolve(CCTK_ARGUMENTS) {
+extern "C" void R_PhotonsContainer_evolve(CCTK_ARGUMENTS) {
   DECLARE_CCTK_PARAMETERS;
   DECLARE_CCTK_ARGUMENTS;
 
@@ -78,7 +78,7 @@ extern "C" void PhotonsContainer_evolve(CCTK_ARGUMENTS) {
   assert(gi_curv >= 0 && "Failed to get the curvature group index");
 
   for (int patch = 0; patch < CarpetX::ghext->num_patches(); ++patch) {
-    auto &pc = photons.at(patch);
+    auto &pc = r_photons.at(patch);
     auto &pd = CarpetX::ghext->patchdata.at(patch);
     for (int lev = 0; lev < pd.leveldata.size(); ++lev) {
       const auto &ld = pd.leveldata.at(lev);
@@ -117,7 +117,7 @@ extern "C" void PhotonsContainer_evolve(CCTK_ARGUMENTS) {
       region_9_radius, region_10_radius};
 
   for (int patch = 0; patch < CarpetX::ghext->num_patches(); ++patch) {
-    auto &pc = photons.at(patch);
+    auto &pc = r_photons.at(patch);
     auto &pd = CarpetX::ghext->patchdata.at(patch);
     for (int lev = 0; (lev < pd.leveldata.size()) & banned_regions; ++lev) {
       pc->check_banned_zones(lev, banned_regions, regions_x, regions_y,
@@ -127,13 +127,13 @@ extern "C" void PhotonsContainer_evolve(CCTK_ARGUMENTS) {
   }
 }
 
-extern "C" void PhotonsContainer_print(CCTK_ARGUMENTS) {
+extern "C" void R_PhotonsContainer_print(CCTK_ARGUMENTS) {
   DECLARE_CCTK_PARAMETERS;
 
   CCTK_INFO("Printing particles to files");
 
   for (int patch = 0; patch < CarpetX::ghext->num_patches(); ++patch) {
-    auto &pc = photons.at(patch);
+    auto &pc = r_photons.at(patch);
     pc->outputParticlesPlot(CCTK_PASS_CTOC, particle_plot_every,
                             std::string(out_dir));
     pc->outputParticlesAscii(CCTK_PASS_CTOC, particle_tsv_every,
@@ -141,8 +141,8 @@ extern "C" void PhotonsContainer_print(CCTK_ARGUMENTS) {
   }
 }
 
-extern "C" int PhotonsContainer_final_cleanup() {
+extern "C" int R_PhotonsContainer_final_cleanup() {
   amrex::Gpu::Device::synchronize();
-  photons.clear();
+  r_photons.clear();
   return 0;
 }
