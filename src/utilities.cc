@@ -56,7 +56,7 @@ void normalize(CCTK_REAL* X_norm, const CCTK_REAL* X, const Metric* m) { //X_{no
 }
 
 
-CCTK_REAL getTimeComponentOf4Velocity(const CCTK_REAL vx, const CCTK_REAL vy, const CCTK_REAL vz, const Metric* m) { //from knowing v^1, v^2, v^3 and having v \cdot v = -1, find v^0
+CCTK_REAL getTimeComponentOf4Velocity(const CCTK_REAL vx, const CCTK_REAL vy, const CCTK_REAL vz, Metric* m) { //from knowing v^1, v^2, v^3 and having v \cdot v = -1, find v^0
     //g_{\mu\nu} v^\mu v^\nu = -1
     //g_{00} v^0 v^0 + 2v^0 (g_{01} v^1 + g_{02} v^2 + g_{03} v^3) + (g_{ij}) + 1 = 0
     //Ax^2 + Bx + C = 0
@@ -72,7 +72,7 @@ CCTK_REAL getTimeComponentOf4Velocity(const CCTK_REAL vx, const CCTK_REAL vy, co
 
     printf((std::to_string(v0) + "\n").c_str());
 
-    printf((m->to_string()).c_str());
+    printf(m->to_string().c_str());
 
     if (innerProduct(v, v, m) + 1 < 0.0000000001) {
         return v0;
