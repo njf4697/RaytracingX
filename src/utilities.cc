@@ -72,6 +72,8 @@ CCTK_REAL getTimeComponentOf4Velocity(const CCTK_REAL vx, const CCTK_REAL vy, co
 
     printf(std::to_string(v0) + "\n");
 
+    printf(m.to_string());
+
     if (innerProduct(v, v, m) + 1 < 0.0000000001) {
         return v0;
     }
