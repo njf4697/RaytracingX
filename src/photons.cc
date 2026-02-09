@@ -26,8 +26,6 @@ extern "C" void R_PhotonsContainer_setup(CCTK_ARGUMENTS) {
   DECLARE_CCTK_ARGUMENTS;
   DECLARE_CCTK_PARAMETERS;
 
-  if (CCTK_MyProc(cctkGH) != 0) return;
-
   const int tl = 0;
   const int gi_metric = CCTK_GroupIndex("ADMBaseX::metric");
   assert(gi_metric >= 0 && "Failed to get the metric group index");
@@ -36,6 +34,8 @@ extern "C" void R_PhotonsContainer_setup(CCTK_ARGUMENTS) {
   CCTK_REAL real_params[32];
   setup_camera_initializer_reals(CCTK_PASS_CTOC, real_params);
   setup_camera_initializer_ints(CCTK_PASS_CTOC, int_params);
+
+  if (CCTK_MyProc(cctkGH) != 0) return;
 
   for (int patch = 0; patch < CarpetX::ghext->num_patches(); ++patch) {
     const auto &patchdata = CarpetX::ghext->patchdata.at(patch);
