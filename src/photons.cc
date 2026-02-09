@@ -189,9 +189,13 @@ void camera_initializer(ParticleContainerClass &pc, const CCTK_REAL *real_params
 
     int iteration = 0;
 
+    printf("test1\n");
+
     // Iterating over all the tiles of the particle data structure
     for (amrex::MFIter mfi = pc.MakeMFIter(level); mfi.isValid(); ++mfi) {
         assert(iteration == 0);
+
+        printf("test2\n");
 
         auto &particles = pc.GetParticles(level);
         auto &particle_tile = pc.DefineAndReturnParticleTile(level, mfi);
@@ -243,4 +247,6 @@ void camera_initializer(ParticleContainerClass &pc, const CCTK_REAL *real_params
 
         iteration++;
     }
+
+    printf("test3\n");
 }
