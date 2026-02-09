@@ -204,9 +204,13 @@ void camera_initializer(ParticleContainerClass &pc, const CCTK_REAL *real_params
         auto arrdata = particle_tile.GetStructOfArrays().realarray();
         auto ptd = particle_tile.getParticleTileData();
 
+        printf("test3\n");
+
         #pragma omp parallel for
         for (int i = 0; i < num_pixels_width; i++) {
             for (int j = 0; j < num_pixels_height; j++) { //create 4-vector \chi parallel to geodesic and fill GeodesicInitialConditions struct for each pixel (see https://arxiv.org/pdf/1410.777)
+
+                printf("test4\n");
 
                 int pidx = i*num_pixels_width + j;
 
@@ -237,6 +241,8 @@ void camera_initializer(ParticleContainerClass &pc, const CCTK_REAL *real_params
                 arrdata[StructType::vy][pidx] = chi_lower[1] * A;
                 arrdata[StructType::vz][pidx] = chi_lower[2] * A;
                 arrdata[StructType::ln_E][pidx] = 0;
+
+                printf("test5\n");
             }   
         
             pc.Redistribute();
@@ -248,5 +254,5 @@ void camera_initializer(ParticleContainerClass &pc, const CCTK_REAL *real_params
         iteration++;
     }
 
-    printf("test3\n");
+    
 }
