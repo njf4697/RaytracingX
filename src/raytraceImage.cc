@@ -49,6 +49,8 @@ void setup_camera_initializer_reals(CCTK_ARGUMENTS, CCTK_REAL* real_params) {
     Metric metric;
     interpolateMetricAtPoint(CCTK_PASS_CTOC, camera_pos[0], camera_pos[1], camera_pos[2], &metric); //interpolate metric values and store in Metric struct
 
+    if (CCTK_MyProc(cctkGH) != 0) return;
+
     CCTK_REAL e0[4];
     CCTK_REAL e1[4];
     CCTK_REAL e2[4];
