@@ -26,6 +26,8 @@ extern "C" void R_PhotonsContainer_setup(CCTK_ARGUMENTS) {
   DECLARE_CCTK_ARGUMENTS;
   DECLARE_CCTK_PARAMETERS;
 
+  if (CCTK_MyProc(cctkGH) != 0) return;
+
   const int tl = 0;
   const int gi_metric = CCTK_GroupIndex("ADMBaseX::metric");
   assert(gi_metric >= 0 && "Failed to get the metric group index");
@@ -64,6 +66,8 @@ extern "C" void R_PhotonsContainer_setup(CCTK_ARGUMENTS) {
 extern "C" void R_PhotonsContainer_evolve(CCTK_ARGUMENTS) {
   DECLARE_CCTK_PARAMETERS;
   DECLARE_CCTK_ARGUMENTS;
+
+  if (CCTK_MyProc(cctkGH) != 0) return;
 
   const CCTK_REAL dt = CCTK_DELTA_TIME;
 
@@ -129,6 +133,8 @@ extern "C" void R_PhotonsContainer_evolve(CCTK_ARGUMENTS) {
 
 extern "C" void R_PhotonsContainer_print(CCTK_ARGUMENTS) {
   DECLARE_CCTK_PARAMETERS;
+
+  if (CCTK_MyProc(cctkGH) != 0) return;
 
   CCTK_INFO("Printing particles to files");
 
