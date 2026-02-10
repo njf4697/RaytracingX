@@ -252,12 +252,12 @@ void camera_initializer(ParticleContainerClass &pc, const CCTK_REAL *real_params
 
             CCTK_VINFO("%d particles created", pc.TotalNumberOfParticles()); 
             
-            printf("test6\n");
+            printf("test7\n");
         }
-        printf("test7\n");
+        printf("test8\n");
 
         iteration++;
     }
 
-    printf("test8\n");
+    printf("test9\n");
 }
