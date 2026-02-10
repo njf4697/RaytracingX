@@ -69,7 +69,7 @@ CCTK_REAL getTimeComponentOf4Velocity(const CCTK_REAL vx, const CCTK_REAL vy, co
     CCTK_REAL v0 = (-B + sqrt(B*B - 4*A*C))/(2*A);
     CCTK_REAL v[4] = {v0, vx, vy, vz};
 
-    printf(("inner prod: " + std::to_string(innerProduct(v, v, m)) + "\n").c_str());
+    CCTK_VWARN(("inner prod: " + std::to_string(innerProduct(v, v, m)) + "\n").c_str());
 
     printf(m->to_string().c_str());
 
