@@ -35,8 +35,6 @@ extern "C" void R_PhotonsContainer_setup(CCTK_ARGUMENTS) {
   setup_camera_initializer_reals(CCTK_PASS_CTOC, real_params);
   setup_camera_initializer_ints(CCTK_PASS_CTOC, int_params);
 
-  if (CCTK_MyProc(cctkGH) != 0) return;
-
   for (int patch = 0; patch < CarpetX::ghext->num_patches(); ++patch) {
     const auto &patchdata = CarpetX::ghext->patchdata.at(patch);
     if (r_photons.size() < CarpetX::ghext->num_patches()) {
@@ -66,8 +64,6 @@ extern "C" void R_PhotonsContainer_setup(CCTK_ARGUMENTS) {
 extern "C" void R_PhotonsContainer_evolve(CCTK_ARGUMENTS) {
   DECLARE_CCTK_PARAMETERS;
   DECLARE_CCTK_ARGUMENTS;
-
-  if (CCTK_MyProc(cctkGH) != 0) return;
 
   const CCTK_REAL dt = CCTK_DELTA_TIME;
 
@@ -133,8 +129,6 @@ extern "C" void R_PhotonsContainer_evolve(CCTK_ARGUMENTS) {
 
 extern "C" void R_PhotonsContainer_print(CCTK_ARGUMENTS) {
   DECLARE_CCTK_PARAMETERS;
-
-  if (CCTK_MyProc(cctkGH) != 0) return;
 
   CCTK_INFO("Printing particles to files");
 
