@@ -243,21 +243,16 @@ void camera_initializer(ParticleContainerClass &pc, const CCTK_REAL *real_params
                 arrdata[StructType::ln_E][pidx] = 0;
 
                 printf("test5\n");
-            }   
-            
-            printf("test6\n");
-
-            pc.Redistribute();
-            pc.SortParticlesByCell(); 
-
-            CCTK_VINFO("%d particles created", pc.TotalNumberOfParticles()); 
-            
-            printf("test7\n");
+            }     
         }
-        printf("test8\n");
-
-        iteration++;
     }
 
-    printf("test9\n");
+    printf("test6\n");
+
+    pc.Redistribute();
+    pc.SortParticlesByCell();
+    CCTK_VINFO("%d particles created", pc.TotalNumberOfParticles()); 
+    iteration++;
+
+    printf("test7\n");
 }
