@@ -11,7 +11,7 @@ void interpolateMetricAtPoint(CCTK_ARGUMENTS, const CCTK_REAL x, const CCTK_REAL
     //}
 
     //only raytrace on one processor
-    const CCTK_INT nPoints = (CCTK_MyProc(cctkGH) == 0) ? 1 : 0;
+    //const CCTK_INT nPoints = (CCTK_MyProc(cctkGH) == 0) ? 1 : 0;
 
     std::array<std::vector<CCTK_REAL>, 3> location_;
     location_[0].push_back(x);
