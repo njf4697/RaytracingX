@@ -181,32 +181,26 @@ void camera_initializer(ParticleContainerClass &pc, const CCTK_REAL *real_params
     const CCTK_INT level = 0;
     const CCTK_INT num_pixels = num_pixels_width * num_pixels_height;
 
-    int iteration = 0;
+    const int n_procs = amrex::ParallelDescriptor::NProcs();
+    const int proc_id = amrex::ParallelDescriptor::MyProc();
 
-    printf("test1\n");
+    const int local_particles_size = num_pixels / n_procs + (proc_id < num_pixels % n_procs);
+    const int local_offset = proc_id * num_pixels / n_procs + std::min(proc_id, num_pixels % n_procs);
 
     // Iterating over all the tiles of the particle data structure
     for (amrex::MFIter mfi = pc.MakeMFIter(level); mfi.isValid(); ++mfi) {
-        assert(iteration == 0);
-
-        printf("test2\n");
 
         auto &particles = pc.GetParticles(level);
         auto &particle_tile = pc.DefineAndReturnParticleTile(level, mfi);
         assert(particle_tile.GetArrayOfStructs().size() == 0);
-        particle_tile.resize(num_pixels);
+        particle_tile.resize(local_particles_size);
         auto arrdata = particle_tile.GetStructOfArrays().realarray();
         auto ptd = particle_tile.getParticleTileData();
 
-        printf("test3\n");
-
         #pragma omp parallel for
-        for (int i = 0; i < num_pixels_width; i++) {
-            for (int j = 0; j < num_pixels_height; j++) { //create 4-vector \chi parallel to geodesic and fill GeodesicInitialConditions struct for each pixel (see https://arxiv.org/pdf/1410.777)
-
-                printf("test4\n");
-
-                int pidx = i*num_pixels_width + j;
+        for (int pidx = local_offset; pidx < local_offset + local_particles_size; pidx++) { //create 4-vector \chi parallel to geodesic and fill geodesic initial conditions for each pixel (see https://arxiv.org/pdf/1410.777)
+                int i = pidx / num_pixels_width;
+                int j = pidx % num_pixels_width;
 
                 CCTK_REAL a_adj = (2.0 * i / num_pixels_width - 1)*tan(alpha_h / 2.0); // a_{adj} = (2a-1)tan(\alpha_h/2)
                 CCTK_REAL b_adj = (2.0 * j / num_pixels_height - 1)*tan(alpha_v / 2.0); // b_{adj} = (2b-1)tan(\alpha_v/2)
@@ -235,18 +229,10 @@ void camera_initializer(ParticleContainerClass &pc, const CCTK_REAL *real_params
                 arrdata[StructType::vy][pidx] = chi_lower[1] * A;
                 arrdata[StructType::vz][pidx] = chi_lower[2] * A;
                 arrdata[StructType::ln_E][pidx] = 0;
-
-                printf("test5\n");
-            }     
         }
     }
-
-    printf("test6\n");
-
     pc.Redistribute();
     pc.SortParticlesByCell();
     CCTK_VINFO("%d particles created", pc.TotalNumberOfParticles()); 
     iteration++;
-
-    printf("test7\n");
 }
