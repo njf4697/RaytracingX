@@ -234,5 +234,4 @@ void camera_initializer(ParticleContainerClass &pc, const CCTK_REAL *real_params
     pc.Redistribute();
     pc.SortParticlesByCell();
     CCTK_VINFO("%d particles created", pc.TotalNumberOfParticles()); 
-    iteration++;
 }
