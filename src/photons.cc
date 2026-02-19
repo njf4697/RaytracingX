@@ -187,6 +187,10 @@ void camera_initializer(ParticleContainerClass &pc, const CCTK_REAL *real_params
     const int local_particles_size = num_pixels / n_procs + (proc_id < num_pixels % n_procs);
     const int local_offset = proc_id * num_pixels / n_procs + std::min(proc_id, num_pixels % n_procs);
 
+    CCTK_VWarn(1, __LINE__, __FILE__, CCTK_THORNSTRING, ("proc: " + std::to_string(proc_id) + "\n").c_str());
+    CCTK_VWarn(1, __LINE__, __FILE__, CCTK_THORNSTRING, ("local size: " + std::to_string(local_particles_size) + "\n").c_str());
+    CCTK_VWarn(1, __LINE__, __FILE__, CCTK_THORNSTRING, ("local offset: " + std::to_string(local_offset) + "\n").c_str());
+
     // Iterating over all the tiles of the particle data structure
     for (amrex::MFIter mfi = pc.MakeMFIter(level); mfi.isValid(); ++mfi) {
 
@@ -199,6 +203,8 @@ void camera_initializer(ParticleContainerClass &pc, const CCTK_REAL *real_params
 
         #pragma omp parallel for
         for (int pidx = local_offset; pidx < local_offset + local_particles_size; pidx++) { //create 4-vector \chi parallel to geodesic and fill geodesic initial conditions for each pixel (see https://arxiv.org/pdf/1410.777)
+                CCTK_VWarn(1, __LINE__, __FILE__, CCTK_THORNSTRING, ("proc: " + std::to_string(proc_id) + " pidx: " + std::to_string(pidx) + "\n").c_str());
+
                 int i = pidx / num_pixels_width;
                 int j = pidx % num_pixels_width;
 
