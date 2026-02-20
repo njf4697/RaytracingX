@@ -190,8 +190,7 @@ void camera_initializer(ParticleContainerClass &pc, const CCTK_REAL *real_params
     // Iterating over all the tiles of the particle data structure
     for (amrex::MFIter mfi = pc.MakeMFIter(level); mfi.isValid(); ++mfi) {
 
-        CCTK_VWarn(1, __LINE__, __FILE__, CCTK_THORNSTRING, ("proc: " + std::to_string(proc_id) + " local size: " + std::to_string(local_particles_size) + " local offset: " + std::to_string(local_offset) + " level: " + std::to_string(level) + " mfi: " + std::to_string(mfi) + "\n").c_str());
-
+        CCTK_VWarn(1, __LINE__, __FILE__, CCTK_THORNSTRING, ("proc: " + std::to_string(proc_id) + " local size: " + std::to_string(local_particles_size) + " local offset: " + std::to_string(local_offset) + " level: " + std::to_string(level) + " mfi: " + std::to_string((int) mfi) + "\n").c_str());
 
         auto &particles = pc.GetParticles(level);
         auto &particle_tile = pc.DefineAndReturnParticleTile(level, mfi);
