@@ -185,7 +185,7 @@ void camera_initializer(ParticleContainerClass &pc, const CCTK_REAL *real_params
     const int proc_id = amrex::ParallelDescriptor::MyProc();
 
     const int local_particles_size = num_pixels / n_procs + (proc_id < num_pixels % n_procs);
-    const int local_offset = proc_id * num_pixels / n_procs + std::min(proc_id, num_pixels % n_procs);
+    const int local_offset = proc_id * (num_pixels / n_procs) + std::min(proc_id, num_pixels % n_procs);
 
     // Iterating over all the tiles of the particle data structure
     for (amrex::MFIter mfi = pc.MakeMFIter(level); mfi.isValid(); ++mfi) {
