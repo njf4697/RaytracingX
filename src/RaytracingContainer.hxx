@@ -6,6 +6,8 @@
 #include <AMReX_ParallelDescriptor.H>
 #include <CParameters.h>
 
+#ifndef RAYTRACINGCONTAINER_HXX
+
 namespace RaytracingPhotons {
 
 struct RaytracingPhotonsData : public Photons::PhotonsData{
@@ -18,7 +20,7 @@ struct RaytracingPhotonsData : public Photons::PhotonsData{
         index,           /**< Pixel index number.*/
         n_attributes, /**< Total number of attributes*/
     }; // enum
-}
+};
 
 }
 
@@ -31,3 +33,5 @@ struct RaytracingPhotonsData : public Photons::PhotonsData{
 //
 //    }
 //}
+
+#endif
