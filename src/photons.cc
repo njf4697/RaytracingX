@@ -201,7 +201,6 @@ void camera_initializer(ParticleContainerClass &pc, const CCTK_REAL *real_params
 
         #pragma omp parallel for
         for (int pidx = local_offset; pidx < local_offset + local_particles_size; pidx++) { //create 4-vector \chi parallel to geodesic and fill geodesic initial conditions for each pixel (see https://arxiv.org/pdf/1410.777)
-                CCTK_VWarn(1, __LINE__, __FILE__, CCTK_THORNSTRING, ("proc: " + std::to_string(proc_id) + " pidx: " + std::to_string(pidx) + "\n").c_str());
 
                 int i = pidx / num_pixels_width;
                 int j = pidx % num_pixels_width;
@@ -217,7 +216,9 @@ void camera_initializer(ParticleContainerClass &pc, const CCTK_REAL *real_params
                 chi[2] = C*e0[2] - e1[2] - b_adj*e2[2] - a_adj*e3[2];
                 chi[3] = C*e0[3] - e1[3] - b_adj*e2[3] - a_adj*e3[3];
 
-                printf("i=%i, j=%i, chi=[%0.2f, %0.2f, %0.2f, %0.2f]\n",i,j,chi[0],chi[1],chi[2],chi[3]);
+                CCTK_VWarn(1, __LINE__, __FILE__, CCTK_THORNSTRING, ("i=" + std::to_string(i) + ", j=" + std::to_string(j) + ", chi=[" + std::to_string(chi[0]) + ", " + std::to_string(chi[1]) + ", " + std::to_string(chi[2]) + ", " + std::to_string(chi[3]) + "]").c_str());
+                CCTK_VWarn(1, __LINE__, __FILE__, CCTK_THORNSTRING, ("e0=[" + std::to_string(e[0]) + ", " + std::to_string(e[1]) + ", " + std::to_string(e[2]) + ", " + std::to_string(e[3]) + "]").c_str());
+
 
                 CCTK_REAL chi_lower[4];
                 vectorToOneFormArr(chi_lower, chi, real_params);
