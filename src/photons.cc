@@ -234,9 +234,9 @@ void camera_initializer(ParticleContainerClass &pc, const CCTK_REAL *real_params
                 ptd.pos(1, pidx) = camera_pos[1];
                 ptd.pos(2, pidx) = camera_pos[2];
                 CCTK_REAL A = 1 / lapse*chi[0];
-                arrdata[StructType::vx][pidx] = chi_lower[0] * A;
-                arrdata[StructType::vy][pidx] = chi_lower[1] * A;
-                arrdata[StructType::vz][pidx] = chi_lower[2] * A;
+                arrdata[StructType::vx][pidx] = chi_lower[1] * A;
+                arrdata[StructType::vy][pidx] = chi_lower[2] * A;
+                arrdata[StructType::vz][pidx] = chi_lower[3] * A;
                 arrdata[StructType::ln_E][pidx] = 0;
                 arrdata[StructType::tau][pidx] = 0;
                 arrdata[StructType::index][pidx] = (CCTK_REAL) pidx;
