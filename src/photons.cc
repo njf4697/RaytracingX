@@ -218,7 +218,10 @@ void camera_initializer(ParticleContainerClass &pc, const CCTK_REAL *real_params
                 chi[3] = C*e0[3] - e1[3] - b_adj*e2[3] - a_adj*e3[3];
 
                 CCTK_VWarn(1, __LINE__, __FILE__, CCTK_THORNSTRING, ("i=" + std::to_string(i) + ", j=" + std::to_string(j) + ", chi=[" + std::to_string(chi[0]) + ", " + std::to_string(chi[1]) + ", " + std::to_string(chi[2]) + ", " + std::to_string(chi[3]) + "]").c_str());
-                CCTK_VWarn(1, __LINE__, __FILE__, CCTK_THORNSTRING, ("e0=[" + std::to_string(e0[0]) + ", " + std::to_string(e0[1]) + ", " + std::to_string(e0[2]) + ", " + std::to_string(e0[3]) + "]").c_str());
+                printf(("e0=[" + std::to_string(e0[0]) + ", " + std::to_string(e0[1]) + ", " + std::to_string(e0[2]) + ", " + std::to_string(e0[3]) + "]").c_str());
+                printf(("e1=[" + std::to_string(e1[0]) + ", " + std::to_string(e1[1]) + ", " + std::to_string(e1[2]) + ", " + std::to_string(e1[3]) + "]").c_str());
+                printf(("e2=[" + std::to_string(e2[0]) + ", " + std::to_string(e2[1]) + ", " + std::to_string(e2[2]) + ", " + std::to_string(e2[3]) + "]").c_str());
+                printf(("e3=[" + std::to_string(e3[0]) + ", " + std::to_string(e3[1]) + ", " + std::to_string(e3[2]) + ", " + std::to_string(e3[3]) + "]").c_str());
 
 
                 CCTK_REAL chi_lower[4];
