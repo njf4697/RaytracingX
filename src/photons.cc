@@ -3,6 +3,7 @@
 #include "Photons.hxx"
 #include "PhotonsContainer.hxx"
 #include "raytracingx.h"
+#include "RaytracingContainer.hxx"
 #include <AMReX_ParallelDescriptor.H>
 #include <CParameters.h>
 
@@ -18,7 +19,7 @@
 #include <iostream>
 #include <loop_device.hxx>
 
-using ParticleData = Photons::PhotonsData;
+using ParticleData = RaytracingPhotons::RaytracingPhotonsData;
 using PC = Containers::PhotonsContainer<ParticleData>;
 std::vector<std::unique_ptr<PC>> r_photons;
 
@@ -217,7 +218,7 @@ void camera_initializer(ParticleContainerClass &pc, const CCTK_REAL *real_params
                 chi[3] = C*e0[3] - e1[3] - b_adj*e2[3] - a_adj*e3[3];
 
                 CCTK_VWarn(1, __LINE__, __FILE__, CCTK_THORNSTRING, ("i=" + std::to_string(i) + ", j=" + std::to_string(j) + ", chi=[" + std::to_string(chi[0]) + ", " + std::to_string(chi[1]) + ", " + std::to_string(chi[2]) + ", " + std::to_string(chi[3]) + "]").c_str());
-                CCTK_VWarn(1, __LINE__, __FILE__, CCTK_THORNSTRING, ("e0=[" + std::to_string(e[0]) + ", " + std::to_string(e[1]) + ", " + std::to_string(e[2]) + ", " + std::to_string(e[3]) + "]").c_str());
+                CCTK_VWarn(1, __LINE__, __FILE__, CCTK_THORNSTRING, ("e0=[" + std::to_string(e0[0]) + ", " + std::to_string(e0[1]) + ", " + std::to_string(e0[2]) + ", " + std::to_string(e0[3]) + "]").c_str());
 
 
                 CCTK_REAL chi_lower[4];
@@ -234,6 +235,8 @@ void camera_initializer(ParticleContainerClass &pc, const CCTK_REAL *real_params
                 arrdata[StructType::vy][pidx] = chi_lower[1] * A;
                 arrdata[StructType::vz][pidx] = chi_lower[2] * A;
                 arrdata[StructType::ln_E][pidx] = 0;
+                arrdata[StructType::tau][pidx] = 0;
+                arrdata[StructType::index][pidx] = (CCTK_REAL) pidx;
         }
     }
     pc.Redistribute();
