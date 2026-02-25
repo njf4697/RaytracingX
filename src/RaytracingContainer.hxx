@@ -9,33 +9,33 @@
 #include <AMReX_ParallelDescriptor.H>
 #include <CParameters.h>
 
-//#define CHECK_OUT_OF_BOUNDS(X,Y) out_of_bounds |= (X0Y > boundarie_hx) || (X0Y < boundarie_lx);\ //old version
-//                                 out_of_bounds |= (X1Y > boundarie_hy) || (X1Y < boundarie_ly);\
-//                                 out_of_bounds |= (X2Y > boundarie_hz) || (X2Y < boundarie_lz);
-#define CHECK_OUT_OF_BOUNDS(X,Y) if (X0Y > boundarie_hx) {\
-                                    out_of_bounds = true;      \
-                                    tau[i] = -1;               \
-                                 }                             \
-                                 if (X0Y < boundarie_lx) {\
-                                    out_of_bounds = true;      \
-                                    tau[i] = -2;               \
-                                 }                             \
-                                 if (X1Y > boundarie_hy) {\
-                                    out_of_bounds = true;      \
-                                    tau[i] = -3;               \
-                                 }                             \
-                                 if (X1Y < boundarie_ly) {\
-                                    out_of_bounds = true;      \
-                                    tau[i] = -4;               \
-                                 }                             \
-                                 if (X2Y > boundarie_hz) {\
-                                    out_of_bounds = true;      \
-                                    tau[i] = -5;               \
-                                 }                             \
-                                 if (X2Y < boundarie_lz) {\
-                                    out_of_bounds = true;      \
-                                    tau[i] = -6;               \
-                                 }                             
+//#define CHECK_OUT_OF_BOUNDS_X(X) out_of_bounds |= (X > boundarie_hx) || (X < boundarie_lx);\ //old version
+//#define CHECK_OUT_OF_BOUNDS_Y(Y) out_of_bounds |= (Y > boundarie_hy) || (Y < boundarie_ly);\
+//#define CHECK_OUT_OF_BOUNDS_Z(Z) out_of_bounds |= (Y > boundarie_hz) || (Y < boundarie_lz);
+#define CHECK_OUT_OF_BOUNDS_X(X) if (X > boundarie_hx) {  \
+                                    out_of_bounds = true; \
+                                    tau[i] = -1;          \
+                                 }                        \
+                                 if (X < boundarie_lx) {  \
+                                    out_of_bounds = true; \
+                                    tau[i] = -2;          \
+                                 }      
+#define CHECK_OUT_OF_BOUNDS_Y(Y) if (Y > boundarie_hy) {  \
+                                    out_of_bounds = true; \
+                                    tau[i] = -3;          \
+                                 }                        \
+                                 if (Y < boundarie_ly) {  \
+                                    out_of_bounds = true; \
+                                    tau[i] = -4;          \
+                                 }  
+#define CHECK_OUT_OF_BOUNDS_Z(Z) if (Z > boundarie_hz) {  \
+                                    out_of_bounds = true; \
+                                    tau[i] = -5;          \
+                                 }                        \
+                                 if (Z < boundarie_lz) {  \
+                                    out_of_bounds = true; \
+                                    tau[i] = -6;          \
+                                 }                                                   
 
 namespace RaytracingX {
 
@@ -305,7 +305,9 @@ void PhotonsContainer<StructType>::evolve(const amrex::MultiFab &lapse,
       U_tmp[6] = U[6] + 0.5 * dt * k_odd[6];
       U_tmp[7] = U[7] + 0.5 * dt * k_odd[7];
       
-      CHECK_OUT_OF_BOUNDS(U_tmp[,])
+      CHECK_OUT_OF_BOUNDS_X(U_tmp[0])
+      CHECK_OUT_OF_BOUNDS_Y(U_tmp[1])
+      CHECK_OUT_OF_BOUNDS_Z(U_tmp[2])
 
       if (out_of_bounds) {
         particles[i].id() = -1;
@@ -336,7 +338,9 @@ void PhotonsContainer<StructType>::evolve(const amrex::MultiFab &lapse,
       ln_energy[i] += (1. / 6.) * dt * (k_odd[6] + 2. * k_even[6]);
       tau[i] += (1. / 6.) * dt * (k_odd[7] + 2. * k_even[7]);
 
-      CHECK_OUT_OF_BOUNDS(U_tmp[,])
+      CHECK_OUT_OF_BOUNDS_X(U_tmp[0])
+      CHECK_OUT_OF_BOUNDS_Y(U_tmp[1])
+      CHECK_OUT_OF_BOUNDS_Z(U_tmp[2])
 
       if (out_of_bounds) {
         particles[i].id() = -1;
@@ -355,7 +359,9 @@ void PhotonsContainer<StructType>::evolve(const amrex::MultiFab &lapse,
       U_tmp[5] = U[5] + dt * k_odd[5];
       U_tmp[6] = U[6] + dt * k_odd[6];
 
-      CHECK_OUT_OF_BOUNDS(U_tmp[,])
+      CHECK_OUT_OF_BOUNDS_X(U_tmp[0])
+      CHECK_OUT_OF_BOUNDS_Y(U_tmp[1])
+      CHECK_OUT_OF_BOUNDS_Z(U_tmp[2])
 
       if (out_of_bounds) {
         particles[i].id() = -1;
@@ -376,7 +382,9 @@ void PhotonsContainer<StructType>::evolve(const amrex::MultiFab &lapse,
       ln_energy[i] += (1. / 6.) * dt * (2. * k_odd[6] + k_even[6]);
       tau[i] += (1. / 6.) * dt * (2. * k_odd[7] + k_even[7]);
 
-      CHECK_OUT_OF_BOUNDS(particles[i].pos(,))
+      CHECK_OUT_OF_BOUNDS_X(particles[i].pos(0))
+      CHECK_OUT_OF_BOUNDS_Y(particles[i].pos(1))
+      CHECK_OUT_OF_BOUNDS_Z(particles[i].pos(2))
       out_of_bounds |= (tau[i] > 1.);
 
       if (out_of_bounds) {
