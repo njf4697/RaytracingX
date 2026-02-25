@@ -114,8 +114,8 @@ public:
 
   using GInX::PhotonsContainer<StructType>::GInX::PhotonsContainer<StructType>;
 
-  RaytracingPhotonsContainer(amrex::AmrCore *amr_core, const CCTK_REAL m)
-    : GInX::PhotonsContainer<StructType>(amr_core), mass{m};
+  RaytracingPhotonsContainer(amrex::AmrCore *amr_core)
+    : GInX::PhotonsContainer<StructType>(amr_core);
 
   ~RaytracingPhotonsContainer() = default;
 
