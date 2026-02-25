@@ -263,6 +263,7 @@ void evolve(const amrex::MultiFab &lapse,
             const amrex::MultiFab &shift,
             const amrex::MultiFab &metric,
             const amrex::MultiFab &curv,
+            const amrex::MultiFab &rho,
             const CCTK_REAL &dt, const int &lev) {
 
   const auto plo0 = this->Geom(0).ProbLoArray();
@@ -521,7 +522,7 @@ void evolve(const amrex::MultiFab &lapse,
 
           // Interpolate metric
           amrex::GpuArray<CCTK_REAL, 6> gamma_x;
-          interpolate_array<5>(gamma_x, metric_array, i0, j0, k0, p.pos(0),
+          GInX::interpolate_array<5>(gamma_x, metric_array, i0, j0, k0, p.pos(0),
                                p.pos(1), p.pos(2), dx, p_lo);
 
           const CCTK_REAL inv_det_gamma =
