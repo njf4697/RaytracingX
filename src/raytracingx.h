@@ -3,6 +3,7 @@
 #include <cctk_Parameters.h>
 #include <string.h>
 #include "util_Table.h"
+#include <math.h>
 
 #ifndef RAYTRACINGX
 #define RAYTRACINGX

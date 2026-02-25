@@ -1,3 +1,6 @@
+#ifndef RAYTRACINGCONTAINER
+#define RAYTRACINGCONTAINER
+
 #include <cctk.h>
 
 #include "Photons.hxx"
@@ -33,8 +36,6 @@
                                     out_of_bounds = true;      \
                                     tau[i] = -6;               \
                                  }                             
-
-#ifndef RAYTRACINGCONTAINER_HXX
 
 namespace RaytracingPhotons {
 
