@@ -37,7 +37,7 @@
                                     tau[i] = -6;               \
                                  }                             
 
-namespace RaytracingPhotons {
+namespace RaytracingX {
 
 struct RaytracingPhotonsData : public Photons::PhotonsData{
     enum {
@@ -50,10 +50,6 @@ struct RaytracingPhotonsData : public Photons::PhotonsData{
         n_attributes, /**< Total number of attributes*/
     }; // enum
 };
-
-}
-
-namespace RaytracingContainers {
 
 template <typename StructType>
 class RaytracingPhotonsContainer : public GInX::PhotonsContainer<StructType> {

@@ -19,8 +19,8 @@
 #include <iostream>
 #include <loop_device.hxx>
 
-using ParticleData = RaytracingPhotons::RaytracingPhotonsData;
-using PC = Containers::PhotonsContainer<ParticleData>;
+using ParticleData = RaytracingX::RaytracingPhotonsData;
+using PC = RaytracingX::RaytracingPhotonsContainer<ParticleData>;
 std::vector<std::unique_ptr<PC>> r_photons;
 
 extern "C" void R_PhotonsContainer_setup(CCTK_ARGUMENTS) {
