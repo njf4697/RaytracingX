@@ -112,10 +112,13 @@ public:
    * \brief Using BaseParticlesContainer constructor
    */
 
-  using GInX::PhotonsContainer<StructType>::GInX::PhotonsContainer<StructType>;
+  using Base =
+      BaseContainer::BaseParticleContainer<RaytracingPhotonsContainer<StructType>,
+                                           StructType>;
+  using Base::Base;
 
-  RaytracingPhotonsContainer(amrex::AmrCore *amr_core)
-    : GInX::PhotonsContainer<StructType>(amr_core);
+  RaytracingPhotonsContainer(amrex::AmrCore *amr_core, const CCTK_REAL m)
+      : Base(amr_core), mass{m} {};
 
   ~RaytracingPhotonsContainer() = default;
 
