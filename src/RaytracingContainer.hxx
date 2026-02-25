@@ -437,13 +437,13 @@ void evolve(const amrex::MultiFab &lapse,
       return;
     }
 
-    auto &attribs = pti.GetAttributes();
-    CCTK_REAL *AMREX_RESTRICT tau = attribs[StructType::tau].data();
-
     for (Iterator::ParticleIterator<StructType> pti(*this, level);
          pti.isValid(); ++pti) {
       const int np = pti.numParticles();
       auto *AMREX_RESTRICT particles = &(pti.GetArrayOfStructs()[0]);
+
+      auto &attribs = pti.GetAttributes();
+      CCTK_REAL *AMREX_RESTRICT tau = attribs[StructType::tau].data();
 
       auto self = this;
       amrex::ParallelFor(np, [=] AMREX_GPU_DEVICE(int i) noexcept {
@@ -562,12 +562,12 @@ void evolve(const amrex::MultiFab &lapse,
        CCTK_INFO("Redistributing particles");
      } // RaytracingPhotonsContainer::redistribute_particles
 
-    virtual void evolve(const amrex::MultiFab &lapse,
-                      const amrex::MultiFab &shift,
-                      const amrex::MultiFab &metric,
-                      const amrex::MultiFab &curv, const CCTK_REAL &dt,
-                      const int &lev) {
-                        return;
+    void evolve(const amrex::MultiFab &lapse,
+                const amrex::MultiFab &shift,
+                const amrex::MultiFab &metric,
+                const amrex::MultiFab &curv, const CCTK_REAL &dt,
+                const int &lev) {
+                    return;
     }
 
 };
