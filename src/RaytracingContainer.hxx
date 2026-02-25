@@ -39,7 +39,7 @@
 
 namespace RaytracingX {
 
-struct RaytracingPhotonsData : public Photons::PhotonsData{
+struct RaytracingPhotonsData : public GInX::PhotonsData{
     enum {
         vx = 0,       /**< Velocity's lower index on the x direction.*/
         vy,           /**< Velocity's lower index on the y direction.*/
@@ -58,9 +58,6 @@ class RaytracingPhotonsContainer : public BaseContainer::BaseParticleContainer<R
 // ##############################################################################
 //              RaytracingPhotonsContainer::METHODS DECLARATION
 // ##############################################################################
-
-// Get the mass value
-CCTK_INT get_mass() { return this->mass; }
 
 /**
  * \brief Computes the right hand side of the geodesic differential equation.
@@ -126,10 +123,12 @@ public:
 
   ~RaytracingPhotonsContainer() = default;
 
-template <typename StructType>
+// Get the mass value
+CCTK_INT get_mass() { return this->mass; }
+
 AMREX_GPU_HOST_DEVICE AMREX_FORCE_INLINE CCTK_ATTRIBUTE_ALWAYS_INLINE
     amrex::GpuArray<CCTK_REAL, 8>
-    PhotonsContainer<StructType>::compute_rhs(
+    compute_rhs(
         const amrex::GpuArray<CCTK_REAL, 8> &u, const CCTK_REAL &t,
         amrex::Array4<CCTK_REAL const> const &lapse,
         const amrex::Array4<CCTK_REAL const> &shift,
@@ -258,12 +257,11 @@ AMREX_GPU_HOST_DEVICE AMREX_FORCE_INLINE CCTK_ATTRIBUTE_ALWAYS_INLINE
  *  @param dt Timestep.
  *  @param lev AMR Level of discretization.
  */
-template <typename StructType>
-void RaytracingPhotonsContainer<StructType>::evolve(const amrex::MultiFab &lapse,
-                                                    const amrex::MultiFab &shift,
-                                                    const amrex::MultiFab &metric,
-                                                    const amrex::MultiFab &curv,
-                                                    const CCTK_REAL &dt, const int &lev) {
+void evolve(const amrex::MultiFab &lapse,
+            const amrex::MultiFab &shift,
+            const amrex::MultiFab &metric,
+            const amrex::MultiFab &curv,
+            const CCTK_REAL &dt, const int &lev) {
 
   const auto plo0 = this->Geom(0).ProbLoArray();
   const auto phi0 = this->Geom(0).ProbHiArray();
@@ -479,8 +477,7 @@ void RaytracingPhotonsContainer<StructType>::evolve(const amrex::MultiFab &lapse
      * @param metric ADM 3 dimension metric.
      * @param Current refinement level.
      */
-    template <typename StructType>
-    void RaytracingPhotonsContainer<StructType>::normalize_velocity(
+    void normalize_velocity(
         const amrex::MultiFab &metric, const int level) {
 
       // Get the with of the discretization on each direction.
@@ -558,12 +555,11 @@ void RaytracingPhotonsContainer<StructType>::evolve(const amrex::MultiFab &lapse
       }
     } // RaytracingPhotonsContainer::normalize_velocity
 
-    template <typename StructType>
-    void PhotonsContainer<StructType>::redistribute_particles() {
+    void redistribute_particles() {
        CCTK_INFO("Redistributing particles");
      } // RaytracingPhotonsContainer::redistribute_particles
 
-}
+};
 }
 
 #endif
