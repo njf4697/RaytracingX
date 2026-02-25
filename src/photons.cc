@@ -73,10 +73,12 @@ extern "C" void R_PhotonsContainer_evolve(CCTK_ARGUMENTS) {
   const int gi_shift = CCTK_GroupIndex("ADMBaseX::shift");
   const int gi_metric = CCTK_GroupIndex("ADMBaseX::metric");
   const int gi_curv = CCTK_GroupIndex("ADMBaseX::curv");
+  const int gi_rho = CCTK_GroupIndex("HydroBaseX::rho");
   assert(gi_lapse >= 0 && "Failed to get the lapse group index");
   assert(gi_shift >= 0 && "Failed to get the shift group index");
   assert(gi_metric >= 0 && "Failed to get the metric group index");
   assert(gi_curv >= 0 && "Failed to get the curvature group index");
+  assert(gi_rho >= 0 && "Failed to get the density group index");
 
   for (int patch = 0; patch < CarpetX::ghext->num_patches(); ++patch) {
     auto &pc = r_photons.at(patch);
@@ -87,12 +89,14 @@ extern "C" void R_PhotonsContainer_evolve(CCTK_ARGUMENTS) {
       const auto &gd_shift = *ld.groupdata.at(gi_shift);
       const auto &gd_metric = *ld.groupdata.at(gi_metric);
       const auto &gd_curv = *ld.groupdata.at(gi_curv);
+      const auto &gd_rho = *ld.groupdata.at(gi_rho);
       const amrex::MultiFab &lapse = *gd_lapse.mfab[tl];
       const amrex::MultiFab &shift = *gd_shift.mfab[tl];
       const amrex::MultiFab &metric = *gd_metric.mfab[tl];
       const amrex::MultiFab &curv = *gd_curv.mfab[tl];
-
-      pc->evolve(lapse, shift, metric, curv, CCTK_DELTA_TIME, lev);
+      const amrex::MultiFab &eho = *gd_rho.mfab[tl];
+      
+      pc->evolve(lapse, shift, metric, curv, rho, CCTK_DELTA_TIME, lev);
     }
   }
 
