@@ -117,7 +117,7 @@ AMREX_GPU_HOST_DEVICE AMREX_FORCE_INLINE CCTK_ATTRIBUTE_ALWAYS_INLINE
         const amrex::Array4<CCTK_REAL const> &shift,
         const amrex::Array4<CCTK_REAL const> &metric,
         const amrex::Array4<CCTK_REAL const> &curv, 
-        const amrex::Array4<CCTK_REAL const> &density, const CCTK_REAL dt,
+        const amrex::Array4<CCTK_REAL const> &rho, const CCTK_REAL dt,
         const amrex::GpuArray<double, 3> &dx, const int lev,
         const amrex::GpuArray<double, 3> &plo) {
 
@@ -149,9 +149,9 @@ AMREX_GPU_HOST_DEVICE AMREX_FORCE_INLINE CCTK_ATTRIBUTE_ALWAYS_INLINE
   amrex::GpuArray<CCTK_REAL, 6> curv_x;
   interpolate_array<5>(curv_x, curv, i0, j0, k0, u[0], u[1], u[2], dx, plo);
 
-  // Interpolate Density at \vect{x}
-  amrex::GpuArray<CCTK_REAL, 1> density_x;
-  interpolate_array<5>(density_x, density, i0, j0, k0, u[0], u[1], u[2], dx, plo);
+  // Interpolate rho at \vect{x}
+  amrex::GpuArray<CCTK_REAL, 1> rho_x;
+  interpolate_array<5>(rho_x, rho, i0, j0, k0, u[0], u[1], u[2], dx, plo);
 
   // Compute the inverse of the metric.
   const CCTK_REAL inv_det_gamma =
@@ -205,7 +205,7 @@ AMREX_GPU_HOST_DEVICE AMREX_FORCE_INLINE CCTK_ATTRIBUTE_ALWAYS_INLINE
                                   2.0 * dx[0] * dx[1] * gamma_inv_x[1] +
                                   2.0 * dx[0] * dx[2] * gamma_inv_x[2] +
                                   2.0 * dx[1] * dx[2] * gamma_inv_x[4];
-  rhs[3 + StructType::tau] = (0.4 * cgs2cactusOpacity) * (density[0] * cgs2cactusDensity) * (ds / dt);
+  rhs[3 + StructType::tau] = (0.4 * cgs2cactusOpacity) * (rho[0] * cgs2cactusrho) * (ds / dt);
 
   return rhs;
 
@@ -279,7 +279,7 @@ void PhotonsContainer<StructType>::evolve(const amrex::MultiFab &lapse,
     auto const shift_array = shift.array(pti);
     auto const metric_array = metric.array(pti);
     auto const curv_array = curv.array(pti);
-    auto const curv_array = density.array(pti);
+    auto const curv_array = rho.array(pti);
 
     // Needed for GPU
     auto self = this;
@@ -297,7 +297,7 @@ void PhotonsContainer<StructType>::evolve(const amrex::MultiFab &lapse,
       // f1 = rhs(u , t) for the runge kutta 4 step
       auto k_odd =
           self->compute_rhs(U, 0.0, lapse_array, shift_array, metric_array,
-                            curv_array, density_array, dt, dx, lev, plo0);
+                            curv_array, rho_array, dt, dx, lev, plo0);
 
       U_tmp[0] = U[0] + 0.5 * dt * k_odd[0];
       U_tmp[1] = U[1] + 0.5 * dt * k_odd[1];
@@ -318,7 +318,7 @@ void PhotonsContainer<StructType>::evolve(const amrex::MultiFab &lapse,
       // f2 = rhs(u + 0.5 * dt * f1, t) for the runge kutta 4 step
       auto k_even =
           self->compute_rhs(U_tmp, 0.5 * dt, lapse_array, shift_array,
-                            metric_array, curv_array, density_array, dt, dx, lev, plo0);
+                            metric_array, curv_array, rho_array, dt, dx, lev, plo0);
 
       // Update particles with the f1 and f2 from RK4
       U_tmp[0] = U[0] + 0.5 * dt * k_even[0];
@@ -377,8 +377,10 @@ void PhotonsContainer<StructType>::evolve(const amrex::MultiFab &lapse,
       vels_y[i] += (1. / 6.) * dt * (2. * k_odd[4] + k_even[4]);
       vels_z[i] += (1. / 6.) * dt * (2. * k_odd[5] + k_even[5]);
       ln_energy[i] += (1. / 6.) * dt * (2. * k_odd[6] + k_even[6]);
+      tau[i] += (1. / 6.) * dt * (2. * k_odd[7] + k_even[7]);
 
       CHECK_OUT_OF_BOUNDS(particles[i].pos(,))
+      out_of_bounds |= (tau[i] > 1.);
 
       if (out_of_bounds) {
         particles[i].id() = -1;
