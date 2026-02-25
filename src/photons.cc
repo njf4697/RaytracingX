@@ -94,7 +94,7 @@ extern "C" void R_PhotonsContainer_evolve(CCTK_ARGUMENTS) {
       const amrex::MultiFab &shift = *gd_shift.mfab[tl];
       const amrex::MultiFab &metric = *gd_metric.mfab[tl];
       const amrex::MultiFab &curv = *gd_curv.mfab[tl];
-      const amrex::MultiFab &eho = *gd_rho.mfab[tl];
+      const amrex::MultiFab &rho = *gd_rho.mfab[tl];
       
       pc->evolve(lapse, shift, metric, curv, rho, CCTK_DELTA_TIME, lev);
     }
