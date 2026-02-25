@@ -1,4 +1,4 @@
 # Configuration options for thorn RaytracingX
 # =====================================================
 
-REQUIRES AMREX Loop PhotonsContainer
+REQUIRES ADMBaseX AMReX AsterX ParticlesContainer PhotonsContainer Loop

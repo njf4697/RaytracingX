@@ -70,4 +70,17 @@ void camera_initializer(ParticleContainerClass &pc, const CCTK_REAL *real_params
 void setup_camera_initializer_ints(CCTK_ARGUMENTS, CCTK_INT* int_params);
 void setup_camera_initializer_reals(CCTK_ARGUMENTS, CCTK_REAL* real_params);
 
+//constants for unit conversion to code units
+static const CCTK_REAL M_cgs = 1.9884e33;      //g               -> M
+static const CCTK_REAL c_cgs = 2.99792458e+10; //cm s^-1         -> 1
+static const CCTK_REAL G_cgs = 6.67430e-8;     //cm^3 g^-1 s^-2  -> 1
+
+//base conversion factors
+static const CCTK_REAL cgs2cactusDensity          = POW3(G_cgs)*POW2(M_cgs)/POW6(c_cgs); //g cm^-3              -> M^-2
+static const CCTK_REAL cgs2cactusLength           = POW2(c_cgs)/(G_cgs * M_cgs);         //cm                   -> M
+
+//derived conversion factors
+static const CCTK_REAL cactus2cgsOpacity       = cgs2cactusDensity * cgs2cactusLength;                //used in GetLeakageCoolingRate
+static const CCTK_REAL cgs2cactusOpacity       = 1.0 / cactus2cgsOpacity;                             //used in CalcOpacity
+
 #endif
