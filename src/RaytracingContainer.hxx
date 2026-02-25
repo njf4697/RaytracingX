@@ -147,28 +147,30 @@ AMREX_GPU_HOST_DEVICE AMREX_FORCE_INLINE CCTK_ATTRIBUTE_ALWAYS_INLINE
   // Interpolate lapse & partial lapse at \vect{x}
   CCTK_REAL lapse_x;
   amrex::GpuArray<CCTK_REAL, 3> d_lapse_x;
-  d_interpolate_array<5>(lapse_x, d_lapse_x, lapse, i0, j0, k0, u[0], u[1],
+  GInX::d_interpolate_array<5>(lapse_x, d_lapse_x, lapse, i0, j0, k0, u[0], u[1],
                          u[2], dx, plo);
 
   // Interpolate shift & partial shift at \vect{x}
   amrex::GpuArray<CCTK_REAL, 3> shift_x;
   amrex::GpuArray<amrex::GpuArray<CCTK_REAL, 3>, 3> d_shift_x;
-  d_interpolate_array<5>(shift_x, d_shift_x, shift, i0, j0, k0, u[0], u[1],
+  GInX::d_interpolate_array<5>(shift_x, d_shift_x, shift, i0, j0, k0, u[0], u[1],
                          u[2], dx, plo);
 
   // Interpolate metric & partial metric at \vect{x}
   amrex::GpuArray<CCTK_REAL, 6> gamma_x;
   amrex::GpuArray<amrex::GpuArray<CCTK_REAL, 6>, 3> d_gamma_x;
-  d_interpolate_array<5>(gamma_x, d_gamma_x, metric, i0, j0, k0, u[0], u[1],
+  GInX::d_interpolate_array<5>(gamma_x, d_gamma_x, metric, i0, j0, k0, u[0], u[1],
                          u[2], dx, plo);
 
   // Interpolate Curvature at \vect{x}
   amrex::GpuArray<CCTK_REAL, 6> curv_x;
-  interpolate_array<5>(curv_x, curv, i0, j0, k0, u[0], u[1], u[2], dx, plo);
+  GInX::interpolate_array<5>(curv_x, curv, i0, j0, k0, u[0], u[1], u[2], dx, plo);
 
   // Interpolate rho at \vect{x}
-  amrex::GpuArray<CCTK_REAL, 1> rho_x;
-  interpolate_array<5>(rho_x, rho, i0, j0, k0, u[0], u[1], u[2], dx, plo);
+  CCTK_REAL rho_x;
+  amrex::GpuArray<CCTK_REAL, 3> d_rho_x;
+  GInX::d_interpolate_array<5>(rho_x, d_rho_x, rho, i0, j0, k0, u[0], u[1],
+                         u[2], dx, plo);
 
   // Compute the inverse of the metric.
   const CCTK_REAL inv_det_gamma =
@@ -222,7 +224,7 @@ AMREX_GPU_HOST_DEVICE AMREX_FORCE_INLINE CCTK_ATTRIBUTE_ALWAYS_INLINE
                                   2.0 * dx[0] * dx[1] * gamma_inv_x[1] +
                                   2.0 * dx[0] * dx[2] * gamma_inv_x[2] +
                                   2.0 * dx[1] * dx[2] * gamma_inv_x[4];
-  rhs[3 + StructType::tau] = (0.4 * cgs2cactusOpacity) * (rho[0] * cgs2cactusrho) * (ds / dt);
+  rhs[3 + StructType::tau] = (0.4 * cgs2cactusOpacity) * (rho_x * cgs2cactusDensity) * (ds / dt);
 
   return rhs;
 
@@ -295,7 +297,7 @@ void evolve(const amrex::MultiFab &lapse,
     auto const shift_array = shift.array(pti);
     auto const metric_array = metric.array(pti);
     auto const curv_array = curv.array(pti);
-    auto const curv_array = rho.array(pti);
+    auto const rho_array = rho.array(pti);
 
     // Needed for GPU
     auto self = this;
