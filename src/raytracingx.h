@@ -8,6 +8,10 @@
 #ifndef RAYTRACINGX
 #define RAYTRACINGX
 
+#define POW2(X) (X*X)
+#define POW3(X) (X*X*X)
+#define POW6(X) (X*X*X*X*X*X)
+
 struct Metric { //struct that contains information about the metric interpolated at a point
     CCTK_REAL alpha;
     CCTK_REAL beta_x, beta_y, beta_z; //g_{tx}, g_{ty}, g_{tz}
