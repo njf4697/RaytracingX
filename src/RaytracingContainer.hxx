@@ -371,7 +371,7 @@ void evolve(const amrex::MultiFab &lapse,
 
       // f3 = rhs(u + 0.5 * dt * f2, t) for the runge kutta 4 step
       k_odd = self->compute_rhs(U_tmp, 0.5 * dt, lapse_array, shift_array,
-                                metric_array, curv_array, dt, dx, lev, plo0);
+                                metric_array, curv_array, rho_array, dt, dx, lev, plo0);
 
       U_tmp[0] = U[0] + dt * k_odd[0];
       U_tmp[1] = U[1] + dt * k_odd[1];
@@ -392,7 +392,7 @@ void evolve(const amrex::MultiFab &lapse,
 
       // f4 = rhs(u + dt * f3, t) for the runge kutta 4 step
       k_even = self->compute_rhs(U_tmp, dt, lapse_array, shift_array,
-                                 metric_array, curv_array, dt, dx, lev, plo0);
+                                 metric_array, curv_array, rho_array, dt, dx, lev, plo0);
 
       // Update particles with the f3 and f4 from RK4
       particles[i].pos(0) += (1. / 6.) * dt * (2. * k_odd[0] + k_even[0]);
@@ -561,6 +561,14 @@ void evolve(const amrex::MultiFab &lapse,
     void redistribute_particles() {
        CCTK_INFO("Redistributing particles");
      } // RaytracingPhotonsContainer::redistribute_particles
+
+    virtual void evolve(const amrex::MultiFab &lapse,
+                      const amrex::MultiFab &shift,
+                      const amrex::MultiFab &metric,
+                      const amrex::MultiFab &curv, const CCTK_REAL &dt,
+                      const int &lev) {
+                        return;
+    }
 
 };
 }
