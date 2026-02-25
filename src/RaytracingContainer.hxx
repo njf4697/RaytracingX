@@ -52,11 +52,15 @@ struct RaytracingPhotonsData : public Photons::PhotonsData{
 };
 
 template <typename StructType>
-class RaytracingPhotonsContainer : public GInX::PhotonsContainer<StructType> {
+class RaytracingPhotonsContainer : public BaseContainer::BaseParticleContainer<RaytracingPhotonsContainer<StructType>,
+                                                  StructType> {
 
 // ##############################################################################
-//                   PhotonsContainer::METHODS DECLARATION
+//              RaytracingPhotonsContainer::METHODS DECLARATION
 // ##############################################################################
+
+// Get the mass value
+CCTK_INT get_mass() { return this->mass; }
 
 /**
  * \brief Computes the right hand side of the geodesic differential equation.
@@ -223,7 +227,7 @@ AMREX_GPU_HOST_DEVICE AMREX_FORCE_INLINE CCTK_ATTRIBUTE_ALWAYS_INLINE
 
   return rhs;
 
-} // PhotonsContainer::compute_rhs
+} // RaytracingPhotonsContainer::compute_rhs
 
 /**
  *  \brief Evolving using Runge-Kutta 4.
@@ -255,11 +259,11 @@ AMREX_GPU_HOST_DEVICE AMREX_FORCE_INLINE CCTK_ATTRIBUTE_ALWAYS_INLINE
  *  @param lev AMR Level of discretization.
  */
 template <typename StructType>
-void PhotonsContainer<StructType>::evolve(const amrex::MultiFab &lapse,
-                                          const amrex::MultiFab &shift,
-                                          const amrex::MultiFab &metric,
-                                          const amrex::MultiFab &curv,
-                                          const CCTK_REAL &dt, const int &lev) {
+void RaytracingPhotonsContainer<StructType>::evolve(const amrex::MultiFab &lapse,
+                                                    const amrex::MultiFab &shift,
+                                                    const amrex::MultiFab &metric,
+                                                    const amrex::MultiFab &curv,
+                                                    const CCTK_REAL &dt, const int &lev) {
 
   const auto plo0 = this->Geom(0).ProbLoArray();
   const auto phi0 = this->Geom(0).ProbHiArray();
@@ -410,7 +414,7 @@ void PhotonsContainer<StructType>::evolve(const amrex::MultiFab &lapse,
       }
     });
   }
-} // PhotonsContainer::evolve
+} // RaytracingPhotonsContainer::evolve
 
   /**
    * The check banned zones function check for user defined invalid particles
@@ -454,6 +458,110 @@ void PhotonsContainer<StructType>::evolve(const amrex::MultiFab &lapse,
       });
     }
   }
+
+      /**
+     * \brief Normalize the velocity accordingly to the metric on each particle
+     * position.
+     *
+     * This function is made to normalize the velocity given a random initial data
+     * using the Photons positions by using that
+     *
+     *  \f[
+     *  P^\mu P_\mu = 0.
+     *  \f]
+     *
+     *  or equivalently
+     *
+     *  \f[
+     *  V^\alpha V_\alpha = V_\alpha V_\beta \gamma^{\alpha\beta} = 1.
+     *  \f]
+     *
+     * @param metric ADM 3 dimension metric.
+     * @param Current refinement level.
+     */
+    template <typename StructType>
+    void RaytracingPhotonsContainer<StructType>::normalize_velocity(
+        const amrex::MultiFab &metric, const int level) {
+
+      // Get the with of the discretization on each direction.
+      const auto dx = this->Geom(level).CellSizeArray();
+      // Get the lower and higher value over the ParticleContainer Geometry
+      const auto p_lo = this->Geom(level).ProbLoArray();
+      const auto p_hi = this->Geom(level).ProbHiArray();
+
+      for (amrex::MFIter mfi = this->MakeMFIter(level); mfi.isValid(); ++mfi) {
+
+        // Get a reference to the particles
+        auto &particle_tile = this->DefineAndReturnParticleTile(level, mfi);
+
+        // Determines the current size and the required new size
+        const auto current_size = particle_tile.GetArrayOfStructs().size();
+
+        // Gets raw pointers to the two different ways particle data is stored for
+        // performance reasons: Array of Struct (AoS) and Struct of Arrays (SoA)
+        auto *p_struct = particle_tile.GetArrayOfStructs()().data();
+        auto arrdata = particle_tile.GetStructOfArrays().realarray();
+
+        // get the current process id
+        const auto metric_array = metric.array(mfi);
+        const CCTK_REAL m = this->mass;
+
+        amrex::ParallelFor(current_size, [=] AMREX_GPU_DEVICE(int i) noexcept {
+          // Start a for loop with Random Number evolution for the velocity
+          const CCTK_REAL ratio[3] = {arrdata[StructType::vx][i],
+                                      arrdata[StructType::vy][i],
+                                      arrdata[StructType::vz][i]};
+          const CCTK_REAL E = std::exp(arrdata[StructType::ln_E][i]);
+
+          // Generate a random position
+          const auto &p = p_struct[i];
+
+          const int i0 = amrex::Math::floor((p.pos(0) - p_lo[0]) / dx[0]);
+          const int j0 = amrex::Math::floor((p.pos(1) - p_lo[1]) / dx[1]);
+          const int k0 = amrex::Math::floor((p.pos(2) - p_lo[2]) / dx[2]);
+
+          // Interpolate metric
+          amrex::GpuArray<CCTK_REAL, 6> gamma_x;
+          interpolate_array<5>(gamma_x, metric_array, i0, j0, k0, p.pos(0),
+                               p.pos(1), p.pos(2), dx, p_lo);
+
+          const CCTK_REAL inv_det_gamma =
+              1.0 / (gamma_x[0] * gamma_x[3] * gamma_x[5] +
+                     2. * gamma_x[1] * gamma_x[2] * gamma_x[4] -
+                     gamma_x[2] * gamma_x[2] * gamma_x[3] -
+                     gamma_x[4] * gamma_x[4] * gamma_x[0] -
+                     gamma_x[1] * gamma_x[1] * gamma_x[5]);
+
+          const amrex::GpuArray<CCTK_REAL, 6> gamma_inv_x = {
+              (gamma_x[3] * gamma_x[5] - gamma_x[4] * gamma_x[4]) * inv_det_gamma,
+              (gamma_x[4] * gamma_x[2] - gamma_x[1] * gamma_x[5]) * inv_det_gamma,
+              (gamma_x[1] * gamma_x[4] - gamma_x[2] * gamma_x[3]) * inv_det_gamma,
+              (gamma_x[0] * gamma_x[5] - gamma_x[2] * gamma_x[2]) * inv_det_gamma,
+              (gamma_x[2] * gamma_x[1] - gamma_x[0] * gamma_x[4]) * inv_det_gamma,
+              (gamma_x[0] * gamma_x[3] - gamma_x[1] * gamma_x[1]) * inv_det_gamma};
+
+          // Normalizing the velocity.
+          const CCTK_REAL v_squared = ratio[0] * ratio[0] * gamma_inv_x[0] +
+                                      ratio[1] * ratio[1] * gamma_inv_x[3] +
+                                      ratio[2] * ratio[2] * gamma_inv_x[5] +
+                                      2.0 * ratio[0] * ratio[1] * gamma_inv_x[1] +
+                                      2.0 * ratio[0] * ratio[2] * gamma_inv_x[2] +
+                                      2.0 * ratio[1] * ratio[2] * gamma_inv_x[4];
+
+          const CCTK_REAL v = std::sqrt(v_squared);
+          const CCTK_REAL alpha = std::sqrt(1. - m * m / (E * E));
+
+          arrdata[StructType::vx][i] = ratio[0] * alpha / v;
+          arrdata[StructType::vy][i] = ratio[1] * alpha / v;
+          arrdata[StructType::vz][i] = ratio[2] * alpha / v;
+        });
+      }
+    } // RaytracingPhotonsContainer::normalize_velocity
+
+    template <typename StructType>
+    void PhotonsContainer<StructType>::redistribute_particles() {
+       CCTK_INFO("Redistributing particles");
+     } // RaytracingPhotonsContainer::redistribute_particles
 
 }
 }
