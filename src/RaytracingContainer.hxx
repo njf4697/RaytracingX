@@ -112,7 +112,7 @@ public:
    * \brief Using BaseParticlesContainer constructor
    */
 
-  using GInX::PhotonsContainer<StructType>::GInX::PhotonsContainer<StructType>
+  using GInX::PhotonsContainer<StructType>::GInX::PhotonsContainer<StructType>;
 
   ~RaytracingPhotonsContainer() = default;
 
