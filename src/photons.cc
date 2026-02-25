@@ -131,14 +131,17 @@ extern "C" void R_PhotonsContainer_evolve(CCTK_ARGUMENTS) {
 extern "C" void R_PhotonsContainer_print(CCTK_ARGUMENTS) {
   DECLARE_CCTK_PARAMETERS;
 
+  if (!run_test) {
+    return;
+  }
+
   CCTK_INFO("Printing particles to files");
+  const int it = cctkGH->cctk_iteration;
 
   for (int patch = 0; patch < CarpetX::ghext->num_patches(); ++patch) {
-    auto &pc = r_photons.at(patch);
-    pc->outputParticlesPlot(CCTK_PASS_CTOC, particle_plot_every,
-                            std::string(out_dir));
-    pc->outputParticlesAscii(CCTK_PASS_CTOC, particle_tsv_every,
-                             std::string(out_dir));
+    auto &pc = photons.at(patch);
+    pc->outputParticlesPlot(it, particle_plot_every, std::string(out_dir));
+    pc->outputParticlesAscii(it, particle_tsv_every, std::string(out_dir));
   }
 }
 

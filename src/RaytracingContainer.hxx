@@ -105,7 +105,17 @@ class RaytracingPhotonsContainer : public GInX::PhotonsContainer<StructType> {
  *  @param plo Physical lower bounds of the whole domain.
  *  @return The right hind side of the differential equation.
  */
+protected:
+  CCTK_REAL mass = 0.;
 public:
+  /**
+   * \brief Using BaseParticlesContainer constructor
+   */
+
+  RaytracingPhotonsContainer(amrex::AmrCore *amr_core, const CCTK_REAL m)
+      : GInX::PhotonsContainer<StructType>(amr_core), mass{m};
+
+  ~RaytracingPhotonsContainer() = default;
 
 template <typename StructType>
 AMREX_GPU_HOST_DEVICE AMREX_FORCE_INLINE CCTK_ATTRIBUTE_ALWAYS_INLINE
