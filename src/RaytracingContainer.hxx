@@ -291,6 +291,7 @@ void evolve(const amrex::MultiFab &lapse,
     CCTK_REAL *AMREX_RESTRICT vels_z = attribs[StructType::vz].data();
     CCTK_REAL *AMREX_RESTRICT ln_energy = attribs[StructType::ln_E].data();
     CCTK_REAL *AMREX_RESTRICT tau = attribs[StructType::tau].data();
+    CCTK_REAL *AMREX_RESTRICT index = attribs[StructType::index].data();
     auto *AMREX_RESTRICT particles = &(pti.GetArrayOfStructs()[0]);
 
     // Get the array of each parameter.
@@ -333,6 +334,7 @@ void evolve(const amrex::MultiFab &lapse,
 
       if (out_of_bounds) {
         particles[i].id() = -1;
+        CCTK_VWarn(1, __LINE__, __FILE__, CCTK_THORNSTRING, "particle %d deleted, tau %d", index[i], tau[i]);
         return;
       }
 
@@ -366,6 +368,7 @@ void evolve(const amrex::MultiFab &lapse,
 
       if (out_of_bounds) {
         particles[i].id() = -1;
+        CCTK_VWarn(1, __LINE__, __FILE__, CCTK_THORNSTRING, "particle %d deleted, tau %d", index[i], tau[i]);
         return;
       }
 
@@ -387,6 +390,7 @@ void evolve(const amrex::MultiFab &lapse,
 
       if (out_of_bounds) {
         particles[i].id() = -1;
+        CCTK_VWarn(1, __LINE__, __FILE__, CCTK_THORNSTRING, "particle %d deleted, tau %d", index[i], tau[i]);
         return;
       }
 
@@ -411,6 +415,7 @@ void evolve(const amrex::MultiFab &lapse,
 
       if (out_of_bounds) {
         particles[i].id() = -1;
+        CCTK_VWarn(1, __LINE__, __FILE__, CCTK_THORNSTRING, "particle %d deleted, tau %d", index[i], tau[i]);
         return;
       }
     });
@@ -454,6 +459,7 @@ void evolve(const amrex::MultiFab &lapse,
           if (dx * dx + dy * dy + dz * dz <= radius[check] * radius[check]) {
             particles[i].id() = -1;
             tau[i] = -check - 7;
+            CCTK_VWarn(1, __LINE__, __FILE__, CCTK_THORNSTRING, "particle %d deleted, tau %d", index[i], tau[i]);
           }
         }
       });
