@@ -23,11 +23,13 @@ using ParticleData = RaytracingX::RaytracingPhotonsData;
 using PC = RaytracingX::RaytracingPhotonsContainer<ParticleData>;
 std::vector<std::unique_ptr<PC>> r_photons;
 
-extern "C" void R_PhotonsContainer_setup(CCTK_ARGUMENTS) {
+extern "C" void R_PhotonsContainer_setup(CCTK_ARGUMENTS)
+{
   DECLARE_CCTK_ARGUMENTS;
   DECLARE_CCTK_PARAMETERS;
 
-  if(verbose) {
+  if (verbose)
+  {
     CCTK_INFO("R_PhotonsContainer_setup");
   }
 
@@ -40,9 +42,11 @@ extern "C" void R_PhotonsContainer_setup(CCTK_ARGUMENTS) {
   setup_camera_initializer_reals(CCTK_PASS_CTOC, real_params);
   setup_camera_initializer_ints(CCTK_PASS_CTOC, int_params);
 
-  for (int patch = 0; patch < CarpetX::ghext->num_patches(); ++patch) {
+  for (int patch = 0; patch < CarpetX::ghext->num_patches(); ++patch)
+  {
     const auto &patchdata = CarpetX::ghext->patchdata.at(patch);
-    if (r_photons.size() < CarpetX::ghext->num_patches()) {
+    if (r_photons.size() < CarpetX::ghext->num_patches())
+    {
       r_photons.push_back(std::make_unique<PC>(patchdata.amrcore.get()));
 
       auto &pc = r_photons.at(patch);
@@ -51,10 +55,12 @@ extern "C" void R_PhotonsContainer_setup(CCTK_ARGUMENTS) {
     }
   }
 
-  for (int patch = 0; patch < CarpetX::ghext->num_patches(); ++patch) {
+  for (int patch = 0; patch < CarpetX::ghext->num_patches(); ++patch)
+  {
     auto &pc = r_photons.at(patch);
     auto &pd = CarpetX::ghext->patchdata.at(patch);
-    for (int lev = 0; lev < pd.leveldata.size(); ++lev) {
+    for (int lev = 0; lev < pd.leveldata.size(); ++lev)
+    {
 
       const auto &ld = pd.leveldata.at(lev);
       const auto &gd_metric = *ld.groupdata.at(gi_metric);
@@ -66,11 +72,13 @@ extern "C" void R_PhotonsContainer_setup(CCTK_ARGUMENTS) {
   }
 }
 
-extern "C" void R_PhotonsContainer_evolve(CCTK_ARGUMENTS) {
+extern "C" void R_PhotonsContainer_evolve(CCTK_ARGUMENTS)
+{
   DECLARE_CCTK_PARAMETERS;
   DECLARE_CCTK_ARGUMENTS;
 
-  if(verbose) {
+  if (verbose)
+  {
     CCTK_INFO("R_PhotonsContainer_evolve");
   }
 
@@ -88,10 +96,12 @@ extern "C" void R_PhotonsContainer_evolve(CCTK_ARGUMENTS) {
   assert(gi_curv >= 0 && "Failed to get the curvature group index");
   assert(gi_rho >= 0 && "Failed to get the density group index");
 
-  for (int patch = 0; patch < CarpetX::ghext->num_patches(); ++patch) {
+  for (int patch = 0; patch < CarpetX::ghext->num_patches(); ++patch)
+  {
     auto &pc = r_photons.at(patch);
     auto &pd = CarpetX::ghext->patchdata.at(patch);
-    for (int lev = 0; lev < pd.leveldata.size(); ++lev) {
+    for (int lev = 0; lev < pd.leveldata.size(); ++lev)
+    {
       const auto &ld = pd.leveldata.at(lev);
       const auto &gd_lapse = *ld.groupdata.at(gi_lapse);
       const auto &gd_shift = *ld.groupdata.at(gi_shift);
@@ -103,7 +113,7 @@ extern "C" void R_PhotonsContainer_evolve(CCTK_ARGUMENTS) {
       const amrex::MultiFab &metric = *gd_metric.mfab[tl];
       const amrex::MultiFab &curv = *gd_curv.mfab[tl];
       const amrex::MultiFab &rho = *gd_rho.mfab[tl];
-      
+
       pc->evolve(lapse, shift, metric, curv, rho, CCTK_DELTA_TIME, lev);
     }
   }
@@ -129,10 +139,12 @@ extern "C" void R_PhotonsContainer_evolve(CCTK_ARGUMENTS) {
       region_5_radius, region_6_radius, region_7_radius, region_8_radius,
       region_9_radius, region_10_radius};
 
-  for (int patch = 0; patch < CarpetX::ghext->num_patches(); ++patch) {
+  for (int patch = 0; patch < CarpetX::ghext->num_patches(); ++patch)
+  {
     auto &pc = r_photons.at(patch);
     auto &pd = CarpetX::ghext->patchdata.at(patch);
-    for (int lev = 0; (lev < pd.leveldata.size()) & banned_regions; ++lev) {
+    for (int lev = 0; (lev < pd.leveldata.size()) & banned_regions; ++lev)
+    {
       pc->check_banned_zones(lev, banned_regions, regions_x, regions_y,
                              regions_z, regions_radius);
     }
@@ -140,123 +152,130 @@ extern "C" void R_PhotonsContainer_evolve(CCTK_ARGUMENTS) {
   }
 }
 
-extern "C" void R_PhotonsContainer_print(CCTK_ARGUMENTS) {
+extern "C" void R_PhotonsContainer_print(CCTK_ARGUMENTS)
+{
   DECLARE_CCTK_PARAMETERS;
 
   CCTK_INFO("Printing particles to files");
   const int it = cctkGH->cctk_iteration;
 
-  for (int patch = 0; patch < CarpetX::ghext->num_patches(); ++patch) {
+  for (int patch = 0; patch < CarpetX::ghext->num_patches(); ++patch)
+  {
     auto &pc = r_photons.at(patch);
     pc->outputParticlesPlot(it, particle_plot_every, std::string(out_dir));
     pc->outputParticlesAscii(it, particle_tsv_every, std::string(out_dir));
   }
 }
 
-extern "C" int R_PhotonsContainer_final_cleanup() {
+extern "C" int R_PhotonsContainer_final_cleanup()
+{
   amrex::Gpu::Device::synchronize();
   r_photons.clear();
   return 0;
 }
 
 template <typename StructType, typename ParticleContainerClass>
-void camera_initializer(ParticleContainerClass &pc, const CCTK_REAL *real_params, const CCTK_INT *int_params) {
-    CCTK_INFO("Initializing particles using the RaytracingX::camera_initializer");
-    
-    CCTK_REAL e0[4], e1[4], e2[4], e3[4];
-    e0[0] = real_params[10];
-    e0[1] = real_params[11];
-    e0[2] = real_params[12];
-    e0[3] = real_params[13];
-    e1[0] = real_params[14];
-    e1[1] = real_params[15];
-    e1[2] = real_params[16];
-    e1[3] = real_params[17];
-    e2[0] = real_params[18];
-    e2[1] = real_params[19];
-    e2[2] = real_params[20];
-    e2[3] = real_params[21];
-    e3[0] = real_params[22];
-    e3[1] = real_params[23];
-    e3[2] = real_params[24];
-    e3[3] = real_params[25];
-    CCTK_REAL alpha_h = real_params[26];
-    CCTK_REAL alpha_v = real_params[27];
-    CCTK_REAL lapse = real_params[28];
-    CCTK_INT num_pixels_width = int_params[0];
-    CCTK_INT num_pixels_height = int_params[1];
-    CCTK_REAL camera_pos[3];
-    camera_pos[0] = real_params[29];
-    camera_pos[1] = real_params[30];
-    camera_pos[2] = real_params[31];
+void camera_initializer(ParticleContainerClass &pc, const CCTK_REAL *real_params, const CCTK_INT *int_params)
+{
+  CCTK_INFO("Initializing particles using the RaytracingX::camera_initializer");
 
-    const CCTK_INT level = 0;
-    const CCTK_INT num_pixels = num_pixels_width * num_pixels_height;
+  CCTK_REAL e0[4], e1[4], e2[4], e3[4];
+  e0[0] = real_params[10];
+  e0[1] = real_params[11];
+  e0[2] = real_params[12];
+  e0[3] = real_params[13];
+  e1[0] = real_params[14];
+  e1[1] = real_params[15];
+  e1[2] = real_params[16];
+  e1[3] = real_params[17];
+  e2[0] = real_params[18];
+  e2[1] = real_params[19];
+  e2[2] = real_params[20];
+  e2[3] = real_params[21];
+  e3[0] = real_params[22];
+  e3[1] = real_params[23];
+  e3[2] = real_params[24];
+  e3[3] = real_params[25];
+  CCTK_REAL alpha_h = real_params[26];
+  CCTK_REAL alpha_v = real_params[27];
+  CCTK_REAL lapse = real_params[28];
+  CCTK_INT num_pixels_width = int_params[0];
+  CCTK_INT num_pixels_height = int_params[1];
+  CCTK_REAL camera_pos[3];
+  camera_pos[0] = real_params[29];
+  camera_pos[1] = real_params[30];
+  camera_pos[2] = real_params[31];
 
-    const int n_procs = amrex::ParallelDescriptor::NProcs();
-    const int proc_id = amrex::ParallelDescriptor::MyProc();
+  const CCTK_INT level = 0;
+  const CCTK_INT num_pixels = num_pixels_width * num_pixels_height;
 
-    const int local_particles_size = num_pixels / n_procs + (proc_id < num_pixels % n_procs);
-    const int local_offset = proc_id * (num_pixels / n_procs) + std::min(proc_id, num_pixels % n_procs);
+  const int n_procs = amrex::ParallelDescriptor::NProcs();
+  const int proc_id = amrex::ParallelDescriptor::MyProc();
 
-    int total_tiles = 0;
-    for (amrex::MFIter mfi = pc.MakeMFIter(level); mfi.isValid(); ++mfi) {
-        total_tiles++;
+  const int local_particles_size = num_pixels / n_procs + (proc_id < num_pixels % n_procs);
+  const int local_offset = proc_id * (num_pixels / n_procs) + std::min(proc_id, num_pixels % n_procs);
+
+  int total_tiles = 0;
+  for (amrex::MFIter mfi = pc.MakeMFIter(level); mfi.isValid(); ++mfi)
+  {
+    total_tiles++;
+  }
+
+  int current_tile = 0;
+
+  // Iterating over all the tiles of the particle data structure
+  for (amrex::MFIter mfi = pc.MakeMFIter(level); mfi.isValid(); ++mfi)
+  {
+
+    const unsigned int particles_per_tile = local_particles_size / total_tiles + (current_tile < local_particles_size % total_tiles);
+
+    auto &particles = pc.GetParticles(level);
+    auto &particle_tile = pc.DefineAndReturnParticleTile(level, mfi);
+    assert(particle_tile.GetArrayOfStructs().size() == 0);
+    auto old_size = particle_tile.GetArrayOfStructs().size();
+    auto new_size = old_size + particles_per_tile;
+    particle_tile.resize(new_size);
+    auto arrdata = particle_tile.GetStructOfArrays().realarray();
+    auto ptd = particle_tile.getParticleTileData();
+
+#pragma omp parallel for
+    for (int local_particle_id = 0; local_particle_id < particles_per_tile; ++local_particle_id)
+    { // create 4-vector \chi parallel to geodesic and fill geodesic initial conditions for each pixel (see https://arxiv.org/pdf/1410.777)
+      int pidx = local_offset + local_particle_id;
+
+      int i = pidx / num_pixels_width;
+      int j = pidx % num_pixels_width;
+
+      CCTK_REAL a_adj = (2.0 * i / (num_pixels_width - 1) - 1) * tan(alpha_h / 2.0);  // a_{adj} = (2a-1)tan(\alpha_h/2)
+      CCTK_REAL b_adj = (2.0 * j / (num_pixels_height - 1) - 1) * tan(alpha_v / 2.0); // b_{adj} = (2b-1)tan(\alpha_v/2)
+
+      CCTK_REAL C = sqrt(1 + pow(b_adj, 2) + pow(a_adj, 2));
+
+      CCTK_REAL chi[4];
+      chi[0] = C * e0[0] - e1[0] - b_adj * e2[0] - a_adj * e3[0];
+      chi[1] = C * e0[1] - e1[1] - b_adj * e2[1] - a_adj * e3[1];
+      chi[2] = C * e0[2] - e1[2] - b_adj * e2[2] - a_adj * e3[2];
+      chi[3] = C * e0[3] - e1[3] - b_adj * e2[3] - a_adj * e3[3];
+
+      CCTK_REAL chi_lower[4];
+      vectorToOneFormArr(chi_lower, chi, real_params);
+
+      ptd.id(local_particle_id) = ParticleContainerClass::ParticleType::NextID();
+      ptd.cpu(local_particle_id) = amrex::ParallelDescriptor::MyProc();
+
+      ptd.pos(0, local_particle_id) = camera_pos[0];
+      ptd.pos(1, local_particle_id) = camera_pos[1];
+      ptd.pos(2, local_particle_id) = camera_pos[2];
+      CCTK_REAL A = 1 / lapse * chi[0];
+      arrdata[StructType::vx][local_particle_id] = chi_lower[1] * A;
+      arrdata[StructType::vy][local_particle_id] = chi_lower[2] * A;
+      arrdata[StructType::vz][local_particle_id] = chi_lower[3] * A;
+      arrdata[StructType::ln_E][local_particle_id] = 0;
+      arrdata[StructType::tau][local_particle_id] = 0;
+      arrdata[StructType::index][local_particle_id] = (CCTK_REAL)pidx;
     }
-
-    int current_tile = 0;
-
-    // Iterating over all the tiles of the particle data structure
-    for (amrex::MFIter mfi = pc.MakeMFIter(level); mfi.isValid(); ++mfi) {
-
-        const unsigned int particles_per_tile = local_particles_size / total_tiles + (current_tile < local_particles_size % total_tiles);
-
-        auto &particles = pc.GetParticles(level);
-        auto &particle_tile = pc.DefineAndReturnParticleTile(level, mfi);
-        assert(particle_tile.GetArrayOfStructs().size() == 0);
-        auto old_size = particle_tile.GetArrayOfStructs().size();
-        auto new_size = old_size + particles_per_tile;
-        particle_tile.resize(new_size);
-        auto arrdata = particle_tile.GetStructOfArrays().realarray();
-        auto ptd = particle_tile.getParticleTileData();
-
-        #pragma omp parallel for
-        for (int local_particle_id = 0; local_particle_id < particles_per_tile; ++local_particle_id) {//create 4-vector \chi parallel to geodesic and fill geodesic initial conditions for each pixel (see https://arxiv.org/pdf/1410.777)
-                int pidx = local_offset + local_particle_id;
-
-                int i = pidx / num_pixels_width;
-                int j = pidx % num_pixels_width;
-
-                CCTK_REAL a_adj = (2.0 * i / (num_pixels_width-1) - 1)*tan(alpha_h / 2.0); // a_{adj} = (2a-1)tan(\alpha_h/2)
-                CCTK_REAL b_adj = (2.0 * j / (num_pixels_height-1) - 1)*tan(alpha_v / 2.0); // b_{adj} = (2b-1)tan(\alpha_v/2)
-
-                CCTK_REAL C = sqrt(1 + pow(b_adj,2) + pow(a_adj,2));
-
-                CCTK_REAL chi[4];
-                chi[0] = C*e0[0] - e1[0] - b_adj*e2[0] - a_adj*e3[0];
-                chi[1] = C*e0[1] - e1[1] - b_adj*e2[1] - a_adj*e3[1];
-                chi[2] = C*e0[2] - e1[2] - b_adj*e2[2] - a_adj*e3[2];
-                chi[3] = C*e0[3] - e1[3] - b_adj*e2[3] - a_adj*e3[3];
-
-                CCTK_REAL chi_lower[4];
-                vectorToOneFormArr(chi_lower, chi, real_params);
-
-                ptd.id(local_particle_id) = ParticleContainerClass::ParticleType::NextID();
-                ptd.cpu(local_particle_id) = amrex::ParallelDescriptor::MyProc();
-
-                ptd.pos(0, local_particle_id) = camera_pos[0];
-                ptd.pos(1, local_particle_id) = camera_pos[1];
-                ptd.pos(2, local_particle_id) = camera_pos[2];
-                CCTK_REAL A = 1 / lapse*chi[0];
-                arrdata[StructType::vx][local_particle_id] = chi_lower[1] * A;
-                arrdata[StructType::vy][local_particle_id] = chi_lower[2] * A;
-                arrdata[StructType::vz][local_particle_id] = chi_lower[3] * A;
-                arrdata[StructType::ln_E][local_particle_id] = 0;
-                arrdata[StructType::tau][local_particle_id] = 0;
-                arrdata[StructType::index][local_particle_id] = (CCTK_REAL) pidx;
-        }
-    }
-    pc.Redistribute();
-    pc.SortParticlesByCell();
-    CCTK_VINFO("%d particles created", pc.TotalNumberOfParticles()); 
+  }
+  pc.Redistribute();
+  pc.SortParticlesByCell();
+  CCTK_VINFO("%d particles created", pc.TotalNumberOfParticles());
 }
