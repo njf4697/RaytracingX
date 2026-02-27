@@ -481,7 +481,7 @@ void evolve(const amrex::MultiFab &lapse,
      * @param Current refinement level.
      */
     void normalize_velocity(
-        const amrex::MultiFab &metric, const int level) {
+      const amrex::MultiFab &metric, const int level) {
 
       // Get the with of the discretization on each direction.
       const auto dx = this->Geom(level).CellSizeArray();

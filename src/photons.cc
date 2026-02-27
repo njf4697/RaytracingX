@@ -27,6 +27,10 @@ extern "C" void R_PhotonsContainer_setup(CCTK_ARGUMENTS) {
   DECLARE_CCTK_ARGUMENTS;
   DECLARE_CCTK_PARAMETERS;
 
+  if(verbose) {
+    CCTK_INFO("R_PhotonsContainer_setup");
+  }
+
   const int tl = 0;
   const int gi_metric = CCTK_GroupIndex("ADMBaseX::metric");
   assert(gi_metric >= 0 && "Failed to get the metric group index");
@@ -65,6 +69,10 @@ extern "C" void R_PhotonsContainer_setup(CCTK_ARGUMENTS) {
 extern "C" void R_PhotonsContainer_evolve(CCTK_ARGUMENTS) {
   DECLARE_CCTK_PARAMETERS;
   DECLARE_CCTK_ARGUMENTS;
+
+  if(verbose) {
+    CCTK_INFO("R_PhotonsContainer_evolve");
+  }
 
   const CCTK_REAL dt = CCTK_DELTA_TIME;
 
@@ -194,8 +202,6 @@ void camera_initializer(ParticleContainerClass &pc, const CCTK_REAL *real_params
     // Iterating over all the tiles of the particle data structure
     for (amrex::MFIter mfi = pc.MakeMFIter(level); mfi.isValid(); ++mfi) {
 
-        CCTK_VWarn(1, __LINE__, __FILE__, CCTK_THORNSTRING, ("proc: " + std::to_string(proc_id) + " local size: " + std::to_string(local_particles_size) + " local offset: " + std::to_string(local_offset) + " level: " + std::to_string(level) + " mfi: " + std::to_string(mfi.index()) + "\n").c_str());
-
         auto &particles = pc.GetParticles(level);
         auto &particle_tile = pc.DefineAndReturnParticleTile(level, mfi);
         assert(particle_tile.GetArrayOfStructs().size() == 0);
@@ -219,13 +225,6 @@ void camera_initializer(ParticleContainerClass &pc, const CCTK_REAL *real_params
                 chi[1] = C*e0[1] - e1[1] - b_adj*e2[1] - a_adj*e3[1];
                 chi[2] = C*e0[2] - e1[2] - b_adj*e2[2] - a_adj*e3[2];
                 chi[3] = C*e0[3] - e1[3] - b_adj*e2[3] - a_adj*e3[3];
-
-                CCTK_VWarn(1, __LINE__, __FILE__, CCTK_THORNSTRING, ("i=" + std::to_string(i) + ", j=" + std::to_string(j) + ", chi=[" + std::to_string(chi[0]) + ", " + std::to_string(chi[1]) + ", " + std::to_string(chi[2]) + ", " + std::to_string(chi[3]) + "]").c_str());
-                printf(("e0=[" + std::to_string(e0[0]) + ", " + std::to_string(e0[1]) + ", " + std::to_string(e0[2]) + ", " + std::to_string(e0[3]) + "]\n").c_str());
-                printf(("e1=[" + std::to_string(e1[0]) + ", " + std::to_string(e1[1]) + ", " + std::to_string(e1[2]) + ", " + std::to_string(e1[3]) + "]\n").c_str());
-                printf(("e2=[" + std::to_string(e2[0]) + ", " + std::to_string(e2[1]) + ", " + std::to_string(e2[2]) + ", " + std::to_string(e2[3]) + "]\n").c_str());
-                printf(("e3=[" + std::to_string(e3[0]) + ", " + std::to_string(e3[1]) + ", " + std::to_string(e3[2]) + ", " + std::to_string(e3[3]) + "]\n").c_str());
-
 
                 CCTK_REAL chi_lower[4];
                 vectorToOneFormArr(chi_lower, chi, real_params);

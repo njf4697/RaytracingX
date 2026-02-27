@@ -6,6 +6,10 @@ void interpolateMetricAtPoint(CCTK_ARGUMENTS, const CCTK_REAL x, const CCTK_REAL
     DECLARE_CCTK_ARGUMENTS
     DECLARE_CCTK_PARAMETERS
 
+    if(verbose) {
+      CCTK_INFO("interpolateMetricAtPoint");
+    }
+
     //if (x < CarpetX::xmin || x > CarpetX::xmax || y < CarpetX::ymin || y > CarpetX::ymax || z < CarpetX::zmin || z > CarpetX::zmax) {
     //  CCTK_VERROR("Camera Location Out of Bounds");
     //}
@@ -68,8 +72,6 @@ void interpolateMetricAtPoint(CCTK_ARGUMENTS, const CCTK_REAL x, const CCTK_REAL
       CCTK_VERROR("Can't set order in parameter table: %d", ierr);
     }
 
-    printf(("camera position: x: " + std::to_string(x) + ", y: " + std::to_string(y) + ", z: " + std::to_string(z) + "\n").c_str());
-
     // Perform the interpolation
     ierr = DriverInterpolate(cctkGH, 3, interpHandle, paramTableHandle,
                              coordSystemHandle, nPoints, interpCoordsTypeCode,
@@ -105,7 +107,4 @@ void interpolateMetricAtPoint(CCTK_ARGUMENTS, const CCTK_REAL x, const CCTK_REAL
     metric_at_point->g_tt = -pow(metric_at_point->alpha,2) + metric_at_point->beta_x*metric_at_point->beta_xup + metric_at_point->beta_y*metric_at_point->beta_yup + metric_at_point->beta_z*metric_at_point->beta_zup; //g_{00}
 
     metric_at_point->fillInverseMetric(); //get g^{\mu\nu}
-
-    printf(metric_at_point->to_string().c_str());
-    printf(metric_at_point->to_string_inv().c_str());
 } 
