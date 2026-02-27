@@ -294,8 +294,6 @@ void evolve(const amrex::MultiFab &lapse,
     CCTK_REAL *AMREX_RESTRICT index = attribs[StructType::index].data();
     auto *AMREX_RESTRICT particles = &(pti.GetArrayOfStructs()[0]);
 
-    CCTK_VWarn(1, __LINE__, __FILE__, CCTK_THORNSTRING, "evolving particle %d", index[i]);
-
     // Get the array of each parameter.
     auto const lapse_array = lapse.array(pti);
     auto const shift_array = shift.array(pti);
