@@ -43,6 +43,10 @@ CCTK_REAL camera_right[3] "Camera right direction" STEERABLE = ALWAYS
     *:* :: "Any real number"
 } 0.0 #[-1., 0., 0.]
 
+BOOLEAN verbose "Print additional output"  STEERABLE=ALWAYS
+{
+} false
+
 SHARES: ParticlesContainer
 
 # Base Output Variables
