@@ -481,7 +481,7 @@ namespace RaytracingX
           if (dx * dx + dy * dy + dz * dz <= radius[check] * radius[check]) {
             particles[i].id() = -1;
             tau[i] = -check - 7;
-            CCTK_VWarn(1, __LINE__, __FILE__, CCTK_THORNSTRING, "particle %d deleted, tau %d", *index[i], tau[i]);
+            CCTK_VWarn(1, __LINE__, __FILE__, CCTK_THORNSTRING, "particle %d deleted, tau %d", index[i], tau[i]);
           }
         } });
             }
