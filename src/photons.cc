@@ -207,7 +207,9 @@ void camera_initializer(ParticleContainerClass &pc, const CCTK_REAL *real_params
   camera_pos[2] = real_params[31];
 
   const CCTK_INT level = 0;
-  const CCTK_INT num_pixels = num_pixels_width * num_pixels_height;
+  const CCTK_INT num_pixels = 0;//num_pixels_width * num_pixels_height;
+
+  CCTK_INFO("test1");
 
   const int n_procs = amrex::ParallelDescriptor::NProcs();
   const int proc_id = amrex::ParallelDescriptor::MyProc();
@@ -220,6 +222,8 @@ void camera_initializer(ParticleContainerClass &pc, const CCTK_REAL *real_params
   {
     total_tiles++;
   }
+
+  CCTK_INFO("test2");
 
   int current_tile = 0;
 
@@ -238,10 +242,14 @@ void camera_initializer(ParticleContainerClass &pc, const CCTK_REAL *real_params
     auto arrdata = particle_tile.GetStructOfArrays().realarray();
     auto ptd = particle_tile.getParticleTileData();
 
+    CCTK_INFO("test3");
+
 #pragma omp parallel for
     for (int local_particle_id = 0; local_particle_id < particles_per_tile; ++local_particle_id)
     { // create 4-vector \chi parallel to geodesic and fill geodesic initial conditions for each pixel (see https://arxiv.org/pdf/1410.777)
       int pidx = local_offset + local_particle_id;
+
+      CCTK_INFO("test4");
 
       int i = pidx / num_pixels_width;
       int j = pidx % num_pixels_width;
@@ -263,6 +271,8 @@ void camera_initializer(ParticleContainerClass &pc, const CCTK_REAL *real_params
       ptd.id(local_particle_id) = ParticleContainerClass::ParticleType::NextID();
       ptd.cpu(local_particle_id) = amrex::ParallelDescriptor::MyProc();
 
+      CCTK_INFO("test5");
+
       ptd.pos(0, local_particle_id) = camera_pos[0];
       ptd.pos(1, local_particle_id) = camera_pos[1];
       ptd.pos(2, local_particle_id) = camera_pos[2];
@@ -273,9 +283,40 @@ void camera_initializer(ParticleContainerClass &pc, const CCTK_REAL *real_params
       arrdata[StructType::ln_E][local_particle_id] = 0;
       arrdata[StructType::tau][local_particle_id] = 0;
       arrdata[StructType::index][local_particle_id] = (CCTK_REAL)pidx;
+
+      CCTK_INFO("test6");
     }
   }
+  CCTK_INFO("test7");
+
   pc.Redistribute();
   pc.SortParticlesByCell();
   CCTK_VINFO("%d particles created", pc.TotalNumberOfParticles());
+
+  CCTK_INFO("test8");
+}
+
+void clear_particles(ParticleContainerClass &pc) {
+  const CCTK_INT level = 0;
+
+  const int n_procs = amrex::ParallelDescriptor::NProcs();
+  const int proc_id = amrex::ParallelDescriptor::MyProc();
+
+  int total_tiles = 0;
+  for (amrex::MFIter mfi = pc.MakeMFIter(level); mfi.isValid(); ++mfi)
+  {
+    total_tiles++;
+  }
+
+  int current_tile = 0;
+
+  for (amrex::MFIter mfi = pc.MakeMFIter(level); mfi.isValid(); ++mfi)
+  {
+
+    const unsigned int particles_per_tile = local_particles_size / total_tiles + (current_tile < local_particles_size % total_tiles);
+
+    auto &particles = pc.GetParticles(level);
+    auto &particle_tile = pc.DefineAndReturnParticleTile(level, mfi);
+    particle_tile.resize(0);
+  }
 }
