@@ -73,28 +73,28 @@ void interpolateMetricAtPoint(CCTK_ARGUMENTS, const CCTK_REAL x, const CCTK_REAL
     }
 
     // Perform the interpolation
-    ierr = DriverInterpolate(cctkGH, 3, interpHandle, paramTableHandle,
-                             coordSystemHandle, nPoints, interpCoordsTypeCode,
-                             interpCoords, nInputArrays, inputArrayIndices,
-                             nInputArrays, outputArrayTypes, outputArrays);
-
-    if (ierr < 0) {
-      CCTK_WARN(CCTK_WARN_ALERT, "Interpolation error");
-    }
+    //ierr = DriverInterpolate(cctkGH, 3, interpHandle, paramTableHandle,
+    //                         coordSystemHandle, nPoints, interpCoordsTypeCode,
+    //                         interpCoords, nInputArrays, inputArrayIndices,
+    //                         nInputArrays, outputArrayTypes, outputArrays);
+//
+    //if (ierr < 0) {
+    //  CCTK_WARN(CCTK_WARN_ALERT, "Interpolation error");
+    //}
 
     // Destroy the parameter table
     Util_TableDestroy(paramTableHandle);
 
-    metric_at_point->alpha = metric_[0].data()[0];
-    metric_at_point->beta_xup = metric_[1].data()[0];
-    metric_at_point->beta_yup = metric_[2].data()[0];
-    metric_at_point->beta_zup = metric_[3].data()[0];
-    metric_at_point->g_xx = metric_[4].data()[0];
-    metric_at_point->g_xy = metric_[5].data()[0];
-    metric_at_point->g_xz = metric_[6].data()[0];
-    metric_at_point->g_yy = metric_[7].data()[0];
-    metric_at_point->g_yz = metric_[8].data()[0];
-    metric_at_point->g_zz = metric_[9].data()[0];
+    metric_at_point->alpha = -1;//metric_[0].data()[0];
+    metric_at_point->beta_xup = 0;//metric_[1].data()[0];
+    metric_at_point->beta_yup = 0;//metric_[2].data()[0];
+    metric_at_point->beta_zup = 0;//metric_[3].data()[0];
+    metric_at_point->g_xx = 1;//metric_[4].data()[0];
+    metric_at_point->g_xy = 0;//metric_[5].data()[0];
+    metric_at_point->g_xz = 0;//metric_[6].data()[0];
+    metric_at_point->g_yy = 1;//metric_[7].data()[0];
+    metric_at_point->g_yz = 0;//metric_[8].data()[0];
+    metric_at_point->g_zz = 1;//metric_[9].data()[0];
 
     //\beta_i = \gamma_ij*\beta^j
     metric_at_point->beta_x = metric_at_point->beta_xup*metric_at_point->g_xx + metric_at_point->beta_yup*metric_at_point->g_xy + metric_at_point->beta_zup*metric_at_point->g_xz;
