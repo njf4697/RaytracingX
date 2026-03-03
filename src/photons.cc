@@ -296,6 +296,7 @@ void camera_initializer(ParticleContainerClass &pc, const CCTK_REAL *real_params
   CCTK_INFO("test8");
 }
 
+template <typename StructType, typename ParticleContainerClass>
 void clear_particles(ParticleContainerClass &pc) {
   const CCTK_INT level = 0;
 
@@ -312,9 +313,6 @@ void clear_particles(ParticleContainerClass &pc) {
 
   for (amrex::MFIter mfi = pc.MakeMFIter(level); mfi.isValid(); ++mfi)
   {
-
-    const unsigned int particles_per_tile = local_particles_size / total_tiles + (current_tile < local_particles_size % total_tiles);
-
     auto &particles = pc.GetParticles(level);
     auto &particle_tile = pc.DefineAndReturnParticleTile(level, mfi);
     particle_tile.resize(0);
