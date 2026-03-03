@@ -231,8 +231,8 @@ void camera_initializer(ParticleContainerClass &pc, const CCTK_REAL *real_params
 
     auto &particles = pc.GetParticles(level);
     auto &particle_tile = pc.DefineAndReturnParticleTile(level, mfi);
-    assert(particle_tile.GetArrayOfStructs().size() == 0);
-    auto old_size = particle_tile.GetArrayOfStructs().size();
+    assert(particle_tile.numParticles() == 0);
+    auto old_size = particle_tile.numParticles();
     auto new_size = old_size + particles_per_tile;
     particle_tile.resize(new_size);
     auto arrdata = particle_tile.GetStructOfArrays().realarray();
