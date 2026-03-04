@@ -207,7 +207,7 @@ void camera_initializer(ParticleContainerClass &pc, const CCTK_REAL *real_params
   camera_pos[2] = real_params[31];
 
   const CCTK_INT level = 0;
-  const CCTK_INT num_pixels = 0;//num_pixels_width * num_pixels_height;
+  const CCTK_INT num_pixels = num_pixels_width * num_pixels_height;
 
   CCTK_INFO("test1");
 
