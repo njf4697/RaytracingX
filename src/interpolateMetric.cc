@@ -2,8 +2,6 @@
 #include <vector>
 #include <array>
 #include <mpi.h>
-#include <AMReX_ParallelDescriptor.H>
-#include <cstdio>
 
 void interpolateMetricAtPoint(CCTK_ARGUMENTS, const CCTK_REAL x, const CCTK_REAL y, const CCTK_REAL z, Metric* metric_at_point) {
     DECLARE_CCTK_ARGUMENTS

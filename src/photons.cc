@@ -18,6 +18,7 @@
 
 #include <iostream>
 #include <loop_device.hxx>
+#include <cstdio>
 
 using ParticleData = RaytracingX::RaytracingPhotonsData;
 using PC = RaytracingX::RaytracingPhotonsContainer<ParticleData>;
@@ -233,7 +234,7 @@ void camera_initializer(ParticleContainerClass &pc, const CCTK_REAL *real_params
 
     const unsigned int particles_per_tile = local_particles_size / total_tiles + (current_tile < local_particles_size % total_tiles);
 
-    CCTK_INFO(("num pixels: " + std::to_string(num_pixels) + ", num procs: " + std::to_string(n_procs) + ", proc id: " + std::to_string(proc_id) + ", local part size: " + std::to_string(local_particles_size) + ", local offset: " + std::to_string(local_offset) + ", total tiles: " + std::to_string(total_tiles) + ", current tile: " + std::to_string(current_tile) + ", particles per tile: " + std::to_string(particles_per_tile)).c_str());
+    fprintf(stderr, ("num pixels: " + std::to_string(num_pixels) + ", num procs: " + std::to_string(n_procs) + ", proc id: " + std::to_string(proc_id) + ", local part size: " + std::to_string(local_particles_size) + ", local offset: " + std::to_string(local_offset) + ", total tiles: " + std::to_string(total_tiles) + ", current tile: " + std::to_string(current_tile) + ", particles per tile: " + std::to_string(particles_per_tile)).c_str());
 
     auto &particles = pc.GetParticles(level);
     auto &particle_tile = pc.DefineAndReturnParticleTile(level, mfi);
