@@ -79,13 +79,9 @@ void interpolateMetricAtPoint(CCTK_ARGUMENTS, const CCTK_REAL x, const CCTK_REAL
                              interpCoords, nInputArrays, inputArrayIndices,
                              nInputArrays, outputArrayTypes, outputArrays);
 
-    MPI_Barrier(MPI_COMM_WORLD);
-
     if (ierr < 0) {
       CCTK_WARN(CCTK_WARN_ALERT, "Interpolation error");
     }
-
-    CCTK_WARN(CCTK_WARN_ALERT, "Interpolation finished");
 
     // Destroy the parameter table
     Util_TableDestroy(paramTableHandle);
