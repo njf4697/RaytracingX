@@ -75,7 +75,7 @@ void interpolateMetricAtPoint(CCTK_ARGUMENTS, const CCTK_REAL x, const CCTK_REAL
       CCTK_VERROR("Can't set order in parameter table: %d", ierr);
     }
 
-    fprintf(std::to_string(amrex::ParallelDescriptor::MyProc()) + " " + std::to_string(cctkGH) + " " + std::to_string(interpHandle) + " " + std::to_string(paramTableHandle) + " " + std::to_string(coordSystemHandle) + " " + std::to_string(nPoints) + " " + std::to_string(interpCoordsTypeCode) + " " + std::to_string(interpCoords) + " " + std::to_string(nInputArrays) + " " + std::to_string(inputArrayIndices) + " " + std::to_string(nInputArrays) + " " + std::to_string(outputArrayTypes) + " " + std::to_string(outputArrays) + "\n");
+    fprintf(stderr, std::to_string(amrex::ParallelDescriptor::MyProc()) + " " + std::to_string(cctkGH) + " " + std::to_string(interpHandle) + " " + std::to_string(paramTableHandle) + " " + std::to_string(coordSystemHandle) + " " + std::to_string(nPoints) + " " + std::to_string(interpCoordsTypeCode) + " " + std::to_string(interpCoords) + " " + std::to_string(nInputArrays) + " " + std::to_string(inputArrayIndices) + " " + std::to_string(nInputArrays) + " " + std::to_string(outputArrayTypes) + " " + std::to_string(outputArrays) + "\n");
 
     // Perform the interpolation
     ierr = DriverInterpolate(cctkGH, 3, interpHandle, paramTableHandle,
