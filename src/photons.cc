@@ -248,7 +248,7 @@ void camera_initializer(ParticleContainerClass &pc, const CCTK_REAL *real_params
         total_particles_local += local_particles_size / total_tiles + (i < local_particles_size % total_tiles);
       }
       
-      int pidx = local_offset + local_particle_id + total_particles_local
+      int pidx = local_offset + local_particle_id + total_particles_local;
 
       int i = pidx / num_pixels_width;
       int j = pidx % num_pixels_width;
