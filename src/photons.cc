@@ -242,7 +242,13 @@ void camera_initializer(ParticleContainerClass &pc, const CCTK_REAL *real_params
 #pragma omp parallel for
     for (int local_particle_id = 0; local_particle_id < particles_per_tile; ++local_particle_id)
     { // create 4-vector \chi parallel to geodesic and fill geodesic initial conditions for each pixel (see https://arxiv.org/pdf/1410.777)
-      int pidx = local_offset + local_particle_id + current_tile * particles_per_tile;
+      
+      int total_particles_local = 0;
+      for (int i = 0; i < current_tile; i++) {
+        total_particles_local += local_particles_size / total_tiles + (i < local_particles_size % total_tiles);
+      }
+      
+      int pidx = local_offset + local_particle_id + total_particles_local
 
       int i = pidx / num_pixels_width;
       int j = pidx % num_pixels_width;
