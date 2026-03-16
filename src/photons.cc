@@ -229,7 +229,7 @@ void camera_initializer(ParticleContainerClass &pc, const CCTK_REAL *real_params
   {
 
     const unsigned int particles_per_tile = local_particles_size / total_tiles + (current_tile < local_particles_size % total_tiles);
-    
+
     auto &particles = pc.GetParticles(level);
     auto &particle_tile = pc.DefineAndReturnParticleTile(level, mfi);
     assert(particle_tile.numParticles() == 0);
@@ -242,7 +242,7 @@ void camera_initializer(ParticleContainerClass &pc, const CCTK_REAL *real_params
 #pragma omp parallel for
     for (int local_particle_id = 0; local_particle_id < particles_per_tile; ++local_particle_id)
     { // create 4-vector \chi parallel to geodesic and fill geodesic initial conditions for each pixel (see https://arxiv.org/pdf/1410.777)
-      int pidx = local_offset + local_particle_id;
+      int pidx = local_offset + local_particle_id + current_tile * particles_per_tile;
 
       int i = pidx / num_pixels_width;
       int j = pidx % num_pixels_width;
