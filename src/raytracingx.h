@@ -85,7 +85,7 @@ static const CCTK_REAL cgs2cactusDensity          = POW3(G_cgs)*POW2(M_cgs)/POW6
 static const CCTK_REAL cgs2cactusLength           = POW2(c_cgs)/(G_cgs * M_cgs);         //cm                   -> M
 
 //derived conversion factors
-static const CCTK_REAL cactus2cgsOpacity       = cgs2cactusDensity * cgs2cactusLength;                //used in GetLeakageCoolingRate
-static const CCTK_REAL cgs2cactusOpacity       = 1.0 / cactus2cgsOpacity;                             //used in CalcOpacity
+static const CCTK_REAL cactus2cgsOpacity       = 1.0;//cgs2cactusDensity * cgs2cactusLength;                //used in GetLeakageCoolingRate
+static const CCTK_REAL cgs2cactusOpacity       = 1.0;//1.0 / cactus2cgsOpacity;                             //used in CalcOpacity
 
 #endif
