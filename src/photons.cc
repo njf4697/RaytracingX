@@ -140,9 +140,9 @@ extern "C" void R_PhotonsContainer_evolve(CCTK_ARGUMENTS)
       region_5_radius, region_6_radius, region_7_radius, region_8_radius,
       region_9_radius, region_10_radius};
   const CCTK_REAL regions_a[10] = {
-      region_1_radius, region_2_radius, region_3_radius, region_4_radius,
-      region_5_radius, region_6_radius, region_7_radius, region_8_radius,
-      region_9_radius, region_10_radius};
+      region_1_a, region_2_a, region_3_a, region_4_a,
+      region_5_a, region_6_a, region_7_a, region_8_a,
+      region_9_a, region_10_a};
 
   for (int patch = 0; patch < CarpetX::ghext->num_patches(); ++patch)
   {
