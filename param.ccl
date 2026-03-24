@@ -51,9 +51,9 @@ BOOLEAN output_final_data "Print the data for a particle before it is deleted"  
 {
 } false
 
-STRING final_data_file_name "deleted_particle_data.tsv" "Filename for the deleted particle data" STEERABLE=ALWAYS
+STRING final_data_file_name "Filename for the deleted particle data" STEERABLE=ALWAYS
 {
-} 
+} "particle_data_on_deletion.tsv"
 
 RESTRICTED: REAL region_1_a "Spin of region 1" STEERABLE=always
 {
