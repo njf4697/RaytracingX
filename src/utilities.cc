@@ -7,6 +7,10 @@ CCTK_REAL innerProduct(const CCTK_REAL* U, const CCTK_REAL* V, const Metric* m) 
          + m->beta_z*U[0]*V[3] + m->g_xz*U[1]*V[3] + m->g_yz*U[2]*V[3] + m->g_zz*U[3]*V[3];
 }
 
+void oneFormToVectorSpatialArr(CCTK_REAL* X_vector, const CCTK_REAL* X_oneform, const CCTK_REAL* arr) {
+
+}
+
 void generalizedCrossProduct(CCTK_REAL* X, const CCTK_REAL* U, const CCTK_REAL* V, const CCTK_REAL* W, const Metric* m) {//X_\rho = \vareps_{\lambda\mu\nu\rho} U^\lambda V^\mu W^\nu, then raising to get X^\rho
     CCTK_REAL temp[4];
     temp[0] = -(-U[3]*V[1]*W[2] +  U[2]*V[1]*W[3] +  U[3]*V[2]*W[1] + -U[1]*V[2]*W[3] + -U[2]*V[3]*W[1] +  U[1]*V[3]*W[2]);
@@ -30,11 +34,11 @@ void vectorToOneForm(CCTK_REAL* X_oneform, const CCTK_REAL* X_vector, const Metr
     X_oneform[3] = X_vector[0]*m->beta_z + X_vector[1]*m->g_xz + X_vector[2]*m->g_yz + X_vector[3]*m->g_zz;
 }
 
-void vectorToOneFormArr(CCTK_REAL* X_oneform, const CCTK_REAL* X_vector, const CCTK_REAL* arr) { //X_\nu = g_{\mu\nu} X^\mu
-    X_oneform[0] = X_vector[0]*arr[0] + X_vector[1]*arr[1] + X_vector[2]*arr[2] + X_vector[3]*arr[3];
-    X_oneform[1] = X_vector[0]*arr[1] + X_vector[1]*arr[4] + X_vector[2]*arr[5] + X_vector[3]*arr[6];
-    X_oneform[2] = X_vector[0]*arr[2] + X_vector[1]*arr[5] + X_vector[2]*arr[7] + X_vector[3]*arr[8];
-    X_oneform[3] = X_vector[0]*arr[3] + X_vector[1]*arr[6] + X_vector[2]*arr[8] + X_vector[3]*arr[9];
+void vectorToOneFormArr(CCTK_REAL* X_oneform, const CCTK_REAL* X_vector, const CCTK_REAL* metric_arr) { //X_\nu = g_{\mu\nu} X^\mu
+    X_oneform[0] = X_vector[0]*metric_arr[0] + X_vector[1]*metric_arr[1] + X_vector[2]*metric_arr[2] + X_vector[3]*metric_arr[3];
+    X_oneform[1] = X_vector[0]*metric_arr[1] + X_vector[1]*metric_arr[4] + X_vector[2]*metric_arr[5] + X_vector[3]*metric_arr[6];
+    X_oneform[2] = X_vector[0]*metric_arr[2] + X_vector[1]*metric_arr[5] + X_vector[2]*metric_arr[7] + X_vector[3]*metric_arr[8];
+    X_oneform[3] = X_vector[0]*metric_arr[3] + X_vector[1]*metric_arr[6] + X_vector[2]*metric_arr[8] + X_vector[3]*metric_arr[9];
 }
 
 void projectUontoV(CCTK_REAL* X, const CCTK_REAL* U, const CCTK_REAL* V, const Metric* m) { //X^\mu = (U \cdot V) / (V \cdot V) V^\mu

@@ -141,10 +141,10 @@ namespace RaytracingX
         // Get the mass value
         CCTK_INT get_mass() { return this->mass; }
 
-        void write_deleted_particle_data(const CCTK_REAL particle_id, const CCTK_REAL x, const CCTK_REAL y, const CCTK_REAL z, const CCTK_REAL tau, bool output_final_data, std::string final_data_file_name) {
+        void write_deleted_particle_data(const CCTK_REAL particle_id, const CCTK_REAL x, const CCTK_REAL y, const CCTK_REAL z, const CCTK_REAL vx, const CCTK_REAL vy, const CCTK_REAL vz, const CCTK_REAL tau, bool output_final_data, std::string final_data_file_name) {
             if (!output_final_data) {return; }
             
-            amrex::AllPrintToFile(final_data_file_name) << (int) particle_id << "\t" << x << "\t" << y << "\t" << z << "\t" << (int) tau << std::endl;
+            amrex::AllPrintToFile(final_data_file_name) << (int) particle_id << "\t" << x << "\t" << y << "\t" << z << "\t" << vx << "\t" << vy << "\t" << vz << "\t" << (int) tau << std::endl;
         }
 
         AMREX_GPU_HOST_DEVICE AMREX_FORCE_INLINE CCTK_ATTRIBUTE_ALWAYS_INLINE
@@ -360,7 +360,7 @@ namespace RaytracingX
       CHECK_OUT_OF_BOUNDS_Z(U_tmp[2])
 
       if (out_of_bounds) {
-        write_deleted_particle_data(index[i], particles[i].pos(0), particles[i].pos(1), particles[i].pos(2), tau[i], output_final_data, final_data_file_name);
+        write_deleted_particle_data(index[i], particles[i].pos(0), particles[i].pos(1), particles[i].pos(2), vels_x[i], vels_y[i], vels_z[i], tau[i], output_final_data, final_data_file_name);
         particles[i].id() = -1;
         return;
       }
@@ -394,7 +394,7 @@ namespace RaytracingX
       CHECK_OUT_OF_BOUNDS_Z(U_tmp[2])
 
       if (out_of_bounds) {
-        write_deleted_particle_data(index[i], particles[i].pos(0), particles[i].pos(1), particles[i].pos(2), tau[i], output_final_data, final_data_file_name);
+        write_deleted_particle_data(index[i], particles[i].pos(0), particles[i].pos(1), particles[i].pos(2), vels_x[i], vels_y[i], vels_z[i], tau[i], output_final_data, final_data_file_name);
         particles[i].id() = -1;
         return;
       }
@@ -416,7 +416,7 @@ namespace RaytracingX
       CHECK_OUT_OF_BOUNDS_Z(U_tmp[2])
 
       if (out_of_bounds) {
-        write_deleted_particle_data(index[i], particles[i].pos(0), particles[i].pos(1), particles[i].pos(2), tau[i], output_final_data, final_data_file_name);
+        write_deleted_particle_data(index[i], particles[i].pos(0), particles[i].pos(1), particles[i].pos(2), vels_x[i], vels_y[i], vels_z[i], tau[i], output_final_data, final_data_file_name);
         particles[i].id() = -1;
         return;
       }
@@ -441,7 +441,7 @@ namespace RaytracingX
       out_of_bounds |= (tau[i] > 1.);
 
       if (out_of_bounds) {
-        write_deleted_particle_data(index[i], particles[i].pos(0), particles[i].pos(1), particles[i].pos(2), tau[i], output_final_data, final_data_file_name);
+        write_deleted_particle_data(index[i], particles[i].pos(0), particles[i].pos(1), particles[i].pos(2), vels_x[i], vels_y[i], vels_z[i], tau[i], output_final_data, final_data_file_name);
         particles[i].id() = -1;
         return;
       } });
@@ -498,7 +498,7 @@ namespace RaytracingX
           if (r <= (radius[check] + sqrt(radius[check]*radius[check]-4*a[check]*a[check])) / 2.0) {
             particles[i].id() = -1;
             tau[i] = -check - 7;
-            write_deleted_particle_data(index[i], particles[i].pos(0), particles[i].pos(1), particles[i].pos(2), tau[i], output_final_data, final_data_file_name);
+            write_deleted_particle_data(index[i], particles[i].pos(0), particles[i].pos(1), particles[i].pos(2), vels_x[i], vels_y[i], vels_z[i], tau[i], output_final_data, final_data_file_name);
           }
         } });
             }
