@@ -141,7 +141,7 @@ namespace RaytracingX
         // Get the mass value
         CCTK_INT get_mass() { return this->mass; }
 
-        void write_deleted_particle_data(const CCTK_REAL particle_id, const CCTK_REAL x, const CCTK_REAL y, const CCTK_REAL z, const CCTK_REAL tau) {
+        void write_deleted_particle_data(const CCTK_REAL particle_id, const CCTK_REAL x, const CCTK_REAL y, const CCTK_REAL z, const CCTK_REAL tau, bool output_final_data, std::string final_data_file_name) {
             if (!output_final_data) {return; }
 
             amrex::AllPrint().SetFileName(final_data_file_name);
@@ -288,7 +288,8 @@ namespace RaytracingX
                     const amrex::MultiFab &metric,
                     const amrex::MultiFab &curv,
                     const amrex::MultiFab &rho,
-                    const CCTK_REAL &dt, const int &lev)
+                    const CCTK_REAL &dt, const int &lev,
+                    bool output_final_data, std::string final_data_file_name)
         {
 
             const auto plo0 = this->Geom(0).ProbLoArray();
@@ -360,7 +361,7 @@ namespace RaytracingX
       CHECK_OUT_OF_BOUNDS_Z(U_tmp[2])
 
       if (out_of_bounds) {
-        write_deleted_particle_data(index[i], particles[i].pos(0), particles[i].pos(1), particles[i].pos(2), tau[i]);
+        write_deleted_particle_data(index[i], particles[i].pos(0), particles[i].pos(1), particles[i].pos(2), tau[i], output_final_data, final_data_file_name);
         particles[i].id() = -1;
         return;
       }
@@ -394,7 +395,7 @@ namespace RaytracingX
       CHECK_OUT_OF_BOUNDS_Z(U_tmp[2])
 
       if (out_of_bounds) {
-        write_deleted_particle_data(index[i], particles[i].pos(0), particles[i].pos(1), particles[i].pos(2), tau[i]);
+        write_deleted_particle_data(index[i], particles[i].pos(0), particles[i].pos(1), particles[i].pos(2), tau[i], output_final_data, final_data_file_name);
         particles[i].id() = -1;
         return;
       }
@@ -416,7 +417,7 @@ namespace RaytracingX
       CHECK_OUT_OF_BOUNDS_Z(U_tmp[2])
 
       if (out_of_bounds) {
-        write_deleted_particle_data(index[i], particles[i].pos(0), particles[i].pos(1), particles[i].pos(2), tau[i]);
+        write_deleted_particle_data(index[i], particles[i].pos(0), particles[i].pos(1), particles[i].pos(2), tau[i], output_final_data, final_data_file_name);
         particles[i].id() = -1;
         return;
       }
@@ -441,7 +442,7 @@ namespace RaytracingX
       out_of_bounds |= (tau[i] > 1.);
 
       if (out_of_bounds) {
-        write_deleted_particle_data(index[i], particles[i].pos(0), particles[i].pos(1), particles[i].pos(2), tau[i]);
+        write_deleted_particle_data(index[i], particles[i].pos(0), particles[i].pos(1), particles[i].pos(2), tau[i], output_final_data, final_data_file_name);
         particles[i].id() = -1;
         return;
       } });
@@ -463,7 +464,8 @@ namespace RaytracingX
                                 const CCTK_REAL (&x)[10], const CCTK_REAL (&y)[10],
                                 const CCTK_REAL (&z)[10],
                                 const CCTK_REAL (&radius)[10],
-                                const CCTK_REAL (&a)[10])
+                                const CCTK_REAL (&a)[10],
+                                bool output_final_data, std::string final_data_file_name)
         {
 
             if (!zones)
@@ -497,7 +499,7 @@ namespace RaytracingX
           if (r <= (radius[check] + sqrt(radius[check]*radius[check]-4*a[check]*a[check])) / 2.0) {
             particles[i].id() = -1;
             tau[i] = -check - 7;
-            write_deleted_particle_data(index[i], particles[i].pos(0), particles[i].pos(1), particles[i].pos(2), tau[i]);
+            write_deleted_particle_data(index[i], particles[i].pos(0), particles[i].pos(1), particles[i].pos(2), tau[i], output_final_data, final_data_file_name);
           }
         } });
             }

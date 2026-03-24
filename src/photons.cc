@@ -115,7 +115,7 @@ extern "C" void R_PhotonsContainer_evolve(CCTK_ARGUMENTS)
       const amrex::MultiFab &curv = *gd_curv.mfab[tl];
       const amrex::MultiFab &rho = *gd_rho.mfab[tl];
 
-      pc->evolve(lapse, shift, metric, curv, rho, CCTK_DELTA_TIME, lev);
+      pc->evolve(lapse, shift, metric, curv, rho, CCTK_DELTA_TIME, lev, output_final_data, final_data_file_name);
     }
   }
 
@@ -151,7 +151,7 @@ extern "C" void R_PhotonsContainer_evolve(CCTK_ARGUMENTS)
     for (int lev = 0; (lev < pd.leveldata.size()) & banned_regions; ++lev)
     {
       pc->check_banned_zones(lev, banned_regions, regions_x, regions_y,
-                             regions_z, regions_radius);
+                             regions_z, regions_radius, output_final_data, final_data_file_name);
     }
     pc->Redistribute();
   }
