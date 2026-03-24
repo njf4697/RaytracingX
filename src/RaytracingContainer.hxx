@@ -496,7 +496,7 @@ namespace RaytracingX
           const CCTK_REAL R2minusa2 = dx*dx + dy*dy + dz*dz - a[check]*a[check];
           
           const CCTK_REAL r = sqrt(R2minusa2 + sqrt(R2minusa2*R2minusa2+4*a[check]*a[check]*z[check]*z[check])) / 2;
-          fprintf(stderr, std::to_string(dx) + " " + std::to_string(dy) + " " +std::to_string(dz) + " " +std::to_string(a) + " " +std::to_string(R2minusa2) + " " +std::to_string(r) + "\n")
+          fprintf(stderr, std::to_string(dx) + " " + std::to_string(dy) + " " +std::to_string(dz) + " " +std::to_string(a[check]) + " " +std::to_string(R2minusa2) + " " +std::to_string(r) + "\n")
           
             assert(r > 0);
 
