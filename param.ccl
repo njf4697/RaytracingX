@@ -51,7 +51,7 @@ BOOLEAN output_final_data "Print the data for a particle before it is deleted"  
 {
 } false
 
-STRING final_data_file_name "deleted_particle_data.tsv" "Filename for the deleted particle data: STEERABLE=ALWAYS
+STRING final_data_file_name "deleted_particle_data.tsv" "Filename for the deleted particle data" STEERABLE=ALWAYS
 {
 } 
 
