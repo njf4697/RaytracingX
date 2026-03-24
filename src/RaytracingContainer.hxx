@@ -353,7 +353,7 @@ namespace RaytracingX
 
       if (out_of_bounds) {
         particles[i].id() = -1;
-        CCTK_VWarn(1, __LINE__, __FILE__, CCTK_THORNSTRING, ("particle " + std::to_string(index[i]) + " deleted, tau " + std::to_string(tau[i])).c_str());
+        fprintf(("particle " + std::to_string(index[i]) + " deleted, tau " + std::to_string(tau[i])).c_str());
         return;
       }
 
@@ -387,7 +387,7 @@ namespace RaytracingX
 
       if (out_of_bounds) {
         particles[i].id() = -1;
-        CCTK_VWarn(1, __LINE__, __FILE__, CCTK_THORNSTRING, ("particle " + std::to_string(index[i]) + " deleted, tau " + std::to_string(tau[i])).c_str());
+        fprintf(("particle " + std::to_string(index[i]) + " deleted, tau " + std::to_string(tau[i])).c_str());
         return;
       }
 
@@ -409,7 +409,7 @@ namespace RaytracingX
 
       if (out_of_bounds) {
         particles[i].id() = -1;
-        CCTK_VWarn(1, __LINE__, __FILE__, CCTK_THORNSTRING, ("particle " + std::to_string(index[i]) + " deleted, tau " + std::to_string(tau[i])).c_str());
+        fprintf(("particle " + std::to_string(index[i]) + " deleted, tau " + std::to_string(tau[i])).c_str());
         return;
       }
 
@@ -434,7 +434,7 @@ namespace RaytracingX
 
       if (out_of_bounds) {
         particles[i].id() = -1;
-        CCTK_VWarn(1, __LINE__, __FILE__, CCTK_THORNSTRING, ("particle " + std::to_string(index[i]) + " deleted, tau " + std::to_string(tau[i])).c_str());
+        fprintf(("particle " + std::to_string(index[i]) + " deleted, tau " + std::to_string(tau[i])).c_str());
         return;
       } });
             }
@@ -482,7 +482,7 @@ namespace RaytracingX
           if (dx * dx + dy * dy + dz * dz <= radius[check] * radius[check]) {
             particles[i].id() = -1;
             tau[i] = -check - 7;
-            CCTK_VWarn(1, __LINE__, __FILE__, CCTK_THORNSTRING, ("particle " + std::to_string(index[i]) + " deleted, tau " + std::to_string(tau[i])).c_str());
+            fprintf(("particle " + std::to_string(index[i]) + " deleted, tau " + std::to_string(tau[i])).c_str());
           }
         } });
             }
