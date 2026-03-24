@@ -241,7 +241,7 @@ namespace RaytracingX
                                  2.0 * dx[0] * dx[2] * gamma_inv_x[2] +
                                  2.0 * dx[1] * dx[2] * gamma_inv_x[4];
             rhs[3 + StructType::tau] = (0.4 * cgs2cactusOpacity) * (rho_x * cgs2cactusDensity) * (ds / dt);
-            fprintf(stderr, (std::to_string(cgs2cactusOpacity) + " " + std::to_string(rho_x) + " " + std::to_string(cgs2cactusDensity) + " " + std::to_string(ds) + " " + std::to_string(dt)).c_str());
+            fprintf(stderr, (std::to_string(cgs2cactusOpacity) + " " + std::to_string(rho_x) + " " + std::to_string(cgs2cactusDensity) + " " + std::to_string(ds) + " " + std::to_string(dt) + "\n").c_str());
 
             return rhs;
 
