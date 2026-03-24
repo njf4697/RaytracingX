@@ -139,6 +139,10 @@ extern "C" void R_PhotonsContainer_evolve(CCTK_ARGUMENTS)
       region_1_radius, region_2_radius, region_3_radius, region_4_radius,
       region_5_radius, region_6_radius, region_7_radius, region_8_radius,
       region_9_radius, region_10_radius};
+  const CCTK_REAL regions_a[10] = {
+      region_1_radius, region_2_radius, region_3_radius, region_4_radius,
+      region_5_radius, region_6_radius, region_7_radius, region_8_radius,
+      region_9_radius, region_10_radius};
 
   for (int patch = 0; patch < CarpetX::ghext->num_patches(); ++patch)
   {
@@ -253,8 +257,8 @@ void camera_initializer(ParticleContainerClass &pc, const CCTK_REAL *real_params
       int i = pidx / num_pixels_width;
       int j = pidx % num_pixels_width;
 
-      CCTK_REAL a_adj = (2.0 * i / (num_pixels_width - 1) - 1) * tan(alpha_h / 2.0);  // a_{adj} = (2a-1)tan(\alpha_h/2)
-      CCTK_REAL b_adj = (2.0 * j / (num_pixels_height - 1) - 1) * tan(alpha_v / 2.0); // b_{adj} = (2b-1)tan(\alpha_v/2)
+      CCTK_REAL a_adj = (2.0 * (i + 0.5) / num_pixels_width - 1.0) * tan(alpha_h / 2.0);  // a_{adj} = (2a-1)tan(\alpha_h/2)
+      CCTK_REAL b_adj = (2.0 * (j + 0.5) / num_pixels_height - 1.0) * tan(alpha_v / 2.0); // b_{adj} = (2b-1)tan(\alpha_v/2)
 
       CCTK_REAL C = sqrt(1 + pow(b_adj, 2) + pow(a_adj, 2));
 
@@ -279,7 +283,7 @@ void camera_initializer(ParticleContainerClass &pc, const CCTK_REAL *real_params
       arrdata[StructType::vz][local_particle_id] = chi_lower[3] * A;
       arrdata[StructType::ln_E][local_particle_id] = 0;
       arrdata[StructType::tau][local_particle_id] = 0;
-      arrdata[StructType::index][local_particle_id] = (CCTK_REAL) pidx;
+      ptd.idata(0, local_particle_id) = pidx;
     }
     current_tile++;
   }

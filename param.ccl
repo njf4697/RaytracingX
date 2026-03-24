@@ -47,6 +47,56 @@ BOOLEAN verbose "Print additional output"  STEERABLE=ALWAYS
 {
 } false
 
+RESTRICTED: REAL region_1_a "Spin of region 1" STEERABLE=always
+{
+    -1:1 :: "Any positive value between -1 and 1"
+} 0.0
+
+RESTRICTED: REAL region_2_a "Spin of region 2" STEERABLE=always
+{
+    -1:1 :: "Any positive value between -1 and 1"
+} 0.0
+
+RESTRICTED: REAL region_3_a "Spin of region 3" STEERABLE=always
+{
+    -1:1 :: "Any positive value between -1 and 1"
+} 0.0
+
+RESTRICTED: REAL region_4_a "Spin of region 4" STEERABLE=always
+{
+    -1:1 :: "Any positive value between -1 and 1"
+} 0.0
+
+RESTRICTED: REAL region_5_a "Spin of region 5" STEERABLE=always
+{
+    -1:1 :: "Any positive value between -1 and 1"
+} 0.0
+
+RESTRICTED: REAL region_6_a "Spin of region 6" STEERABLE=always
+{
+    -1:1 :: "Any positive value between -1 and 1"
+} 0.0
+
+RESTRICTED: REAL region_7_a "Spin of region 7" STEERABLE=always
+{
+    -1:1 :: "Any positive value between -1 and 1"
+} 0.0
+
+RESTRICTED: REAL region_8_a "Spin of region 8" STEERABLE=always
+{
+    -1:1 :: "Any positive value between -1 and 1"
+} 0.0
+
+RESTRICTED: REAL region_9_a "Spin of region 9" STEERABLE=always
+{
+    -1:1 :: "Any positive value between -1 and 1"
+} 0.0
+
+RESTRICTED: REAL region_10_a "Spin of region 10" STEERABLE=always
+{
+    -1:1 :: "Any positive value between -1 and 1"
+} 0.0
+
 SHARES: ParticlesContainer
 
 # Base Output Variables

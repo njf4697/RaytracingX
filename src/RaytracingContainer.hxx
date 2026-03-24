@@ -8,10 +8,11 @@
 #include "raytracingx.h"
 #include <AMReX_ParallelDescriptor.H>
 #include <CParameters.h>
+#include <fstream>
 
 // #define CHECK_OUT_OF_BOUNDS_X(X) out_of_bounds |= (X > boundarie_hx) || (X < boundarie_lx);\ //old version
 // #define CHECK_OUT_OF_BOUNDS_Y(Y) out_of_bounds |= (Y > boundarie_hy) || (Y < boundarie_ly);\
-// #define CHECK_OUT_OF_BOUNDS_Z(Z) out_of_bounds |= (Y > boundarie_hz) || (Y < boundarie_lz);
+// #define CHECK_OUT_OF_BOUNDS_Z(Z) out_of_bounds |= (Z > boundarie_hz) || (Z < boundarie_lz);
 #define CHECK_OUT_OF_BOUNDS_X(X) \
     if (X > boundarie_hx)        \
     {                            \
@@ -46,6 +47,9 @@
         tau[i] = -6;             \
     }
 
+#define INDEX(i) \
+    particles[i].idata(0).data()
+
 namespace RaytracingX
 {
 
@@ -57,8 +61,7 @@ namespace RaytracingX
             vy,           /**< Velocity's lower index on the y direction.*/
             vz,           /**< Velocity's lower index on the z direction.*/
             ln_E,         /**< Ln Energy value.*/
-            tau,          /**< Optical depth value.*/
-            index,        /**< Pixel index number.*/
+            tau,          /**< Optical depth value. Also used as particle deletion code, see above macros, also iterates across banned regions*/
             n_attributes, /**< Total number of attributes*/
         }; // enum
     };
@@ -133,12 +136,21 @@ namespace RaytracingX
         using Base::Base;
 
         RaytracingPhotonsContainer(amrex::AmrCore *amr_core, const CCTK_REAL m)
-            : Base(amr_core), mass{m} {};
+            : Base(amr_core), mass{m} {
+                AddParticleInt("pixel_number");
+            };
 
         ~RaytracingPhotonsContainer() = default;
 
         // Get the mass value
         CCTK_INT get_mass() { return this->mass; }
+
+        void print_last_position(const CCTK_INT particle_id, const CCTK_REAL x, const CCTK_REAL y, const CCTK_REAL z, const CCTK_REAL tau) {
+            if (!output_final_position) {return; }
+
+            amrex::AllPrint().SetFileName(final_position_file_name);
+            amrex::AllPrint() << particle_id << "\t" << x << "\t" << y << "\t" << z << "\t" << (int) tau << std::endl;
+        }
 
         AMREX_GPU_HOST_DEVICE AMREX_FORCE_INLINE CCTK_ATTRIBUTE_ALWAYS_INLINE
             amrex::GpuArray<CCTK_REAL, 8>
@@ -309,7 +321,6 @@ namespace RaytracingX
                 CCTK_REAL *AMREX_RESTRICT vels_z = attribs[StructType::vz].data();
                 CCTK_REAL *AMREX_RESTRICT ln_energy = attribs[StructType::ln_E].data();
                 CCTK_REAL *AMREX_RESTRICT tau = attribs[StructType::tau].data();
-                CCTK_REAL *AMREX_RESTRICT index = attribs[StructType::index].data();
                 auto *AMREX_RESTRICT particles = &(pti.GetArrayOfStructs()[0]);
 
                 // Get the array of each parameter.
@@ -352,8 +363,8 @@ namespace RaytracingX
       CHECK_OUT_OF_BOUNDS_Z(U_tmp[2])
 
       if (out_of_bounds) {
+        print_last_position(INDEX[i], particles[i].pos(0), particles[i].pos(1), particles[i].pos(2), tau[i]);
         particles[i].id() = -1;
-        fprintf(stderr, ("particle " + std::to_string(index[i]) + " deleted, tau " + std::to_string(tau[i]) + "\n").c_str());
         return;
       }
 
@@ -386,8 +397,8 @@ namespace RaytracingX
       CHECK_OUT_OF_BOUNDS_Z(U_tmp[2])
 
       if (out_of_bounds) {
+        print_last_position(INDEX[i], particles[i].pos(0), particles[i].pos(1), particles[i].pos(2), tau[i]);
         particles[i].id() = -1;
-        fprintf(stderr, ("particle " + std::to_string(index[i]) + " deleted, tau " + std::to_string(tau[i]) + "\n").c_str());
         return;
       }
 
@@ -408,8 +419,8 @@ namespace RaytracingX
       CHECK_OUT_OF_BOUNDS_Z(U_tmp[2])
 
       if (out_of_bounds) {
+        print_last_position(INDEX[i], particles[i].pos(0), particles[i].pos(1), particles[i].pos(2), tau[i]);
         particles[i].id() = -1;
-        fprintf(stderr, ("particle " + std::to_string(index[i]) + " deleted, tau " + std::to_string(tau[i]) + "\n").c_str());
         return;
       }
 
@@ -433,8 +444,8 @@ namespace RaytracingX
       out_of_bounds |= (tau[i] > 1.);
 
       if (out_of_bounds) {
+        print_last_position(INDEX[i], particles[i].pos(0), particles[i].pos(1), particles[i].pos(2), tau[i]);
         particles[i].id() = -1;
-        fprintf(stderr, ("particle " + std::to_string(index[i]) + " deleted, tau " + std::to_string(tau[i]) + "\n").c_str());
         return;
       } });
             }
@@ -454,7 +465,8 @@ namespace RaytracingX
         void check_banned_zones(const int &level, const CCTK_INT4 &zones,
                                 const CCTK_REAL (&x)[10], const CCTK_REAL (&y)[10],
                                 const CCTK_REAL (&z)[10],
-                                const CCTK_REAL (&radius)[10])
+                                const CCTK_REAL (&radius)[10],
+                                const CCTK_REAL (&a)[10])
         {
 
             if (!zones)
@@ -470,7 +482,6 @@ namespace RaytracingX
 
                 auto &attribs = pti.GetAttributes();
                 CCTK_REAL *AMREX_RESTRICT tau = attribs[StructType::tau].data();
-                CCTK_REAL *AMREX_RESTRICT index = attribs[StructType::index].data();
 
                 auto self = this;
                 amrex::ParallelFor(np, [=] AMREX_GPU_DEVICE(int i) noexcept
@@ -479,10 +490,16 @@ namespace RaytracingX
           const CCTK_REAL dx = particles[i].pos(0) - x[check];
           const CCTK_REAL dy = particles[i].pos(1) - y[check];
           const CCTK_REAL dz = particles[i].pos(2) - z[check];
-          if (dx * dx + dy * dy + dz * dz <= radius[check] * radius[check]) {
+
+          const CCTK_REAL R2minusa2 = dx*dx + dy*dy + dz*dz - a[check]*a[check];
+          const CCTK_REAL r = sqrt(R2minusa2 + sqrt(R2minusa2*R2minusa2+4*a[check]*a[check]*z[check]*z[check])) / 2;
+
+          assert(r > 0);
+
+          if (r <= (radius[check] + sqrt(radius[check]*radius[check]-4*a[check]*a[check])) / 2.0) {
             particles[i].id() = -1;
             tau[i] = -check - 7;
-            fprintf(stderr, ("particle " + std::to_string(index[i]) + " deleted, tau " + std::to_string(tau[i]) + "\n").c_str());
+            print_last_position(INDEX[i], particles[i].pos(0), particles[i].pos(1), particles[i].pos(2), tau[i]);
           }
         } });
             }
@@ -587,6 +604,28 @@ namespace RaytracingX
                 arrdata[StructType::vz][i] = ratio[2] * alpha / v; });
             }
         } // RaytracingPhotonsContainer::normalize_velocity
+
+        void outputParticlesAscii(const int &it, const int &plot_every,
+                            const std::string &out_dir) {
+            if (plot_every > 0 && it % plot_every == 0) {
+              const std::string &file_name =
+                  out_dir + "/" + amrex::Concatenate(this->name, it);
+              CCTK_VINFO(" Writing ascii file %s", file_name.c_str());
+            
+              this->WriteAsciiFile(file_name, true, true);
+            }
+        };
+
+        void outputParticlesPlot(const int &it, const int &plot_every,
+                                 const std::string &out_dir) {
+          if (plot_every > 0 && it % plot_every == 0) {
+            const std::string file_name =
+                out_dir + "/" + amrex::Concatenate("plt", it);
+            CCTK_VINFO("Writing plot file %s", file_name.c_str());
+
+            this->WritePlotFile(file_name, this->name, true, true);
+          }
+        };
 
         void redistribute_particles()
         {
