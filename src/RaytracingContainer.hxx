@@ -144,8 +144,8 @@ namespace RaytracingX
         void write_deleted_particle_data(const CCTK_REAL particle_id, const CCTK_REAL x, const CCTK_REAL y, const CCTK_REAL z, const CCTK_REAL tau, bool output_final_data, std::string final_data_file_name) {
             if (!output_final_data) {return; }
 
-            amrex::AllPrint().SetFileName(final_data_file_name);
-            amrex::AllPrint() << (int) particle_id << "\t" << x << "\t" << y << "\t" << z << "\t" << (int) tau << std::endl;
+            amrex::AllPrint ap(final_data_file_name);
+            ap.Print("%d\t%f\t%f\t%f\t%d\n", (int) particle_id, x, y, z, (int) tau);
         }
 
         AMREX_GPU_HOST_DEVICE AMREX_FORCE_INLINE CCTK_ATTRIBUTE_ALWAYS_INLINE
