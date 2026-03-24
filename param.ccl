@@ -47,6 +47,14 @@ BOOLEAN verbose "Print additional output"  STEERABLE=ALWAYS
 {
 } false
 
+BOOLEAN output_final_data "Print the data for a particle before it is deleted"  STEERABLE=ALWAYS
+{
+} false
+
+STRING final_data_file_name "Filename for the deleted particle data: STEERABLE=ALWAYS
+{
+} "deleted_particle_data.tsv"
+
 RESTRICTED: REAL region_1_a "Spin of region 1" STEERABLE=always
 {
     -1:1 :: "Any positive value between -1 and 1"

@@ -283,7 +283,7 @@ void camera_initializer(ParticleContainerClass &pc, const CCTK_REAL *real_params
       arrdata[StructType::vz][local_particle_id] = chi_lower[3] * A;
       arrdata[StructType::ln_E][local_particle_id] = 0;
       arrdata[StructType::tau][local_particle_id] = 0;
-      ptd.idata(0, local_particle_id) = pidx;
+      arrdata[StructType::pixel_number][local_particle_id] = (CCTK_REAL) pidx;
     }
     current_tile++;
   }
