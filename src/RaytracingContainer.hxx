@@ -479,6 +479,9 @@ namespace RaytracingX
                 auto *AMREX_RESTRICT particles = &(pti.GetArrayOfStructs()[0]);
 
                 auto &attribs = pti.GetAttributes();
+                CCTK_REAL *AMREX_RESTRICT vels_x = attribs[StructType::vx].data();
+                CCTK_REAL *AMREX_RESTRICT vels_y = attribs[StructType::vy].data();
+                CCTK_REAL *AMREX_RESTRICT vels_z = attribs[StructType::vz].data();
                 CCTK_REAL *AMREX_RESTRICT tau = attribs[StructType::tau].data();
                 CCTK_REAL *AMREX_RESTRICT index = attribs[StructType::pixel_number].data();
 
