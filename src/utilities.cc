@@ -7,10 +7,6 @@ CCTK_REAL innerProduct(const CCTK_REAL* U, const CCTK_REAL* V, const Metric* m) 
          + m->beta_z*U[0]*V[3] + m->g_xz*U[1]*V[3] + m->g_yz*U[2]*V[3] + m->g_zz*U[3]*V[3];
 }
 
-void oneFormToVectorSpatialArr(CCTK_REAL* X_vector, const CCTK_REAL* X_oneform, const CCTK_REAL* arr) {
-
-}
-
 void generalizedCrossProduct(CCTK_REAL* X, const CCTK_REAL* U, const CCTK_REAL* V, const CCTK_REAL* W, const Metric* m) {//X_\rho = \vareps_{\lambda\mu\nu\rho} U^\lambda V^\mu W^\nu, then raising to get X^\rho
     CCTK_REAL temp[4];
     temp[0] = -(-U[3]*V[1]*W[2] +  U[2]*V[1]*W[3] +  U[3]*V[2]*W[1] + -U[1]*V[2]*W[3] + -U[2]*V[3]*W[1] +  U[1]*V[3]*W[2]);
