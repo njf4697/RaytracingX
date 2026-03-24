@@ -481,7 +481,7 @@ namespace RaytracingX
 
                 auto &attribs = pti.GetAttributes();
                 CCTK_REAL *AMREX_RESTRICT tau = attribs[StructType::tau].data();
-                CCTK_REAL *AMREX_RESTRICT tau = attribs[StructType::pixel_number].data();
+                CCTK_REAL *AMREX_RESTRICT index = attribs[StructType::pixel_number].data();
 
                 auto self = this;
                 amrex::ParallelFor(np, [=] AMREX_GPU_DEVICE(int i) noexcept
