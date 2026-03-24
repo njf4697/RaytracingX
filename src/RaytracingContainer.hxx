@@ -241,9 +241,7 @@ namespace RaytracingX
                                  2.0 * dx[0] * dx[2] * gamma_inv_x[2] +
                                  2.0 * dx[1] * dx[2] * gamma_inv_x[4];
             rhs[3 + StructType::tau] = (0.4 * cgs2cactusOpacity) * (rho_x * cgs2cactusDensity) * (ds / dt);
-            if (rho_x != 0.0) {
-                fprintf(stderr, (std::to_string(cgs2cactusOpacity) + " " + std::to_string(rho_x) + " " + std::to_string(cgs2cactusDensity) + " " + std::to_string(ds) + " " + std::to_string(dt) + "\n").c_str());
-            }
+
             return rhs;
 
         } // RaytracingPhotonsContainer::compute_rhs
@@ -355,7 +353,7 @@ namespace RaytracingX
 
       if (out_of_bounds) {
         particles[i].id() = -1;
-        fprintf(stderr, ("particle " + std::to_string(index[i]) + " deleted, tau " + std::to_string(tau[i])).c_str());
+        fprintf(stderr, ("particle " + std::to_string(index[i]) + " deleted, tau " + std::to_string(tau[i]) + "\n").c_str());
         return;
       }
 
@@ -389,7 +387,7 @@ namespace RaytracingX
 
       if (out_of_bounds) {
         particles[i].id() = -1;
-        fprintf(stderr, ("particle " + std::to_string(index[i]) + " deleted, tau " + std::to_string(tau[i])).c_str());
+        fprintf(stderr, ("particle " + std::to_string(index[i]) + " deleted, tau " + std::to_string(tau[i]) + "\n").c_str());
         return;
       }
 
@@ -411,7 +409,7 @@ namespace RaytracingX
 
       if (out_of_bounds) {
         particles[i].id() = -1;
-        fprintf(stderr, ("particle " + std::to_string(index[i]) + " deleted, tau " + std::to_string(tau[i])).c_str());
+        fprintf(stderr, ("particle " + std::to_string(index[i]) + " deleted, tau " + std::to_string(tau[i]) + "\n").c_str());
         return;
       }
 
@@ -436,7 +434,7 @@ namespace RaytracingX
 
       if (out_of_bounds) {
         particles[i].id() = -1;
-        fprintf(stderr, ("particle " + std::to_string(index[i]) + " deleted, tau " + std::to_string(tau[i])).c_str());
+        fprintf(stderr, ("particle " + std::to_string(index[i]) + " deleted, tau " + std::to_string(tau[i]) + "\n").c_str());
         return;
       } });
             }
@@ -484,7 +482,7 @@ namespace RaytracingX
           if (dx * dx + dy * dy + dz * dz <= radius[check] * radius[check]) {
             particles[i].id() = -1;
             tau[i] = -check - 7;
-            fprintf(stderr, ("particle " + std::to_string(index[i]) + " deleted, tau " + std::to_string(tau[i])).c_str());
+            fprintf(stderr, ("particle " + std::to_string(index[i]) + " deleted, tau " + std::to_string(tau[i]) + "\n").c_str());
           }
         } });
             }
