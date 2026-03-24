@@ -151,7 +151,7 @@ extern "C" void R_PhotonsContainer_evolve(CCTK_ARGUMENTS)
     for (int lev = 0; (lev < pd.leveldata.size()) & banned_regions; ++lev)
     {
       pc->check_banned_zones(lev, banned_regions, regions_x, regions_y,
-                             regions_z, regions_radius, output_final_data, final_data_file_name);
+                             regions_z, regions_radius, regions_a, output_final_data, final_data_file_name);
     }
     pc->Redistribute();
   }
