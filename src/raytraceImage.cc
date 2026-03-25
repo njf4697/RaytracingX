@@ -16,7 +16,7 @@ void gramSchmidtProcess(CCTK_ARGUMENTS, CCTK_REAL* e0, CCTK_REAL* e1, CCTK_REAL*
     CCTK_REAL u2[4];
     CCTK_REAL u3[4];
     CCTK_REAL v1[4] = {0, camera_point[0], camera_point[1], camera_point[2]}; //v1 is camera pointing direciton
-    CCTK_REAL v2[4] = {0, camera_right[0], camera_right[1], camera_right[2]}; //v2 is camera right direction
+    CCTK_REAL v2[4] = {0, camera_up[0], camera_up[1], camera_up[2]}; //v2 is camera right direction
     
 
     CCTK_REAL projv1_onto_u0[4];
