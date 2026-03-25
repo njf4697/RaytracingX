@@ -83,8 +83,6 @@ extern "C" void R_PhotonsContainer_evolve(CCTK_ARGUMENTS)
     CCTK_INFO("R_PhotonsContainer_evolve");
   }
 
-  const CCTK_REAL dt = CCTK_DELTA_TIME;
-
   const int tl = 0;
   const int gi_lapse = CCTK_GroupIndex("ADMBaseX::lapse");
   const int gi_shift = CCTK_GroupIndex("ADMBaseX::shift");

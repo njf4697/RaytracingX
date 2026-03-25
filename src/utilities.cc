@@ -9,10 +9,10 @@ CCTK_REAL innerProduct(const CCTK_REAL* U, const CCTK_REAL* V, const Metric* m) 
 
 void generalizedCrossProduct(CCTK_REAL* X, const CCTK_REAL* U, const CCTK_REAL* V, const CCTK_REAL* W, const Metric* m) {//X_\rho = \vareps_{\lambda\mu\nu\rho} U^\lambda V^\mu W^\nu, then raising to get X^\rho
     CCTK_REAL temp[4];
-    temp[0] = -U[3]*V[1]*W[2] +  U[2]*V[1]*W[3] +  U[3]*V[2]*W[1] + -U[1]*V[2]*W[3] + -U[2]*V[3]*W[1] +  U[1]*V[3]*W[2];
-    temp[1] =  U[3]*V[0]*W[2] + -U[2]*V[0]*W[3] + -U[3]*V[2]*W[0] +  U[0]*V[2]*W[3] +  U[2]*V[3]*W[0] + -U[0]*V[3]*W[2];
-    temp[2] = -U[3]*V[0]*W[1] +  U[1]*V[0]*W[3] +  U[3]*V[1]*W[0] + -U[0]*V[1]*W[3] + -U[1]*V[3]*W[0] +  U[0]*V[3]*W[1];
-    temp[3] =  U[2]*V[0]*W[1] + -U[1]*V[0]*W[2] + -U[2]*V[1]*W[0] +  U[0]*V[1]*W[2] +  U[1]*V[2]*W[0] + -U[0]*V[2]*W[1];
+    temp[0] = -(-U[3]*V[1]*W[2] +  U[2]*V[1]*W[3] +  U[3]*V[2]*W[1] + -U[1]*V[2]*W[3] + -U[2]*V[3]*W[1] +  U[1]*V[3]*W[2]);
+    temp[1] = -( U[3]*V[0]*W[2] + -U[2]*V[0]*W[3] + -U[3]*V[2]*W[0] +  U[0]*V[2]*W[3] +  U[2]*V[3]*W[0] + -U[0]*V[3]*W[2]);
+    temp[2] = -(-U[3]*V[0]*W[1] +  U[1]*V[0]*W[3] +  U[3]*V[1]*W[0] + -U[0]*V[1]*W[3] + -U[1]*V[3]*W[0] +  U[0]*V[3]*W[1]);
+    temp[3] = -( U[2]*V[0]*W[1] + -U[1]*V[0]*W[2] + -U[2]*V[1]*W[0] +  U[0]*V[1]*W[2] +  U[1]*V[2]*W[0] + -U[0]*V[2]*W[1]);
     oneFormToVector(X, temp, m);
 }
 
@@ -66,13 +66,13 @@ CCTK_REAL getTimeComponentOf4Velocity(const CCTK_REAL vx, const CCTK_REAL vy, co
     CCTK_REAL C = m->g_xx*vx*vx + 2*m->g_xy*vx*vy + 2*m->g_xz*vx*vz +
                                    m->g_yy*vy*vy + 2*m->g_yz*vy*vz +
                                                     m->g_zz*vz*vz + 1;
-    CCTK_REAL v0 = (-B + sqrt(B*B - 4*A*C))/(2*A);
+    CCTK_REAL v0 = (-B - sqrt(B*B - 4*A*C))/(2*A);
     CCTK_REAL v[4] = {v0, vx, vy, vz};
 
     if (innerProduct(v, v, m) + 1 < 0.0000000001 or v0 < 0) {
         return v0;
     }
-    v0 = (-B - sqrt(B*B - 4*A*C))/(2*A);
+    v0 = (-B + sqrt(B*B - 4*A*C))/(2*A);
     v[0] = v0;
     if (innerProduct(v, v, m) + 1 < 0.0000000001) {
         return v0;
