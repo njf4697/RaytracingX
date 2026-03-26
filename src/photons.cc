@@ -252,8 +252,8 @@ void camera_initializer(ParticleContainerClass &pc, const CCTK_REAL *real_params
       
       int pidx = local_offset + local_particle_id + total_particles_local;
 
-      int i = pidx / num_pixels_width;
-      int j = pidx % num_pixels_width;
+      int i = pidx % num_pixels_width;
+      int j = pidx / num_pixels_width;
 
       CCTK_REAL a_adj = (2.0 * (i + 0.5) / num_pixels_width - 1.0) * tan(alpha_h / 2.0);  // a_{adj} = (2a-1)tan(\alpha_h/2)
       CCTK_REAL b_adj = (2.0 * (j + 0.5) / num_pixels_height - 1.0) * tan(alpha_v / 2.0); // b_{adj} = (2b-1)tan(\alpha_v/2)
