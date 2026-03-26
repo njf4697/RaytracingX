@@ -41,7 +41,7 @@ void gramSchmidtProcess(CCTK_ARGUMENTS, CCTK_REAL* e0, CCTK_REAL* e1, CCTK_REAL*
 
     generalizedCrossProduct(e3, e0, e1, e2, metric); //e3 is an normalized vector orthogonal to e0, e1, e2, e3
 
-    fprintf(stderr, "[%f, %f, %f, %f], [%f, %f, %f, %f], [%f, %f, %f, %f], [%f, %f, %f, %f]\n", e0[0], e0[1], e0[2], e0[3], e1[0], e1[1], e1[2], e1[3], e2[0], e2[1], e2[2], e2[3], e3[0], e3[1], e3[2], e3[3]);
+    //fprintf(stderr, "[%f, %f, %f, %f], [%f, %f, %f, %f], [%f, %f, %f, %f], [%f, %f, %f, %f]\n", e0[0], e0[1], e0[2], e0[3], e1[0], e1[1], e1[2], e1[3], e2[0], e2[1], e2[2], e2[3], e3[0], e3[1], e3[2], e3[3]);
 }
 
 void setup_camera_initializer_reals(CCTK_ARGUMENTS, CCTK_REAL* real_params) {
