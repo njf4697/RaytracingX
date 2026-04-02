@@ -218,8 +218,6 @@ namespace RaytracingX
                 gamma_inv_x[1] * u[3] + gamma_inv_x[3] * u[4] + gamma_inv_x[4] * u[5],
                 gamma_inv_x[2] * u[3] + gamma_inv_x[4] * u[4] + gamma_inv_x[5] * u[5]};
 
-            fprintf(stderr, "%f %f %f\n", i0, j0, k0);
-
             // Compute the rhs for position
             rhs[0] = lapse_x * V_up[0] - shift_x[0];
             rhs[1] = lapse_x * V_up[1] - shift_x[1];
