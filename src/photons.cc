@@ -113,7 +113,7 @@ extern "C" void R_PhotonsContainer_evolve(CCTK_ARGUMENTS)
       const amrex::MultiFab &curv = *gd_curv.mfab[tl];
       const amrex::MultiFab &rho = *gd_rho.mfab[tl];
 
-      pc->evolve(lapse, shift, metric, curv, rho, CCTK_DELTA_TIME, lev, output_final_data, final_data_file_name);
+      pc->evolve(lapse, shift, metric, curv, rho, -CCTK_DELTA_TIME, lev, output_final_data, final_data_file_name);
     }
   }
 
