@@ -339,14 +339,15 @@ namespace RaytracingX
 
       bool out_of_bounds = false;
 
-      fprintf(stderr, "%f %f %f\n", U[0], U[1], U[2]);
-
+      
       amrex::GpuArray<CCTK_REAL, 8> U_tmp = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
-
+      
       // f1 = rhs(u , t) for the runge kutta 4 step
       auto k_odd =
-          self->compute_rhs(U, 0.0, lapse_array, shift_array, metric_array,
-                            curv_array, rho_array, dt, dx, lev, plo0);
+      self->compute_rhs(U, 0.0, lapse_array, shift_array, metric_array,
+        curv_array, rho_array, dt, dx, lev, plo0);
+        
+      fprintf(stderr, "%f %f %f\n", k_odd[0], k_odd[1], k_odd[2]);
 
       U_tmp[0] = U[0] + 0.5 * dt * k_odd[0];
       U_tmp[1] = U[1] + 0.5 * dt * k_odd[1];
