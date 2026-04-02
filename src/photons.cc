@@ -113,7 +113,7 @@ extern "C" void R_PhotonsContainer_evolve(CCTK_ARGUMENTS)
       const amrex::MultiFab &curv = *gd_curv.mfab[tl];
       const amrex::MultiFab &rho = *gd_rho.mfab[tl];
 
-      pc->evolve(lapse, shift, metric, curv, rho, CCTK_DELTA_TIME, lev, output_final_data, final_data_file_name);
+      pc->evolve(lapse, shift, metric, curv, rho, -CCTK_DELTA_TIME, lev, output_final_data, final_data_file_name);
     }
   }
 
@@ -276,9 +276,9 @@ void camera_initializer(ParticleContainerClass &pc, const CCTK_REAL *real_params
       ptd.pos(1, local_particle_id) = camera_pos[1];
       ptd.pos(2, local_particle_id) = camera_pos[2];
       CCTK_REAL A = 1 / lapse * chi[0];
-      arrdata[StructType::vx][local_particle_id] = chi_lower[1] * A;
-      arrdata[StructType::vy][local_particle_id] = chi_lower[2] * A;
-      arrdata[StructType::vz][local_particle_id] = chi_lower[3] * A;
+      arrdata[StructType::vx][local_particle_id] = -chi_lower[1] * A;
+      arrdata[StructType::vy][local_particle_id] = -chi_lower[2] * A;
+      arrdata[StructType::vz][local_particle_id] = -chi_lower[3] * A;
       arrdata[StructType::ln_E][local_particle_id] = 0;
       arrdata[StructType::tau][local_particle_id] = 0;
       arrdata[StructType::pixel_number][local_particle_id] = (CCTK_REAL) pidx;
