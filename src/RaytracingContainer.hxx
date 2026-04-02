@@ -354,6 +354,8 @@ namespace RaytracingX
       U_tmp[5] = U[5] + 0.5 * dt * k_odd[5];
       U_tmp[6] = U[6] + 0.5 * dt * k_odd[6];
       U_tmp[7] = U[7] + 0.5 * dt * k_odd[7];
+
+      fprintf(stderr, "%f %f %f", U_tmp[0], U_tmp[1], U_tmp[2])
       
       CHECK_OUT_OF_BOUNDS_X(U_tmp[0])
       CHECK_OUT_OF_BOUNDS_Y(U_tmp[1])
@@ -497,9 +499,9 @@ namespace RaytracingX
           
           const CCTK_REAL r = sqrt(R2minusa2 + sqrt(R2minusa2*R2minusa2+4*a[check]*a[check]*z[check]*z[check])) / 2;
 
-          if (!(r > 0)) {
-            fprintf(stderr, (std::to_string(particles[i].pos(0)) + " " + std::to_string(dy) + " " +std::to_string(dz) + " " +std::to_string(a[check]) + " " +std::to_string(R2minusa2) + " " +std::to_string(r) + "\n").c_str());
-          }
+          //if (!(r > 0)) {
+          //  fprintf(stderr, (std::to_string(particles[i].pos(0)) + " " + std::to_string(dy) + " " +std::to_string(dz) + " " +std::to_string(a[check]) + " " +std::to_string(R2minusa2) + " " +std::to_string(r) + "\n").c_str());
+          //}
           assert(r > 0);
           
 
