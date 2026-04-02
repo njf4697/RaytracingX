@@ -339,13 +339,12 @@ namespace RaytracingX
 
       bool out_of_bounds = false;
 
-      
       amrex::GpuArray<CCTK_REAL, 8> U_tmp = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
-      
+
       // f1 = rhs(u , t) for the runge kutta 4 step
       auto k_odd =
-      self->compute_rhs(U, 0.0, lapse_array, shift_array, metric_array,
-        curv_array, rho_array, dt, dx, lev, plo0);
+          self->compute_rhs(U, 0.0, lapse_array, shift_array, metric_array,
+                            curv_array, rho_array, dt, dx, lev, plo0);
 
       U_tmp[0] = U[0] + 0.5 * dt * k_odd[0];
       U_tmp[1] = U[1] + 0.5 * dt * k_odd[1];
@@ -499,7 +498,7 @@ namespace RaytracingX
           const CCTK_REAL r = sqrt(R2minusa2 + sqrt(R2minusa2*R2minusa2+4*a[check]*a[check]*z[check]*z[check])) / 2;
 
           //if (!(r > 0)) {
-          //  fprintf(stderr, (std::to_string(particles[i].pos(0)) + " " + std::to_string(dy) + " " +std::to_string(dz) + " " +std::to_string(a[check]) + " " +std::to_string(R2minusa2) + " " +std::to_string(r) + "\n").c_str());
+          //  fprintf(stderr, (std::to_string(dx) + " " + std::to_string(dy) + " " +std::to_string(dz) + " " +std::to_string(a[check]) + " " +std::to_string(R2minusa2) + " " +std::to_string(r) + "\n").c_str());
           //}
           assert(r > 0);
           
