@@ -339,6 +339,8 @@ namespace RaytracingX
 
       bool out_of_bounds = false;
 
+      fprintf(stderr, "%f %f %f\n", U[0], U[1], U[2]);
+
       amrex::GpuArray<CCTK_REAL, 8> U_tmp = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
 
       // f1 = rhs(u , t) for the runge kutta 4 step
@@ -354,8 +356,6 @@ namespace RaytracingX
       U_tmp[5] = U[5] + 0.5 * dt * k_odd[5];
       U_tmp[6] = U[6] + 0.5 * dt * k_odd[6];
       U_tmp[7] = U[7] + 0.5 * dt * k_odd[7];
-
-      fprintf(stderr, "%f %f %f", U_tmp[0], U_tmp[1], U_tmp[2]);
       
       CHECK_OUT_OF_BOUNDS_X(U_tmp[0])
       CHECK_OUT_OF_BOUNDS_Y(U_tmp[1])
