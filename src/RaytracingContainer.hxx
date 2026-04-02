@@ -218,6 +218,8 @@ namespace RaytracingX
                 gamma_inv_x[1] * u[3] + gamma_inv_x[3] * u[4] + gamma_inv_x[4] * u[5],
                 gamma_inv_x[2] * u[3] + gamma_inv_x[4] * u[4] + gamma_inv_x[5] * u[5]};
 
+            fprintf(stderr, "%f %f %f\n", V_up[0], V_up[1], V_up[2]);
+
             // Compute the rhs for position
             rhs[0] = lapse_x * V_up[0] - shift_x[0];
             rhs[1] = lapse_x * V_up[1] - shift_x[1];
@@ -346,8 +348,6 @@ namespace RaytracingX
       auto k_odd =
       self->compute_rhs(U, 0.0, lapse_array, shift_array, metric_array,
         curv_array, rho_array, dt, dx, lev, plo0);
-        
-      fprintf(stderr, "%f %f %f\n", k_odd[0], k_odd[1], k_odd[2]);
 
       U_tmp[0] = U[0] + 0.5 * dt * k_odd[0];
       U_tmp[1] = U[1] + 0.5 * dt * k_odd[1];
