@@ -87,8 +87,7 @@ namespace RaytracingX
          */
 
         using Base =
-            GInX::BaseParticleContainer<RaytracingPhotonsContainer<StructType>,
-                                                 StructType>;
+            GInX::BaseParticleContainer<RaytracingParticlesContainer<StructType>,StructType>;
         using Base::Base;
 
         RaytracingParticlesContainer(amrex::AmrCore *amr_core, const CCTK_REAL m)
