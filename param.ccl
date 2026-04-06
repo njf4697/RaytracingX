@@ -110,7 +110,7 @@ RESTRICTED: REAL region_10_a "Spin of region 10" STEERABLE=always
     -1:1 :: "Any positive value between -1 and 1"
 } 0.0
 
-SHARES: ParticlesContainer
+SHARES: BaseParticlesContainer
 
 # Base Output Variables
 USES INT particle_plot_every
