@@ -12,6 +12,9 @@
 #include <AMReX_MFIter.H>
 #include "AMReX_GpuDevice.H"
 #include "AMReX_ParallelDescriptor.H"
+#include "BaseParticleContainer.hxx"
+
+#define DEG2RAD 0.01745329251
 
 #ifndef RAYTRACING_INITIALIZERS
 #define RAYTRACING_INITIALIZERS
@@ -79,7 +82,7 @@ void camera_initializer(ParticleContainerClass &pc, const CCTK_REAL *real_params
   
   //Assert that the number of pixels is valid. This is due to a hack storing the pixel id as a real, and 16,777,217 is the first integer to not be exact in IEEE 32-bit floats. Reasoning for hack explained below.
   if (num_pixels > 16777216) {
-    CCTK_ERROR("Number of pixels exceeds the maximum of 16,777,216.")
+    CCTK_ERROR("Number of pixels exceeds the maximum of 16,777,216.");
   }
 
   const int n_procs = amrex::ParallelDescriptor::NProcs();
@@ -191,7 +194,7 @@ void setup_camera_initializer_reals(CCTK_ARGUMENTS, CCTK_REAL* real_params) {
     DECLARE_CCTK_PARAMETERS
 
     Metric metric;
-    interpolateMetricAtPoint(CCTK_PASS_CTOC, camera_pos[0], camera_pos[1], camera_pos[2], &metric); //interpolate metric values and store in Metric struct
+    interpolateMetricAtPoint(CCTK_PASS_CTOC, &metric); //interpolate metric values and store in Metric struct
 
     CCTK_REAL e0[4];
     CCTK_REAL e1[4];

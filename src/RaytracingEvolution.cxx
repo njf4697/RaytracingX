@@ -32,8 +32,6 @@
 #include <iostream>
 #include <loop_device.hxx>
 
-#define DEG2RAD 0.01745329251
-
 //RaytracingX: Uses override for particle data struct and particle container defined in RaytracingX/RaytracingContainer.hxx.
 using ParticleData = RaytracingX::RaytracingPhotonsData;
 using PC = RaytracingX::RaytracingParticlesContainer<ParticleData>;
