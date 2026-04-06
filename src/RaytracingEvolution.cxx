@@ -16,7 +16,7 @@
 
 #include <cctk.h>
 
-#include "ParticlesContainer.hxx"
+#include "BaseParticlesContainer.hxx"
 #include "RaytracingContainer.hxx"
 #include <AMReX_ParallelDescriptor.H>
 #include <CParameters.h>
