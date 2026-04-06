@@ -20,6 +20,7 @@
 #include "RaytracingContainer.hxx"
 #include <AMReX_ParallelDescriptor.H>
 #include <CParameters.h>
+#include <AMReX_MFIter.H>
 
 #include <cstring>
 #include <driver.hxx>
