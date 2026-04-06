@@ -2,10 +2,10 @@
 # ====================================================
 
 IMPLEMENTS: RaytracingX
-INHERITS:   ADMBaseX AMReX HydroBaseX ParticlesContainer PhotonsContainer Loop
+INHERITS:   ADMBaseX AMReX HydroBaseX BaseParticlesContainer ParticlesContainer Loop
 
 USES INCLUDE HEADER: Photons.hxx
-USES INCLUDE HEADER: PhotonsContainer.hxx
+USES INCLUDE HEADER: BaseParticlesContainer.hxx
 USES INCLUDE HEADER: loop_device.hxx
 USES INCLUDE HEADER: driver.hxx
 

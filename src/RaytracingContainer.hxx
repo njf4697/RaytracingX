@@ -4,15 +4,13 @@
 #include <cctk.h>
 
 #include "Photons.hxx"
-#include "PhotonsContainer.hxx"
+#include "BaseParticlesContainer.hxx"
 #include "raytracingx.h"
 #include <AMReX_ParallelDescriptor.H>
 #include <CParameters.h>
 #include <fstream>
 
-// #define CHECK_OUT_OF_BOUNDS_X(X) out_of_bounds |= (X > boundarie_hx) || (X < boundarie_lx);\ //old version
-// #define CHECK_OUT_OF_BOUNDS_Y(Y) out_of_bounds |= (Y > boundarie_hy) || (Y < boundarie_ly);\
-// #define CHECK_OUT_OF_BOUNDS_Z(Z) out_of_bounds |= (Z > boundarie_hz) || (Z < boundarie_lz);
+//Macros that check if the position is out of bounds, and each one sets the optical depth to a specific value for debugging purposes.
 #define CHECK_OUT_OF_BOUNDS_X(X) \
     if (X > boundarie_hx)        \
     {                            \
@@ -65,61 +63,18 @@ namespace RaytracingX
     };
 
     template <typename StructType>
-    class RaytracingPhotonsContainer : public BaseContainer::BaseParticleContainer<RaytracingPhotonsContainer<StructType>,
+    class RaytracingParticlesContainer : public BaseContainer::BaseParticleContainer<RaytracingParticlesContainer<StructType>,
                                                                                    StructType>
     {
 
-        // ##############################################################################
-        //              RaytracingPhotonsContainer::METHODS DECLARATION
-        // ##############################################################################
-
-        /**
-         * \brief Computes the right hand side of the geodesic differential equation.
-         *
-         * Given differential equation \f[\frac{d}{dt}U = f\left(U, \frac{dU}{dx};
-         * t\right)\f] computes
-         * \f[f\left(U, \frac{dU}{dx}; t\right)\f]
-         *
-         * where \f$U\f$ is a vector that contains \f$(x_u, y_u, z_u, vx_d, vy_d, vz_d,
-         * E)\f$. That's why each rhs depends on the other components of the vector
-         * \f$U\f$. For the position the differential equation  is:
-         *
-         * \f[\frac{d}{dt} U[i] = \alpha \gamma^{ij} U[3 + j] - \beta^i\f]
-         *
-         * Where \f$i,j = 0, 1, 2\f$, \f$\gamma\f$ is the induced metric, \f$\alpha\f$
-         * is the lapse function and \f$\beta\f$ is the shift vector.
-         *
-         * For the Velocity_d the differential equation is:
-         *
-         * \f{eqnarray*}{
-         * \frac{d}{dt}U[3 + i] &= -\partial_i\alpha + \left(\gamma^{kj} U[3 + k]
-         * \partial_j\alpha - \alpha K_{jk}\gamma^{jl}\gamma^{km}U[3+l]U[3+m]\right) U[3
-         * + i]\\ & +
-         * \frac{1}{2}\alpha\gamma^{jl}\gamma^{km}U[3+l]U[3+m]\partial_i\gamma{jk} + U[3
-         * + j] \partial_i\beta^j
-         * \f}
-         *
-         * and finally, for the \f$ ln E \f$ the differential equation is:
-         *
-         * \f[ \dfrac{d}{dt} U[6] = \alpha K_{jk}U[3 + l]U[3 + m]\gamma^{lj}\gamma^{mk}
-         * - U[3+l]\gamma^{lj}\partial_j\alpha\f]
-         *
-         *  Where \f$i, j, k, l, m = 0, 1, 2\f$ and we have been using Einstein
-         * notation.
-         *
-         *  @param u A GpuArray of size n_attributes + the coordinates that contains the
-         * varaibles needed to evolve.
-         *  @param t Current time t.
-         *  @param lapse ADM lapse function.
-         *  @param shift Shift vector \beta^i
-         *  @param metric 3 dimensional ADM metric.
-         *  @param curv Extrinsic curvature.
-         *  @param dt Timestep.
-         *  @param dx Spacestep
-         *  @param lev AMR Level of discretization.
-         *  @param plo Physical lower bounds of the whole domain.
-         *  @return The right hind side of the differential equation.
-         */
+    /**
+     * \brief RaytracingParticlesContainer class definition.
+     *
+     * The following class defines the needed functions to evolve the position and
+     * velocity of the photons in the simulation for raytracing purposes. Many of the methods
+     * are similar to those found in ParticlesContainer/ParticlesContainer.hxx, so changes will be prefaced with 
+     * 'RaytraingX:'.
+     */
     protected:
         CCTK_REAL mass = 0.;
 
@@ -138,15 +93,62 @@ namespace RaytracingX
 
         ~RaytracingPhotonsContainer() = default;
 
-        // Get the mass value
-        CCTK_INT get_mass() { return this->mass; }
-
+        //RaytracingX: Add method that writes particle information when the particle is deleted.
         void write_deleted_particle_data(const CCTK_REAL particle_id, const CCTK_REAL x, const CCTK_REAL y, const CCTK_REAL z, const CCTK_REAL vx, const CCTK_REAL vy, const CCTK_REAL vz, const CCTK_REAL tau, bool output_final_data, std::string final_data_file_name) {
             if (!output_final_data) {return; }
             
             amrex::AllPrintToFile(final_data_file_name) << (int) particle_id << "\t" << x << "\t" << y << "\t" << z << "\t" << vx << "\t" << vy << "\t" << vz << "\t" << (int) tau << std::endl;
         }
 
+        /**
+         * \brief Computes the right hand side of the geodesic differential equation.
+         *
+         * Given differential equation \f[\frac{d}{dt}U = f\left(U, \frac{dU}{dx};
+         * t\right)\f] computes
+         * \f[f\left(U, \frac{dU}{dx}; t\right)\f]
+         *
+         * where \f$U\f$ is a vector which contains \f$(x, y, z, v_x, v_y, v_z,
+         * \ln E)\f$. The differential equation for the particles' position is
+         *
+         * \f[\frac{d}{dt} U[i] = \alpha \gamma^{ij} U[3 + j] - \beta^i\f]
+         *
+         * Where \f$i,j = 0, 1, 2\f$, \f$\gamma\f$ is the induced metric, \f$\alpha\f$
+         * is the lapse function and \f$\beta\f$ is the shift vector.
+         *
+         * For the Velocity_d the differential equation is:
+         *
+         * \f{eqnarray*}{
+         * \frac{d}{dt}U[3 + i] &= -\partial_i\alpha + \left(\gamma^{kj} U[3 + k]
+         * \partial_j\alpha - \alpha K_{jk}\gamma^{jl}\gamma^{km}U[3+l]U[3+m]\right) U[3
+         * + i]\\ & +
+         * \frac{1}{2}\alpha\gamma^{jl}\gamma^{km}U[3+l]U[3+m]\partial_i\gamma{jk} + U[3
+         * + j] \partial_i\beta^j
+         * \f}
+         *
+         * and finally, for the \f$ \ln E \f$ the differential equation is:
+         *
+         * \f[ \dfrac{d}{dt} U[6] = \alpha K_{jk}U[3 + l]U[3 + m]\gamma^{lj}\gamma^{mk}
+         * - U[3+l]\gamma^{lj}\partial_j\alpha\f]
+         *
+         *  Where \f$i, j, k, l, m = 0, 1, 2\f$ and \f$K_{ij}\f$ is the extrinsic
+         * curvature. We have been using Einstein notation.
+         * 
+         *  RaytracingX: optical depth iteration as \f \frac{d\tau}{ds}=\kappa\rho \f so \frac{d}{dt}\tau = \kappa\rho\frac{ds}{dt}
+         *
+         *  @param u A GpuArray of size n_attributes + the coordinates that contains the
+         * varaibles needed to evolve.
+         *  @param t Current time t.
+         *  @param lapse ADM lapse function.
+         *  @param shift Shift vector \beta^i
+         *  @param metric 3 dimensional ADM metric.
+         *  @param curv Extrinsic curvature.
+         *  @param rho RaytracingX: Gas density.
+         *  @param dt Timestep.
+         *  @param dx Spacestep
+         *  @param lev AMR Level of discretization.
+         *  @param plo Physical lower bounds of the whole domain.
+         *  @return The right hind side of the differential equation.
+         */
         AMREX_GPU_HOST_DEVICE AMREX_FORCE_INLINE CCTK_ATTRIBUTE_ALWAYS_INLINE
             amrex::GpuArray<CCTK_REAL, 8>
             compute_rhs(
@@ -160,6 +162,7 @@ namespace RaytracingX
                 const amrex::GpuArray<double, 3> &plo)
         {
 
+            //RaytracingX: Add space for optical depth variable.
             amrex::GpuArray<CCTK_REAL, 8> rhs = {0., 0., 0., 0., 0., 0., 0., 0.};
 
             const long int i0 = amrex::Math::floor((u[0] - plo[0]) / dx[0]);
@@ -188,6 +191,7 @@ namespace RaytracingX
             amrex::GpuArray<CCTK_REAL, 6> curv_x;
             GInX::interpolate_array<5>(curv_x, curv, i0, j0, k0, u[0], u[1], u[2], dx, plo);
 
+            //RaytracingX: Interpolate density for optical depth calculation.
             // Interpolate rho at \vect{x}
             CCTK_REAL rho_x;
             amrex::GpuArray<CCTK_REAL, 3> d_rho_x;
@@ -240,6 +244,7 @@ namespace RaytracingX
                 lapse_x * VecVecMul(SMatVecMul(curv_x, V_up), V_up) -
                 VecVecMul(V_up, d_lapse_x);
 
+            //RaytracingX: Add evolution for optical depth calculation.
             // Compute the rhs for optical depth
             const CCTK_REAL ds = dx[0] * dx[0] * gamma_inv_x[0] +
                                  dx[1] * dx[1] * gamma_inv_x[3] +
@@ -251,12 +256,12 @@ namespace RaytracingX
 
             return rhs;
 
-        } // RaytracingPhotonsContainer::compute_rhs
+        } // RaytracingParticlesContainer::compute_rhs
 
         /**
          *  \brief Evolving using Runge-Kutta 4.
          *
-         *  For the Runge-Kutta 4 we are solving the differential equation
+         * We are solving the differential equation
          * \f$\frac{dU}{dt} = f\left(U, \frac{dU}{dx}, t\right)\f$ using:
          *
          *  \f[
@@ -272,15 +277,16 @@ namespace RaytracingX
          * t}{2}\right),\f$
          *  * \f$f_4 = f(U_n + \Delta t f_3, t + \Delta t),\f$
          *
-         *  And checking if it goes outside of the grid boundaries.
+         *  While computing we are checking if the particles still in the physical domain.
          *
          *  @see compute_rhs()
          *  @param lapse ADM lapse function.
          *  @param shift ADM shift vector.
-         *  @param metric ADM 3 dimension metric.
+         *  @param metric ADM induced metric.
          *  @param curv Extrinsic curvature.
+         *  @param rho RaytracingX: gas density
          *  @param dt Timestep.
-         *  @param lev AMR Level of discretization.
+         *  @param lev Refinement level.
          */
         void evolve(const amrex::MultiFab &lapse,
                     const amrex::MultiFab &shift,
@@ -316,8 +322,8 @@ namespace RaytracingX
                 CCTK_REAL *AMREX_RESTRICT vels_y = attribs[StructType::vy].data();
                 CCTK_REAL *AMREX_RESTRICT vels_z = attribs[StructType::vz].data();
                 CCTK_REAL *AMREX_RESTRICT ln_energy = attribs[StructType::ln_E].data();
-                CCTK_REAL *AMREX_RESTRICT tau = attribs[StructType::tau].data();
-                CCTK_REAL *AMREX_RESTRICT index = attribs[StructType::pixel_number].data();
+                CCTK_REAL *AMREX_RESTRICT tau = attribs[StructType::tau].data(); //RaytracingX: Add optical depth.
+                CCTK_REAL *AMREX_RESTRICT index = attribs[StructType::pixel_number].data(); //RaytracingX: Add pixel index.
                 auto *AMREX_RESTRICT particles = &(pti.GetArrayOfStructs()[0]);
 
                 // Get the array of each parameter.
@@ -325,7 +331,7 @@ namespace RaytracingX
                 auto const shift_array = shift.array(pti);
                 auto const metric_array = metric.array(pti);
                 auto const curv_array = curv.array(pti);
-                auto const rho_array = rho.array(pti);
+                auto const rho_array = rho.array(pti);//RaytracingX: Add optical depth.
 
                 // Needed for GPU
                 auto self = this;
@@ -335,16 +341,17 @@ namespace RaytracingX
       const amrex::GpuArray<CCTK_REAL, 8> U = {
           particles[i].pos(0), particles[i].pos(1), particles[i].pos(2),
           vels_x[i],           vels_y[i],           vels_z[i],
-          ln_energy[i], tau[i]};
+          ln_energy[i], tau[i]}; //RaytracingX: Add density for optical depth.
 
       bool out_of_bounds = false;
 
+      //RaytracingX: Add optical depth.
       amrex::GpuArray<CCTK_REAL, 8> U_tmp = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
 
       // f1 = rhs(u , t) for the runge kutta 4 step
       auto k_odd =
           self->compute_rhs(U, 0.0, lapse_array, shift_array, metric_array,
-                            curv_array, rho_array, dt, dx, lev, plo0);
+                            curv_array, rho_array, dt, dx, lev, plo0); //RaytracingX: Add density for optical depth.
 
       U_tmp[0] = U[0] + 0.5 * dt * k_odd[0];
       U_tmp[1] = U[1] + 0.5 * dt * k_odd[1];
@@ -353,13 +360,15 @@ namespace RaytracingX
       U_tmp[4] = U[4] + 0.5 * dt * k_odd[4];
       U_tmp[5] = U[5] + 0.5 * dt * k_odd[5];
       U_tmp[6] = U[6] + 0.5 * dt * k_odd[6];
-      U_tmp[7] = U[7] + 0.5 * dt * k_odd[7];
+      U_tmp[7] = U[7] + 0.5 * dt * k_odd[7]; //RaytracingX: Add optical depth.
       
+      //RaytracingX: Change bounds check for debug information.
       CHECK_OUT_OF_BOUNDS_X(U_tmp[0])
       CHECK_OUT_OF_BOUNDS_Y(U_tmp[1])
       CHECK_OUT_OF_BOUNDS_Z(U_tmp[2])
 
       if (out_of_bounds) {
+        //RaytracingX: Write particle information on deletion.
         write_deleted_particle_data(index[i], particles[i].pos(0), particles[i].pos(1), particles[i].pos(2), vels_x[i], vels_y[i], vels_z[i], tau[i], output_final_data, final_data_file_name);
         particles[i].id() = -1;
         return;
@@ -378,7 +387,7 @@ namespace RaytracingX
       U_tmp[4] = U[4] + 0.5 * dt * k_even[4];
       U_tmp[5] = U[5] + 0.5 * dt * k_even[5];
       U_tmp[6] = U[6] + 0.5 * dt * k_even[6];
-      U_tmp[7] = U[7] + 0.5 * dt * k_even[7];
+      U_tmp[7] = U[7] + 0.5 * dt * k_even[7]; //RaytracingX: Add optical depth.
 
       particles[i].pos(0) += (1. / 6.) * dt * (k_odd[0] + 2. * k_even[0]);
       particles[i].pos(1) += (1. / 6.) * dt * (k_odd[1] + 2. * k_even[1]);
@@ -387,13 +396,15 @@ namespace RaytracingX
       vels_y[i] += (1. / 6.) * dt * (k_odd[4] + 2. * k_even[4]);
       vels_z[i] += (1. / 6.) * dt * (k_odd[5] + 2. * k_even[5]);
       ln_energy[i] += (1. / 6.) * dt * (k_odd[6] + 2. * k_even[6]);
-      tau[i] += (1. / 6.) * dt * (k_odd[7] + 2. * k_even[7]);
-
+      tau[i] += (1. / 6.) * dt * (k_odd[7] + 2. * k_even[7]); //RaytracingX: Add optical depth.
+      
+      //RaytracingX: Change bounds check for debug information.
       CHECK_OUT_OF_BOUNDS_X(U_tmp[0])
       CHECK_OUT_OF_BOUNDS_Y(U_tmp[1])
       CHECK_OUT_OF_BOUNDS_Z(U_tmp[2])
 
       if (out_of_bounds) {
+        //RaytracingX: Write particle information on deletion.
         write_deleted_particle_data(index[i], particles[i].pos(0), particles[i].pos(1), particles[i].pos(2), vels_x[i], vels_y[i], vels_z[i], tau[i], output_final_data, final_data_file_name);
         particles[i].id() = -1;
         return;
@@ -401,7 +412,7 @@ namespace RaytracingX
 
       // f3 = rhs(u + 0.5 * dt * f2, t) for the runge kutta 4 step
       k_odd = self->compute_rhs(U_tmp, 0.5 * dt, lapse_array, shift_array,
-                                metric_array, curv_array, rho_array, dt, dx, lev, plo0);
+                                metric_array, curv_array, rho_array, dt, dx, lev, plo0); //RaytracingX: Add optical depth.
 
       U_tmp[0] = U[0] + dt * k_odd[0];
       U_tmp[1] = U[1] + dt * k_odd[1];
@@ -410,12 +421,15 @@ namespace RaytracingX
       U_tmp[4] = U[4] + dt * k_odd[4];
       U_tmp[5] = U[5] + dt * k_odd[5];
       U_tmp[6] = U[6] + dt * k_odd[6];
-
+      U_tmp[7] = U[7] + dt * k_odd[7]; //RaytracingX: Add optical depth.
+      
+      //RaytracingX: Change bounds check for debug information.
       CHECK_OUT_OF_BOUNDS_X(U_tmp[0])
       CHECK_OUT_OF_BOUNDS_Y(U_tmp[1])
       CHECK_OUT_OF_BOUNDS_Z(U_tmp[2])
 
       if (out_of_bounds) {
+        //RaytracingX: Write particle information on deletion.
         write_deleted_particle_data(index[i], particles[i].pos(0), particles[i].pos(1), particles[i].pos(2), vels_x[i], vels_y[i], vels_z[i], tau[i], output_final_data, final_data_file_name);
         particles[i].id() = -1;
         return;
@@ -423,7 +437,7 @@ namespace RaytracingX
 
       // f4 = rhs(u + dt * f3, t) for the runge kutta 4 step
       k_even = self->compute_rhs(U_tmp, dt, lapse_array, shift_array,
-                                 metric_array, curv_array, rho_array, dt, dx, lev, plo0);
+                                 metric_array, curv_array, rho_array, dt, dx, lev, plo0); //RaytracingX: Add optical depth.
 
       // Update particles with the f3 and f4 from RK4
       particles[i].pos(0) += (1. / 6.) * dt * (2. * k_odd[0] + k_even[0]);
@@ -433,24 +447,28 @@ namespace RaytracingX
       vels_y[i] += (1. / 6.) * dt * (2. * k_odd[4] + k_even[4]);
       vels_z[i] += (1. / 6.) * dt * (2. * k_odd[5] + k_even[5]);
       ln_energy[i] += (1. / 6.) * dt * (2. * k_odd[6] + k_even[6]);
-      tau[i] += (1. / 6.) * dt * (2. * k_odd[7] + k_even[7]);
+      tau[i] += (1. / 6.) * dt * (2. * k_odd[7] + k_even[7]); //RaytracingX: Add optical depth.
 
+      //RaytracingX: Change bounds check for debug information.
       CHECK_OUT_OF_BOUNDS_X(particles[i].pos(0))
       CHECK_OUT_OF_BOUNDS_Y(particles[i].pos(1))
       CHECK_OUT_OF_BOUNDS_Z(particles[i].pos(2))
+      //RaytracingX: Delete particle (i.e. stop evolving geodesic) when geodesic hits photosphere (tau=1).
       out_of_bounds |= (tau[i] > 1.);
 
       if (out_of_bounds) {
+        //RaytracingX: Write particle information on deletion.
         write_deleted_particle_data(index[i], particles[i].pos(0), particles[i].pos(1), particles[i].pos(2), vels_x[i], vels_y[i], vels_z[i], tau[i], output_final_data, final_data_file_name);
         particles[i].id() = -1;
         return;
       } });
             }
-        } // RaytracingPhotonsContainer::evolve
+        } // RaytracingParticlesContainer::evolve
 
         /**
          * The check banned zones function check for user defined invalid particles
-         * zones.
+         * zones. 
+         * RaytracingX: Changed to work with spinning BHs.
          *
          * @param level Adaptive Mesh Refinement level
          * @param zones Number of banned zones
@@ -464,7 +482,7 @@ namespace RaytracingX
                                 const CCTK_REAL (&z)[10],
                                 const CCTK_REAL (&radius)[10],
                                 const CCTK_REAL (&a)[10],
-                                bool output_final_data, std::string final_data_file_name)
+                                bool output_final_data, std::string final_data_file_name) //RaytracingX: Add optical depth.
         {
 
             if (!zones)
@@ -482,8 +500,8 @@ namespace RaytracingX
                 CCTK_REAL *AMREX_RESTRICT vels_x = attribs[StructType::vx].data();
                 CCTK_REAL *AMREX_RESTRICT vels_y = attribs[StructType::vy].data();
                 CCTK_REAL *AMREX_RESTRICT vels_z = attribs[StructType::vz].data();
-                CCTK_REAL *AMREX_RESTRICT tau = attribs[StructType::tau].data();
-                CCTK_REAL *AMREX_RESTRICT index = attribs[StructType::pixel_number].data();
+                CCTK_REAL *AMREX_RESTRICT tau = attribs[StructType::tau].data(); //RaytracingX: Add optical depth.
+                CCTK_REAL *AMREX_RESTRICT index = attribs[StructType::pixel_number].data(); //RaytracingX: Add pixel number.
 
                 auto self = this;
                 amrex::ParallelFor(np, [=] AMREX_GPU_DEVICE(int i) noexcept
@@ -493,19 +511,16 @@ namespace RaytracingX
           const CCTK_REAL dy = particles[i].pos(1) - y[check];
           const CCTK_REAL dz = particles[i].pos(2) - z[check];
 
+          //RaytracingX: Change to work for spinning BHs.
           const CCTK_REAL R2minusa2 = dx*dx + dy*dy + dz*dz - a[check]*a[check];
-          
           const CCTK_REAL r = sqrt(R2minusa2 + sqrt(R2minusa2*R2minusa2+4*a[check]*a[check]*z[check]*z[check])) / 2;
 
-          //if (!(r > 0)) {
-          //  fprintf(stderr, (std::to_string(dx) + " " + std::to_string(dy) + " " +std::to_string(dz) + " " +std::to_string(a[check]) + " " +std::to_string(R2minusa2) + " " +std::to_string(r) + "\n").c_str());
-          //}
-          assert(r > 0);
+          if (!(r > 0)) { CCTK_ERROR("Issue with calculating distance to banned zone."); }
           
-
           if (r <= (radius[check] + sqrt(radius[check]*radius[check]-4*a[check]*a[check])) / 2.0) {
             particles[i].id() = -1;
             tau[i] = -check - 7;
+            //RaytracingX: Write particle information on deletion.
             write_deleted_particle_data(index[i], particles[i].pos(0), particles[i].pos(1), particles[i].pos(2), vels_x[i], vels_y[i], vels_z[i], tau[i], output_final_data, final_data_file_name);
           }
         } });
@@ -610,19 +625,21 @@ namespace RaytracingX
                 arrdata[StructType::vy][i] = ratio[1] * alpha / v;
                 arrdata[StructType::vz][i] = ratio[2] * alpha / v; });
             }
-        } // RaytracingPhotonsContainer::normalize_velocity
+        } // RaytracingParticlesContainer::normalize_velocity
 
         void redistribute_particles()
         {
             CCTK_INFO("Redistributing particles");
-        } // RaytracingPhotonsContainer::redistribute_particles
+        } // RaytracingParticlesContainer::redistribute_particles
 
+        //RaytracingX: evolve method override necessary because expanding virtual class from BaseParticleContainer
         void evolve(const amrex::MultiFab &lapse,
                     const amrex::MultiFab &shift,
                     const amrex::MultiFab &metric,
                     const amrex::MultiFab &curv, const CCTK_REAL &dt,
                     const int &lev)
         {
+            CCTK_ERROR("This evolve method should not be used! Use the other one.")
             return;
         }
     };

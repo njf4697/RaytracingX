@@ -3,7 +3,12 @@
 #include <array>
 #include <mpi.h>
 
-void interpolateMetricAtPoint(CCTK_ARGUMENTS, const CCTK_REAL x, const CCTK_REAL y, const CCTK_REAL z, Metric* metric_at_point) {
+/**
+ * \brief This function wraps DriverInterpolate to interpolate the metric quantities at the camera.
+ * 
+ * @param metric_at_point An empty Metric object that will be filled in with the appropriate data.
+ */
+void interpolateMetricAtPoint(CCTK_ARGUMENTS, Metric* metric_at_point) {
     DECLARE_CCTK_ARGUMENTS
     DECLARE_CCTK_PARAMETERS
 
@@ -11,17 +16,17 @@ void interpolateMetricAtPoint(CCTK_ARGUMENTS, const CCTK_REAL x, const CCTK_REAL
       CCTK_INFO("interpolateMetricAtPoint");
     }
 
-    //if (x < CarpetX::xmin || x > CarpetX::xmax || y < CarpetX::ymin || y > CarpetX::ymax || z < CarpetX::zmin || z > CarpetX::zmax) {
-    //  CCTK_VERROR("Camera Location Out of Bounds");
-    //}
+    if (camera_pos[0] < xmin || camera_pos[0] > xmax || camera_pos[1] < ymin || camera_pos[1] > ymax || camera_pos[2] < zmin || camera_pos[2] > zmax) {
+      CCTK_VERROR("Camera location out of bounds");
+    }
 
-    //only raytrace on one processor
-    const CCTK_INT nPoints = 1;//(CCTK_MyProc(cctkGH) == 0) ? 1 : 0;
+    //Only call interpolation on one processor.
+    const int nPoints = (CCTK_MyProc(cctkGH) == 0) ? 1 : 0;
 
     std::array<std::vector<CCTK_REAL>, 3> location_;
-    location_[0].push_back(x);
-    location_[1].push_back(y);
-    location_[2].push_back(z);
+    location_[0].push_back(camera_pos[0]);
+    location_[1].push_back(camera_pos[1]);
+    location_[2].push_back(camera_pos[2]);
 
     std::array<std::vector<CCTK_REAL>, 10> metric_;
     metric_[0].resize(1);
@@ -57,7 +62,7 @@ void interpolateMetricAtPoint(CCTK_ARGUMENTS, const CCTK_REAL x, const CCTK_REAL
 
     const int interpHandle = CCTK_InterpHandle("CarpetX");
     if (interpHandle < 0) {
-      CCTK_WARN(CCTK_WARN_ALERT, "Can't get interpolation handle");
+      CCTK_ERROR("Can't get interpolation handle");
       return;
     }
 
@@ -80,11 +85,20 @@ void interpolateMetricAtPoint(CCTK_ARGUMENTS, const CCTK_REAL x, const CCTK_REAL
                              nInputArrays, outputArrayTypes, outputArrays);
 
     if (ierr < 0) {
-      CCTK_WARN(CCTK_WARN_ALERT, "Interpolation error");
+      CCTK_ERROR("Interpolation error.");
     }
 
     // Destroy the parameter table
     Util_TableDestroy(paramTableHandle);
+
+    // Send data from rank 0 to all other ranks
+    for (int i = 0; i < 10; ++i) {
+      MPI_Bcast(metric_[i].data(),
+                1,
+                CCTK_REAL,
+                0,
+                CCTK_MPI_COMM_WORLD);
+    }
 
     metric_at_point->alpha = metric_[0].data()[0];
     metric_at_point->beta_xup = metric_[1].data()[0];

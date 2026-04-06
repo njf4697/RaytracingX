@@ -8,10 +8,6 @@
 #ifndef RAYTRACINGX
 #define RAYTRACINGX
 
-#define POW2(X) (X*X)
-#define POW3(X) (X*X*X)
-#define POW6(X) (X*X*X*X*X*X)
-
 struct Metric { //struct that contains information about the metric interpolated at a point
     CCTK_REAL alpha;
     CCTK_REAL beta_x, beta_y, beta_z; //g_{tx}, g_{ty}, g_{tz}
@@ -59,21 +55,16 @@ struct Metric { //struct that contains information about the metric interpolated
     }
 };
 
-//nonscheduled
-void gramSchmidtProcess(CCTK_ARGUMENTS, CCTK_REAL* e0, CCTK_REAL* e1, CCTK_REAL* e2, CCTK_REAL* e3, Metric* metric); //raytraceImage.cc
-void interpolateMetricAtPoint(CCTK_ARGUMENTS, const CCTK_REAL x, const CCTK_REAL y, const CCTK_REAL z, Metric* metric_at_point); //interpolateMetric.cc
+void gramSchmidtProcess(CCTK_ARGUMENTS, CCTK_REAL* e0, CCTK_REAL* e1, CCTK_REAL* e2, CCTK_REAL* e3, Metric* metric); //Utilities.cc
+void interpolateMetricAtPoint(CCTK_ARGUMENTS, Metric* metric_at_point); //InterpolateMetric.cc
 CCTK_REAL innerProduct(const CCTK_REAL* U, const CCTK_REAL* V, const Metric* m); //utilities.cc
-void generalizedCrossProduct(CCTK_REAL* X, const CCTK_REAL* U, const CCTK_REAL* V, const CCTK_REAL* W, const Metric* m); //utilities.cc
-void oneFormToVector(CCTK_REAL* X_vector, const CCTK_REAL* X_oneform, const Metric* m); //utilities.cc
-void vectorToOneForm(CCTK_REAL* X_oneform, const CCTK_REAL* X_vector, const Metric* m); //utilities.cc
-void vectorToOneFormArr(CCTK_REAL* X_oneform, const CCTK_REAL* X_vector, const CCTK_REAL* arr); //utilities.cc
-void projectUontoV(CCTK_REAL* X, const CCTK_REAL* U, const CCTK_REAL* V, const Metric* m); //utilities.cc
-void normalize(CCTK_REAL* X_norm, const CCTK_REAL* X, const Metric* m); //utilities.cc
-CCTK_REAL getTimeComponentOf4Velocity(const CCTK_REAL vx, const CCTK_REAL vy, const CCTK_REAL vz, Metric* m); //utilities.cc
-template <typename StructType, typename ParticleContainerClass>
-void camera_initializer(ParticleContainerClass &pc, const CCTK_REAL *real_params, const CCTK_INT *int_params);
-void setup_camera_initializer_ints(CCTK_ARGUMENTS, CCTK_INT* int_params);
-void setup_camera_initializer_reals(CCTK_ARGUMENTS, CCTK_REAL* real_params);
+void generalizedCrossProduct(CCTK_REAL* X, const CCTK_REAL* U, const CCTK_REAL* V, const CCTK_REAL* W, const Metric* m); //Utilities.cc
+void oneFormToVector(CCTK_REAL* X_vector, const CCTK_REAL* X_oneform, const Metric* m); //Utilities.cc
+void vectorToOneForm(CCTK_REAL* X_oneform, const CCTK_REAL* X_vector, const Metric* m); //Utilities.cc
+void vectorToOneFormArr(CCTK_REAL* X_oneform, const CCTK_REAL* X_vector, const CCTK_REAL* arr); //Utilities.cc
+void projectUontoV(CCTK_REAL* X, const CCTK_REAL* U, const CCTK_REAL* V, const Metric* m); //Utilities.cc
+void normalize(CCTK_REAL* X_norm, const CCTK_REAL* X, const Metric* m); //Utilities.cc
+CCTK_REAL getTimeComponentOf4Velocity(const CCTK_REAL vx, const CCTK_REAL vy, const CCTK_REAL vz, Metric* m); //Utilities.cc
 
 //constants for unit conversion to code units
 static const CCTK_REAL M_cgs = 1.9884e33;      //g               -> M
@@ -81,11 +72,11 @@ static const CCTK_REAL c_cgs = 2.99792458e+10; //cm s^-1         -> 1
 static const CCTK_REAL G_cgs = 6.67430e-8;     //cm^3 g^-1 s^-2  -> 1
 
 //base conversion factors
-static const CCTK_REAL cgs2cactusDensity          = POW3(G_cgs)*POW2(M_cgs)/POW6(c_cgs); //g cm^-3              -> M^-2
-static const CCTK_REAL cgs2cactusLength           = POW2(c_cgs)/(G_cgs * M_cgs);         //cm                   -> M
+static const CCTK_REAL cgs2cactusDensity          = 1.6192e-18; //calculated using wolfram alpha, POW3(G_cgs)*POW2(M_cgs)/POW6(c_cgs) g cm^-3              -> M^-2
+static const CCTK_REAL cgs2cactusLength           = 6.7722e-6; //calculated using wolfram alpha, POW2(c_cgs)/(G_cgs * M_cgs)          cm                   -> M
 
 //derived conversion factors
-static const CCTK_REAL cactus2cgsOpacity       = 1.0;//cgs2cactusDensity * cgs2cactusLength;                //used in GetLeakageCoolingRate
-static const CCTK_REAL cgs2cactusOpacity       = 1.0;//1.0 / cactus2cgsOpacity;                             //used in CalcOpacity
+static const CCTK_REAL cactus2cgsOpacity       = 1.0; //1.09656e-23; //cgs2cactusDensity * cgs2cactusLength;                //used in GetLeakageCoolingRate
+static const CCTK_REAL cgs2cactusOpacity       = 1.0; //9.119e22; //1.0 / cactus2cgsOpacity;                             //used in CalcOpacity
 
 #endif

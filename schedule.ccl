@@ -1,6 +1,8 @@
 # Schedule definition for thorn RaytracingX
 # ===================================================
 
+if (!do_raytracing) {
+
 SCHEDULE R_PhotonsContainer_setup AT CCTK_POSTINITIAL {
     LANG: C
     OPTIONS: global
@@ -32,3 +34,5 @@ SCHEDULE R_PhotonsContainer_final_cleanup at CCTK_SHUTDOWN{
     LANG: C
     OPTIONS: global
 } "cleaning everything"
+
+}

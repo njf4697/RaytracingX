@@ -2,7 +2,7 @@
 # ========================================================
 
 # Source files in this directory
-SRCS = raytraceImage.cc interpolateMetric.cc utilities.cc photons.cc
+SRCS = RaytracingEvolution.cc InterpolateMetric.cc Utilities.cc
 
 # Subdirectories containing source files
 SUBDIRS = 
