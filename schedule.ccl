@@ -16,14 +16,14 @@ if ((particle_plot_every>0)||(particle_tsv_every>0) ){
     } "print the particles"
 }
 
-SCHEDULE R_PhotonsContainer_evolve AT evol
+SCHEDULE R_ParticlesContainer_evolve AT evol
 {
     LANG: C
     OPTIONS: global
 } "Photons evolution"
 
 if ((particle_plot_every||particle_tsv_every) ) {
-    SCHEDULE R_ParticlesContainer_print AT evol AFTER R_PhotonsContainer_evolve
+    SCHEDULE R_ParticlesContainer_print AT evol AFTER R_ParticlesContainer_evolve
     {
         LANG: C
         OPTIONS: global
