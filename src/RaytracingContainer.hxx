@@ -15,6 +15,7 @@
 #include <AMReX_AmrParticles.H>
 #include <AMReX_MultiFab.H>
 #include <AMReX_MultiFabUtil.H>
+#include <AMReX_MFIter.H>
 
 //Macros that check if the position is out of bounds, and each one sets the optical depth to a specific value for debugging purposes.
 #define CHECK_OUT_OF_BOUNDS_X(X) \
