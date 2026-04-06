@@ -63,7 +63,7 @@ namespace RaytracingX
     };
 
     template <typename StructType>
-    class RaytracingParticlesContainer : public BaseContainer::BaseParticleContainer<RaytracingParticlesContainer<StructType>,
+    class RaytracingParticlesContainer : public GInX::BaseParticleContainer<RaytracingParticlesContainer<StructType>,
                                                                                    StructType>
     {
 
