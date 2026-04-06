@@ -5,7 +5,7 @@
 
 #include "Photons.hxx"
 #include "BaseParticlesContainer.hxx"
-#include "raytracingx.h"
+#include "RaytracingX.h"
 #include <AMReX_ParallelDescriptor.H>
 #include <CParameters.h>
 #include <fstream>
