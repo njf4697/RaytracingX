@@ -227,5 +227,5 @@ void gramSchmidtProcess(CCTK_ARGUMENTS, CCTK_REAL* e0, CCTK_REAL* e1, CCTK_REAL*
     if (!(abs(innerProduct(e1, e2, metric)) < 0.001)) { return; }
     if (!(abs(innerProduct(e1, e3, metric)) < 0.001)) { return; }
     if (!(abs(innerProduct(e2, e3, metric)) < 0.001)) { return; }
-    CCTK_ERROR("Given camera coordinate system is invalid.")
+    CCTK_ERROR("Given camera coordinate system is invalid.");
 }
