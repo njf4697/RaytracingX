@@ -84,14 +84,14 @@ namespace RaytracingX
          */
 
         using Base =
-            BaseContainer::BaseParticleContainer<RaytracingPhotonsContainer<StructType>,
+            GInX::BaseParticleContainer<RaytracingPhotonsContainer<StructType>,
                                                  StructType>;
         using Base::Base;
 
-        RaytracingPhotonsContainer(amrex::AmrCore *amr_core, const CCTK_REAL m)
+        RaytracingParticlesContainer(amrex::AmrCore *amr_core, const CCTK_REAL m)
             : Base(amr_core), mass{m} { };
 
-        ~RaytracingPhotonsContainer() = default;
+        ~RaytracingParticlesContainer() = default;
 
         //RaytracingX: Add method that writes particle information when the particle is deleted.
         void write_deleted_particle_data(const CCTK_REAL particle_id, const CCTK_REAL x, const CCTK_REAL y, const CCTK_REAL z, const CCTK_REAL vx, const CCTK_REAL vy, const CCTK_REAL vz, const CCTK_REAL tau, bool output_final_data, std::string final_data_file_name) {
