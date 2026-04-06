@@ -16,10 +16,6 @@ void interpolateMetricAtPoint(CCTK_ARGUMENTS, Metric* metric_at_point) {
       CCTK_INFO("interpolateMetricAtPoint");
     }
 
-    if (camera_pos[0] < xmin || camera_pos[0] > xmax || camera_pos[1] < ymin || camera_pos[1] > ymax || camera_pos[2] < zmin || camera_pos[2] > zmax) {
-      CCTK_VERROR("Camera location out of bounds");
-    }
-
     //Only call interpolation on one processor.
     const int nPoints = (CCTK_MyProc(cctkGH) == 0) ? 1 : 0;
 
