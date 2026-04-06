@@ -645,7 +645,7 @@ namespace RaytracingX
                     const amrex::MultiFab &curv, const CCTK_REAL &dt,
                     const int &lev)
         {
-            CCTK_ERROR("This evolve method should not be used! Use the other one.")
+            CCTK_ERROR("This evolve method should not be used! Use the other one.");
             return;
         }
     };
