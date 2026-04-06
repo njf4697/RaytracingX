@@ -201,7 +201,7 @@ extern "C" void R_ParticlesContainer_evolve(CCTK_ARGUMENTS)
 /**
  * \brief Print out particle data.
  */
-extern "C" void R_PartilesContainer_print(CCTK_ARGUMENTS)
+extern "C" void R_ParticlesContainer_print(CCTK_ARGUMENTS)
 {
   DECLARE_CCTK_PARAMETERS;
 
