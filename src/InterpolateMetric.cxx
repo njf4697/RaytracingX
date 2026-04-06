@@ -1,4 +1,4 @@
-#include "raytracingx.h"
+#include "RaytracingX.h"
 #include <vector>
 #include <array>
 #include <mpi.h>
