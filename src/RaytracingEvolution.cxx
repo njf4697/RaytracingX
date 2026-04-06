@@ -12,7 +12,7 @@
  */
 
 #include "RaytracingX.h"
-#include "RaytracingInitializers.h"
+#include "RaytracingInitializers.hxx"
 
 #include <cctk.h>
 
