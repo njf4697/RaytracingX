@@ -88,10 +88,11 @@ void interpolateMetricAtPoint(CCTK_ARGUMENTS, Metric* metric_at_point) {
     Util_TableDestroy(paramTableHandle);
 
     // Send data from rank 0 to all other ranks
+    MPI_Datatype mpi_real = (sizeof(CCTK_REAL) == sizeof(double)) ? MPI_DOUBLE : MPI_FLOAT;
     for (int i = 0; i < 10; ++i) {
       MPI_Bcast(metric_[i].data(),
                 1,
-                CCTK_REAL,
+                mpi_real,
                 0,
                 MPI_COMM_WORLD);
     }

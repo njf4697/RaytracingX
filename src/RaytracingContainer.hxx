@@ -9,6 +9,9 @@
 #include <AMReX_ParallelDescriptor.H>
 #include <CParameters.h>
 #include <fstream>
+#include "Interpolator.hxx"
+#include <AMReX_Particles.H>
+#include <AMReX_AmrParticles.H>
 
 //Macros that check if the position is out of bounds, and each one sets the optical depth to a specific value for debugging purposes.
 #define CHECK_OUT_OF_BOUNDS_X(X) \
@@ -172,30 +175,30 @@ namespace RaytracingX
             // Interpolate lapse & partial lapse at \vect{x}
             CCTK_REAL lapse_x;
             amrex::GpuArray<CCTK_REAL, 3> d_lapse_x;
-            GInX::d_interpolate_array<5>(lapse_x, d_lapse_x, lapse, i0, j0, k0, u[0], u[1],
+            d_interpolate_array<5>(lapse_x, d_lapse_x, lapse, i0, j0, k0, u[0], u[1],
                                          u[2], dx, plo);
 
             // Interpolate shift & partial shift at \vect{x}
             amrex::GpuArray<CCTK_REAL, 3> shift_x;
             amrex::GpuArray<amrex::GpuArray<CCTK_REAL, 3>, 3> d_shift_x;
-            GInX::d_interpolate_array<5>(shift_x, d_shift_x, shift, i0, j0, k0, u[0], u[1],
+            d_interpolate_array<5>(shift_x, d_shift_x, shift, i0, j0, k0, u[0], u[1],
                                          u[2], dx, plo);
 
             // Interpolate metric & partial metric at \vect{x}
             amrex::GpuArray<CCTK_REAL, 6> gamma_x;
             amrex::GpuArray<amrex::GpuArray<CCTK_REAL, 6>, 3> d_gamma_x;
-            GInX::d_interpolate_array<5>(gamma_x, d_gamma_x, metric, i0, j0, k0, u[0], u[1],
+            d_interpolate_array<5>(gamma_x, d_gamma_x, metric, i0, j0, k0, u[0], u[1],
                                          u[2], dx, plo);
 
             // Interpolate Curvature at \vect{x}
             amrex::GpuArray<CCTK_REAL, 6> curv_x;
-            GInX::interpolate_array<5>(curv_x, curv, i0, j0, k0, u[0], u[1], u[2], dx, plo);
+            interpolate_array<5>(curv_x, curv, i0, j0, k0, u[0], u[1], u[2], dx, plo);
 
             //RaytracingX: Interpolate density for optical depth calculation.
             // Interpolate rho at \vect{x}
             CCTK_REAL rho_x;
             amrex::GpuArray<CCTK_REAL, 3> d_rho_x;
-            GInX::d_interpolate_array<5>(rho_x, d_rho_x, rho, i0, j0, k0, u[0], u[1],
+            d_interpolate_array<5>(rho_x, d_rho_x, rho, i0, j0, k0, u[0], u[1],
                                          u[2], dx, plo);
 
             // Compute the inverse of the metric.
@@ -592,7 +595,7 @@ namespace RaytracingX
                 
                 // Interpolate metric
                 amrex::GpuArray<CCTK_REAL, 6> gamma_x;
-                GInX::interpolate_array<5>(gamma_x, metric_array, i0, j0, k0, p.pos(0),
+                interpolate_array<5>(gamma_x, metric_array, i0, j0, k0, p.pos(0),
                                      p.pos(1), p.pos(2), dx, p_lo);
                 
                 const CCTK_REAL inv_det_gamma =
