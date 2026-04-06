@@ -93,7 +93,7 @@ void interpolateMetricAtPoint(CCTK_ARGUMENTS, Metric* metric_at_point) {
                 1,
                 CCTK_REAL,
                 0,
-                CCTK_MPI_COMM_WORLD);
+                MPI_COMM_WORLD);
     }
 
     metric_at_point->alpha = metric_[0].data()[0];
