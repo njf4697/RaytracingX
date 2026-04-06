@@ -316,7 +316,7 @@ namespace RaytracingX
             const CCTK_REAL boundarie_hz = phi0[2] - 0.0 * dx[2];
             const CCTK_REAL boundarie_lz = plo0[2] + 0.0 * dx[2];
 
-            for (Iterator::ParticleIterator<StructType> pti(*this, lev); pti.isValid();
+            for (ParticleIterator<StructType> pti(*this, lev); pti.isValid();
                  ++pti)
             {
 
