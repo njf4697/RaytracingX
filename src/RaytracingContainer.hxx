@@ -355,6 +355,8 @@ namespace RaytracingX
 
       bool out_of_bounds = false;
 
+      fprintf(stderr, "test0");
+
       //RaytracingX: Add optical depth.
       amrex::GpuArray<CCTK_REAL, 8> U_tmp = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
 
