@@ -221,6 +221,7 @@ void gramSchmidtProcess(CCTK_ARGUMENTS, CCTK_REAL* e0, CCTK_REAL* e1, CCTK_REAL*
     generalizedCrossProduct(e3, e0, e1, e2, metric); //e3 is an normalized vector orthogonal to e0, e1, e2, e3, and gives a unit vector in the direction from the center of the camera to the center of the right edge.
 
     //Check that each vector is orthogonal to others.
+    fprintf(stderr, "%f %f %f %f %f %f", innerProduct(e0, e1, metric), innerProduct(e0, e2, metric), innerProduct(e0, e3, metric), innerProduct(e1, e2, metric), innerProduct(e1, e3, metric), innerProduct(e2, e3, metric));
     if (!(abs(innerProduct(e0, e1, metric)) < 0.001)) { return; }
     if (!(abs(innerProduct(e0, e2, metric)) < 0.001)) { return; }
     if (!(abs(innerProduct(e0, e3, metric)) < 0.001)) { return; }
