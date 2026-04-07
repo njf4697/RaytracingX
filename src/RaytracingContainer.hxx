@@ -101,11 +101,11 @@ namespace RaytracingX
 
         //RaytracingX: Add method that writes particle information when the particle is deleted.
         void write_deleted_particle_data(const CCTK_REAL particle_id, const CCTK_REAL x, const CCTK_REAL y, const CCTK_REAL z, const CCTK_REAL vx, const CCTK_REAL vy, const CCTK_REAL vz, const CCTK_REAL tau, bool output_final_data, std::string final_data_file_name) {
-            fprintf(stderr, "test1")
+            fprintf(stderr, "test1");
             
             if (!output_final_data) {return; }
 
-            fprintf(stderr, "test2")
+            fprintf(stderr, "test2");
             
             amrex::AllPrintToFile(final_data_file_name) << (int) particle_id << "\t" << x << "\t" << y << "\t" << z << "\t" << vx << "\t" << vy << "\t" << vz << "\t" << (int) tau << std::endl;
         }
