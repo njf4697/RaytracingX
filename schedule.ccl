@@ -1,7 +1,7 @@
 # Schedule definition for thorn RaytracingX
 # ===================================================
 
-if (!do_raytracing) {
+if (do_raytracing) {
 
 SCHEDULE R_ParticlesContainer_setup AT CCTK_POSTINITIAL {
     LANG: C
