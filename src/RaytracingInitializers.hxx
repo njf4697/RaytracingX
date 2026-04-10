@@ -141,6 +141,8 @@ void camera_initializer(ParticleContainerClass &pc, const CCTK_REAL *real_params
       int i = pidx % num_pixels_width;
       int j = pidx / num_pixels_width;
 
+      fprintf(stderr, "%d", pidx);
+
       //Calculate offset per pixel. The offset can be thought of as $/Delta\theta$ and $\Delta\phi$ with respect to camera facing direction,
       //but is calculated by finding a vector in the equivalent direction. This also gives the direction corresponding to the center of the pixels.
       CCTK_REAL a_adj = (2.0 * (i / num_pixels_width) - 1.0) * tan(alpha_h / 2.0);  // a_{adj} = (2a-1)tan(\alpha_h/2)
@@ -164,8 +166,6 @@ void camera_initializer(ParticleContainerClass &pc, const CCTK_REAL *real_params
       ptd.pos(1, local_particle_id) = camera_pos[1];
       ptd.pos(2, local_particle_id) = camera_pos[2];
       CCTK_REAL A = 1 / lapse * chi[0];
-
-      fprintf(stderr, "%f %f %f\n", chi_lower[1], chi_lower[2], chi_lower[3]);
 
       //The direction of the geodesic needs to be reversed, because the geodesics are evolved backwards in time, but the evolution routine doesn't "know" that.
       arrdata[StructType::vx][local_particle_id] = -chi_lower[1] * A; 
