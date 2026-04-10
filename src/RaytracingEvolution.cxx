@@ -225,13 +225,15 @@ extern "C" int R_ParticlesContainer_final_cleanup()
   return 0;
 }
 
-extern "C" int particles_remaining(CCTK_ARGUMENTS) {
+extern "C" void particles_remaining(CCTK_ARGUMENTS) {
   DECLARE_CCTK_PARAMETERS
 
   auto &pc = r_photons.at(0);
-  int num_particles = pc.TotalNumberOfParticles(true, true);
+  int num_particles = pc->TotalNumberOfParticles(true, true);
 
   if (verbose) {CCTK_VINFO("Particles Remaining: %d", num_particles); }
 
-  return num_particles;
+  return;
+
+  //return num_particles;
 }
