@@ -225,15 +225,69 @@ extern "C" int R_ParticlesContainer_final_cleanup()
   return 0;
 }
 
-extern "C" void particles_remaining(CCTK_ARGUMENTS) {
+int particles_remaining(CCTK_ARGUMENTS) {
   DECLARE_CCTK_PARAMETERS
 
   auto &pc = r_photons.at(0);
   int num_particles = pc->TotalNumberOfParticles(true, false);
 
-  if (verbose) {CCTK_VINFO("Particles Remaining: %d", num_particles); }
+  if (verbose) { CCTK_VINFO("Particles Remaining: %d", num_particles); }
 
-  return;
+  return num_particles;
+}
 
-  //return num_particles;
+extern "C" int raytrace_here(CCTK_ARGUMENTS) {
+  DECLARE_CCTK_ARGUMENTS;
+  DECLARE_CCTK_PARAMETERS;
+
+  if (raytrace_every > 0 && CCTK_ITERATION % raytrace_every == 0) { return 1; }
+  
+  if (num_raytrace_iterations > 0) {
+    for (int i = 0; i < num_raytrace_iterations; i++)
+      {
+        if (raytrace_at_iteration[i] == CCTK_ITERATION)
+        {
+          return 1;
+        }
+      }
+  }
+
+  if (num_raytrace_times > 0) {
+    for (int i = 0; i < num_raytrace_times; i++)
+      {
+        if (raytrace_at_time[i] >= CCTK_TIME &&
+            raytrace_at_time[i] <  CCTK_TIME + CCTK_DELTA_TIME)
+        {
+          return 1;
+        }
+      }
+  }
+
+  return 0;
+}
+
+extern "C" void raytrace_image(CCTK_ARGUMENTS) {
+  R_ParticlesContainer_setup(CCTK_PASS_CTOC);
+
+  int iteration = 0;
+  int num_particles = particles_remaining(CCTK_PASS_CTOC);
+
+  while (num_particles > 0) {
+    CCTK_VINFO("Raytracing iteration %d, run time %f, %d particles remaining", iteration, CCTK_WallTime(), num_particles);
+
+    if (particle_plot_every > 0 || particle_tsv_every > 0) {
+      R_ParticlesContainer_print(CCTK_PASS_CTOC);
+    }
+
+    R_ParticlesContainer_evolve(CCTK_PASS_CTOC);
+
+    num_particles = particles_remaining(CCTK_PASS_CTOC);
+    iteration++ 
+  }
+
+  CCTK_VINFO("Raytracing iteration %d, run time %f, %d particles remaining", iteration, CCTK_WallTime(), num_particles);
+
+  if (particle_plot_every > 0 || particle_tsv_every > 0) {
+    R_ParticlesContainer_print(CCTK_PASS_CTOC);
+  }
 }
