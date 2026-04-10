@@ -201,13 +201,12 @@ extern "C" void R_ParticlesContainer_evolve(CCTK_ARGUMENTS)
 /**
  * \brief Print out particle data.
  */
-extern "C" void R_ParticlesContainer_print(CCTK_ARGUMENTS)
+extern "C" void R_ParticlesContainer_print(CCTK_ARGUMENTS, int it)
 {
   DECLARE_CCTK_PARAMETERS;
 
   //RaytracingX: Particle skip override moved to schedule.ccl.
 
-  const int it = cctkGH->cctk_iteration;
   if ((particle_plot_every > 0 && it % particle_plot_every == 0) || (particle_tsv_every > 0 && it % particle_tsv_every == 0)) {
     CCTK_INFO("Printing particles to files");
   }
@@ -283,7 +282,7 @@ extern "C" void raytrace_image(CCTK_ARGUMENTS) {
     CCTK_VINFO("Raytracing iteration %d, run time %f %f, %d particles remaining", iteration, CCTK_RunTime(), num_particles);
 
     if (particle_plot_every > 0 || particle_tsv_every > 0) {
-      R_ParticlesContainer_print(CCTK_PASS_CTOC);
+      R_ParticlesContainer_print(CCTK_PASS_CTOC, iteration);
     }
 
     R_ParticlesContainer_evolve(CCTK_PASS_CTOC);
