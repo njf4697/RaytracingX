@@ -141,11 +141,6 @@ void camera_initializer(ParticleContainerClass &pc, const CCTK_REAL *real_params
       int i = pidx % num_pixels_width;
       int j = pidx / num_pixels_width;
 
-      fprintf(stderr, "e0 %f %f %f %f\n", e0[0], e0[1], e0[2], e0[3]);
-      fprintf(stderr, "e1 %f %f %f %f\n", e1[0], e1[1], e1[2], e1[3]);
-      fprintf(stderr, "e2 %f %f %f %f\n", e2[0], e2[1], e2[2], e2[3]);
-      fprintf(stderr, "e3 %f %f %f %f\n", e3[0], e3[1], e3[2], e3[3]);
-
       //Calculate offset per pixel. The offset can be thought of as $/Delta\theta$ and $\Delta\phi$ with respect to camera facing direction,
       //but is calculated by finding a vector in the equivalent direction. This also gives the direction corresponding to the center of the pixels.
       CCTK_REAL a_adj = (2.0 * (i / num_pixels_width) - 1.0) * tan(alpha_h / 2.0);  // a_{adj} = (2a-1)tan(\alpha_h/2)
@@ -158,6 +153,8 @@ void camera_initializer(ParticleContainerClass &pc, const CCTK_REAL *real_params
       chi[1] = C * e0[1] + e1[1] - b_adj * e2[1] + a_adj * e3[1];
       chi[2] = C * e0[2] + e1[2] - b_adj * e2[2] + a_adj * e3[2];
       chi[3] = C * e0[3] + e1[3] - b_adj * e2[3] + a_adj * e3[3];
+
+      fprintf(stderr, "chi %f %f %f %f\n", chi[0], chi[1], chi[2], chi[3]);
 
       CCTK_REAL chi_lower[4];
       vectorToOneFormArr(chi_lower, chi, real_params);
