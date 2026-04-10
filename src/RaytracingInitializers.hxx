@@ -165,7 +165,7 @@ void camera_initializer(ParticleContainerClass &pc, const CCTK_REAL *real_params
       ptd.pos(2, local_particle_id) = camera_pos[2];
       CCTK_REAL A = 1 / lapse * chi[0];
 
-      fprintf(stderr, "%f %f %f", chi_lower[1], chi_lower[2], chi_lower[3]);
+      fprintf(stderr, "%f %f %f\n", chi_lower[1], chi_lower[2], chi_lower[3]);
 
       //The direction of the geodesic needs to be reversed, because the geodesics are evolved backwards in time, but the evolution routine doesn't "know" that.
       arrdata[StructType::vx][local_particle_id] = -chi_lower[1] * A; 
