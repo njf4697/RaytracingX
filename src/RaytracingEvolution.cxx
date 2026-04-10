@@ -207,9 +207,11 @@ extern "C" void R_ParticlesContainer_print(CCTK_ARGUMENTS)
 
   //RaytracingX: Particle skip override moved to schedule.ccl.
 
-  CCTK_INFO("Printing particles to files");
   const int it = cctkGH->cctk_iteration;
-
+  if ((particle_plot_every > 0 && it % particle_plot_every == 0) || (particle_tsv_every > 0 && it % particle_tsv_every == 0)) {
+    CCTK_INFO("Printing particles to files");
+  }
+  
   for (int patch = 0; patch < CarpetX::ghext->num_patches(); ++patch)
   {
     auto &pc = r_photons.at(patch);
@@ -278,7 +280,7 @@ extern "C" void raytrace_image(CCTK_ARGUMENTS) {
   int num_particles = particles_remaining(CCTK_PASS_CTOC);
 
   while (num_particles > 0) {
-    CCTK_VINFO("Raytracing iteration %d, run time %f, %d particles remaining", iteration, CCTK_RunTime(), num_particles);
+    CCTK_VINFO("Raytracing iteration %d, run time %f %f, %d particles remaining", iteration, CCTK_RunTime(), num_particles);
 
     if (particle_plot_every > 0 || particle_tsv_every > 0) {
       R_ParticlesContainer_print(CCTK_PASS_CTOC);
