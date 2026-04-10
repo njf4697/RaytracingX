@@ -279,7 +279,7 @@ extern "C" void raytrace_image(CCTK_ARGUMENTS) {
   int num_particles = particles_remaining(CCTK_PASS_CTOC);
 
   while (num_particles > 0) {
-    CCTK_VINFO("Raytracing iteration %d, run time %f %f, %d particles remaining", iteration, CCTK_RunTime(), num_particles);
+    CCTK_VINFO("Raytracing iteration %d, run time %d, %d particles remaining", iteration, CCTK_RunTime(), num_particles);
 
     if (particle_plot_every > 0 || particle_tsv_every > 0) {
       R_ParticlesContainer_print(CCTK_PASS_CTOC, iteration);
@@ -291,7 +291,7 @@ extern "C" void raytrace_image(CCTK_ARGUMENTS) {
     iteration++;
   }
 
-  CCTK_VINFO("Raytracing iteration %d, run time %f %f, %d particles remaining", iteration, CCTK_RunTime(), num_particles);
+  CCTK_VINFO("Raytracing iteration %d, run time %d, %d particles remaining", iteration, CCTK_RunTime(), num_particles);
 
   if (particle_plot_every > 0 || particle_tsv_every > 0) {
     R_ParticlesContainer_print(CCTK_PASS_CTOC);
