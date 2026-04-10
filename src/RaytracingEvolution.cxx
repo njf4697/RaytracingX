@@ -236,18 +236,18 @@ int particles_remaining(CCTK_ARGUMENTS) {
   return num_particles;
 }
 
-extern "C" int raytrace_here(CCTK_ARGUMENTS) {
+bool raytrace_here(CCTK_ARGUMENTS) {
   DECLARE_CCTK_ARGUMENTS;
   DECLARE_CCTK_PARAMETERS;
 
-  if (raytrace_every > 0 && CCTK_ITERATION % raytrace_every == 0) { return 1; }
+  if (raytrace_every > 0 && CCTK_ITERATION % raytrace_every == 0) { return true; }
   
   if (num_raytrace_iterations > 0) {
     for (int i = 0; i < num_raytrace_iterations; i++)
       {
         if (raytrace_at_iteration[i] == CCTK_ITERATION)
         {
-          return 1;
+          return true;
         }
       }
   }
@@ -258,15 +258,20 @@ extern "C" int raytrace_here(CCTK_ARGUMENTS) {
         if (raytrace_at_time[i] >= CCTK_TIME &&
             raytrace_at_time[i] <  CCTK_TIME + CCTK_DELTA_TIME)
         {
-          return 1;
+          return true;
         }
       }
   }
 
-  return 0;
+  return false;
 }
 
 extern "C" void raytrace_image(CCTK_ARGUMENTS) {
+  DECLARE_CCTK_ARGUMENTS;
+  DECLARE_CCTK_PARAMETERS;
+
+  if (!raytrace_here) { return; }
+
   R_ParticlesContainer_setup(CCTK_PASS_CTOC);
 
   int iteration = 0;

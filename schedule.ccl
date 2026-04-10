@@ -3,11 +3,9 @@
 
 if (do_raytracing) {
 
-if (raytrace_here) {
     SCHEDULE raytrace_image AT evol {
         LANG: C
         OPTIONS: GLOBAL
     } "Raytrace Image"
-}
 
 }
