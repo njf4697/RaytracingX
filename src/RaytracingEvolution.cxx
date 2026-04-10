@@ -240,12 +240,12 @@ bool raytrace_here(CCTK_ARGUMENTS) {
   DECLARE_CCTK_ARGUMENTS;
   DECLARE_CCTK_PARAMETERS;
 
-  if (raytrace_every > 0 && CCTK_ITERATION % raytrace_every == 0) { return true; }
+  if (raytrace_every > 0 && cctk_iteration % raytrace_every == 0) { return true; }
   
   if (num_raytrace_iterations > 0) {
     for (int i = 0; i < num_raytrace_iterations; i++)
       {
-        if (raytrace_at_iteration[i] == CCTK_ITERATION)
+        if (raytrace_at_iteration[i] == cctk_iteration)
         {
           return true;
         }
@@ -255,8 +255,8 @@ bool raytrace_here(CCTK_ARGUMENTS) {
   if (num_raytrace_times > 0) {
     for (int i = 0; i < num_raytrace_times; i++)
       {
-        if (raytrace_at_time[i] >= CCTK_TIME &&
-            raytrace_at_time[i] <  CCTK_TIME + CCTK_DELTA_TIME)
+        if (raytrace_at_time[i] >= cctk_time &&
+            raytrace_at_time[i] <  cctk_time + cctk_delta_time)
         {
           return true;
         }
@@ -278,7 +278,7 @@ extern "C" void raytrace_image(CCTK_ARGUMENTS) {
   int num_particles = particles_remaining(CCTK_PASS_CTOC);
 
   while (num_particles > 0) {
-    CCTK_VINFO("Raytracing iteration %d, run time %f, %d particles remaining", iteration, CCTK_WallTime(), num_particles);
+    CCTK_VINFO("Raytracing iteration %d, run time %f, %d particles remaining", iteration, CCTK_RunTime(), num_particles);
 
     if (particle_plot_every > 0 || particle_tsv_every > 0) {
       R_ParticlesContainer_print(CCTK_PASS_CTOC);
