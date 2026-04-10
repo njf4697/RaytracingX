@@ -30,6 +30,12 @@ if ((particle_plot_every||particle_tsv_every) ) {
     } "print the particles"
 }
 
+SCHEDULE particles_remaining AT evol
+{
+    LANG: C
+    OPTIONS: global
+} "Number of particles remaining"
+
 SCHEDULE R_ParticlesContainer_final_cleanup at CCTK_SHUTDOWN{
     LANG: C
     OPTIONS: global
