@@ -232,8 +232,6 @@ int particles_remaining(CCTK_ARGUMENTS) {
   auto &pc = r_photons.at(0);
   int num_particles = pc->TotalNumberOfParticles(true, false);
 
-  if (verbose) { CCTK_VINFO("Particles Remaining: %d", num_particles); }
-
   return num_particles;
 }
 
