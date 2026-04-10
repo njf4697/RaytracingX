@@ -294,6 +294,6 @@ extern "C" void raytrace_image(CCTK_ARGUMENTS) {
   CCTK_VINFO("Raytracing iteration %d, run time %d, %d particles remaining", iteration, CCTK_RunTime(), num_particles);
 
   if (particle_plot_every > 0 || particle_tsv_every > 0) {
-    R_ParticlesContainer_print(CCTK_PASS_CTOC);
+    R_ParticlesContainer_print(CCTK_PASS_CTOC, iteration);
   }
 }
