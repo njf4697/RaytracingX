@@ -466,13 +466,13 @@ namespace RaytracingX
       //RaytracingX: Delete particle when geodesic reaches event horizon.
       const long int i0 = amrex::Math::floor((particles[i].pos(0) - plo[0]) / dx[0]);
       const long int j0 = amrex::Math::floor((particles[i].pos(1) - plo[1]) / dx[1]);
-      const long int k0 = amrex::Math::floor((particles[i].pos(2) - plo[2]) / dx[2])  
+      const long int k0 = amrex::Math::floor((particles[i].pos(2) - plo[2]) / dx[2]);
       // Interpolate lapse & partial lapse at \vect{x}
       CCTK_REAL lapse_x;
       amrex::GpuArray<CCTK_REAL, 3> d_lapse_x;
       GInX::d_interpolate_array<5>(lapse_x, d_lapse_x, lapse, i0, j0, k0, particles[i].pos(0), particles[i].pos(1),
                                    particles[i].pos(2), dx, plo);
-      if (exp(ln_alphaenergy) / lapse_x > 1.0e9) {
+      if (exp(ln_alphaenergy[i]) / lapse_x > 1.0e9) {
         out_of_bounds = true;
         tau[i] = -7;
         write_deleted_particle_data(index[i], particles[i].pos(0), particles[i].pos(1), particles[i].pos(2), vels_x[i], vels_y[i], vels_z[i], tau[i], output_final_data, final_data_file_name);
