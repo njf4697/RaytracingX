@@ -470,7 +470,7 @@ namespace RaytracingX
       // Interpolate lapse & partial lapse at \vect{x}
       CCTK_REAL lapse_x;
       amrex::GpuArray<CCTK_REAL, 3> d_lapse_x;
-      GInX::d_interpolate_array<5>(lapse_x, d_lapse_x, lapse, i0, j0, k0, particles[i].pos(0), particles[i].pos(1),
+      GInX::d_interpolate_array<5>(lapse_x, d_lapse_x, lapse_array, i0, j0, k0, particles[i].pos(0), particles[i].pos(1),
                                    particles[i].pos(2), dx, plo);
       if (exp(ln_alphaenergy[i]) / lapse_x > 1.0e9) {
         out_of_bounds = true;
@@ -506,7 +506,7 @@ namespace RaytracingX
                                 const CCTK_REAL (&z)[10],
                                 const CCTK_REAL (&radius)[10],
                                 const CCTK_REAL (&a)[10],
-                                bool output_final_data, std::string final_data_file_name) //RaytracingX: Add outputdata.
+                                bool output_final_data, std::string final_data_file_name) //RaytracingX: Add output data.
         {
 
             if (!zones)
