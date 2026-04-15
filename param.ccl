@@ -32,6 +32,16 @@ INT num_raytrace_times "Number of specified times to raytrace at" STEERABLE=ALWA
     0:100 :: "Any positive integer, max 100"
 } 0
 
+INT max_iterations "Maximum iterations for raytracing calculation" STEERABLE=ALWAYS
+{
+    0:* :: "Any positive integer"
+} 10000
+
+CCTK_REAL max_energy "Maximum photon energy defining event horizon" STEERABLE = ALWAYS
+{
+    (0.:* :: "Any real number"
+} 1.0e9
+
 CCTK_REAL vertical_fov "Vertical field of view (in degrees)" STEERABLE = ALWAYS
 {
     (0.:180.) :: "Any real number 0<vertical_fov<180"

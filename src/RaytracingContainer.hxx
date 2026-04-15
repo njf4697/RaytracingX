@@ -62,7 +62,7 @@ namespace RaytracingX
             vx = 0,       /**< Velocity's lower index on the x direction.*/
             vy,           /**< Velocity's lower index on the y direction.*/
             vz,           /**< Velocity's lower index on the z direction.*/
-            ln_E,         /**< Ln Energy value.*/
+            ln_alphaE,         /**< Ln Energy value.*/
             tau,          /**< Optical depth value. Also used as particle deletion code, see above macros, also iterates across banned regions*/
             pixel_number, /**< Number used to match particle to corresponding pixel in the image. Defined as a real since BaseParticleContainer does not have options for int parameters, unless defined at runtime, in which case they will not print with WriteAsciiFile*/
             n_attributes, /**< Total number of attributes*/
@@ -131,7 +131,7 @@ namespace RaytracingX
          * + j] \partial_i\beta^j
          * \f}
          *
-         * and finally, for the \f$ \ln E \f$ the differential equation is:
+         * and finally, for the \f$ \ln \alphaE \f$ the differential equation is:
          *
          * \f[ \dfrac{d}{dt} U[6] = \alpha K_{jk}U[3 + l]U[3 + m]\gamma^{lj}\gamma^{mk}
          * - U[3+l]\gamma^{lj}\partial_j\alpha\f]
@@ -246,7 +246,7 @@ namespace RaytracingX
             }
 
             // Compute the rhs for energy
-            rhs[3 + StructType::ln_E] =
+            rhs[3 + StructType::ln_alphaE] =
                 lapse_x * VecVecMul(SMatVecMul(curv_x, V_up), V_up) -
                 VecVecMul(V_up, d_lapse_x);
 
@@ -327,7 +327,7 @@ namespace RaytracingX
                 CCTK_REAL *AMREX_RESTRICT vels_x = attribs[StructType::vx].data();
                 CCTK_REAL *AMREX_RESTRICT vels_y = attribs[StructType::vy].data();
                 CCTK_REAL *AMREX_RESTRICT vels_z = attribs[StructType::vz].data();
-                CCTK_REAL *AMREX_RESTRICT ln_energy = attribs[StructType::ln_E].data();
+                CCTK_REAL *AMREX_RESTRICT ln_alphaenergy = attribs[StructType::ln_alphaE].data();
                 CCTK_REAL *AMREX_RESTRICT tau = attribs[StructType::tau].data(); //RaytracingX: Add optical depth.
                 CCTK_REAL *AMREX_RESTRICT index = attribs[StructType::pixel_number].data(); //RaytracingX: Add pixel index.
                 auto *AMREX_RESTRICT particles = &(pti.GetArrayOfStructs()[0]);
@@ -347,7 +347,7 @@ namespace RaytracingX
       const amrex::GpuArray<CCTK_REAL, 8> U = {
           particles[i].pos(0), particles[i].pos(1), particles[i].pos(2),
           vels_x[i],           vels_y[i],           vels_z[i],
-          ln_energy[i], tau[i]}; //RaytracingX: Add density for optical depth.
+          ln_alphaenergy[i], tau[i]}; //RaytracingX: Add density for optical depth.
 
       bool out_of_bounds = false;
 
@@ -401,7 +401,7 @@ namespace RaytracingX
       vels_x[i] += (1. / 6.) * dt * (k_odd[3] + 2. * k_even[3]);
       vels_y[i] += (1. / 6.) * dt * (k_odd[4] + 2. * k_even[4]);
       vels_z[i] += (1. / 6.) * dt * (k_odd[5] + 2. * k_even[5]);
-      ln_energy[i] += (1. / 6.) * dt * (k_odd[6] + 2. * k_even[6]);
+      ln_alphaenergy[i] += (1. / 6.) * dt * (k_odd[6] + 2. * k_even[6]);
       tau[i] += (1. / 6.) * dt * (k_odd[7] + 2. * k_even[7]); //RaytracingX: Add optical depth.
       
       //RaytracingX: Change bounds check for debug information.
@@ -452,15 +452,33 @@ namespace RaytracingX
       vels_x[i] += (1. / 6.) * dt * (2. * k_odd[3] + k_even[3]);
       vels_y[i] += (1. / 6.) * dt * (2. * k_odd[4] + k_even[4]);
       vels_z[i] += (1. / 6.) * dt * (2. * k_odd[5] + k_even[5]);
-      ln_energy[i] += (1. / 6.) * dt * (2. * k_odd[6] + k_even[6]);
+      ln_alphaenergy[i] += (1. / 6.) * dt * (2. * k_odd[6] + k_even[6]);
       tau[i] += (1. / 6.) * dt * (2. * k_odd[7] + k_even[7]); //RaytracingX: Add optical depth.
 
       //RaytracingX: Change bounds check for debug information.
       CHECK_OUT_OF_BOUNDS_X(particles[i].pos(0))
       CHECK_OUT_OF_BOUNDS_Y(particles[i].pos(1))
       CHECK_OUT_OF_BOUNDS_Z(particles[i].pos(2))
+
       //RaytracingX: Delete particle (i.e. stop evolving geodesic) when geodesic hits photosphere (tau=1).
       out_of_bounds |= (tau[i] > 1.);
+      
+      //RaytracingX: Delete particle when geodesic reaches event horizon.
+      const long int i0 = amrex::Math::floor((particles[i].pos(0) - plo[0]) / dx[0]);
+      const long int j0 = amrex::Math::floor((particles[i].pos(1) - plo[1]) / dx[1]);
+      const long int k0 = amrex::Math::floor((particles[i].pos(2) - plo[2]) / dx[2])  
+      // Interpolate lapse & partial lapse at \vect{x}
+      CCTK_REAL lapse_x;
+      amrex::GpuArray<CCTK_REAL, 3> d_lapse_x;
+      GInX::d_interpolate_array<5>(lapse_x, d_lapse_x, lapse, i0, j0, k0, particles[i].pos(0), particles[i].pos(1),
+                                   particles[i].pos(2), dx, plo);
+      if (exp(ln_alphaenergy) / lapse_x > max_energy) {
+        out_of_bounds = true;
+        tau[i] = -7;
+        write_deleted_particle_data(index[i], particles[i].pos(0), particles[i].pos(1), particles[i].pos(2), vels_x[i], vels_y[i], vels_z[i], tau[i], output_final_data, final_data_file_name);
+        particles[i].id() = -1;
+        return;
+      }
 
       if (out_of_bounds) {
         //RaytracingX: Write particle information on deletion.
@@ -474,7 +492,7 @@ namespace RaytracingX
         /**
          * The check banned zones function check for user defined invalid particles
          * zones. 
-         * RaytracingX: Changed to work with spinning BHs.
+         * RaytracingX: Changed to work with spinning BHs and output data.
          *
          * @param level Adaptive Mesh Refinement level
          * @param zones Number of banned zones
@@ -488,7 +506,7 @@ namespace RaytracingX
                                 const CCTK_REAL (&z)[10],
                                 const CCTK_REAL (&radius)[10],
                                 const CCTK_REAL (&a)[10],
-                                bool output_final_data, std::string final_data_file_name) //RaytracingX: Add optical depth.
+                                bool output_final_data, std::string final_data_file_name) //RaytracingX: Add outputdata.
         {
 
             if (!zones)
@@ -587,7 +605,7 @@ namespace RaytracingX
                 const CCTK_REAL ratio[3] = {arrdata[StructType::vx][i],
                                             arrdata[StructType::vy][i],
                                             arrdata[StructType::vz][i]};
-                const CCTK_REAL E = std::exp(arrdata[StructType::ln_E][i]);
+                const CCTK_REAL E = std::exp(arrdata[StructType::ln_alphaE][i]);
                 
                 // Generate a random position
                 const auto &p = p_struct[i];
