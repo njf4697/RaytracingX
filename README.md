@@ -2,7 +2,7 @@
 
 A relativistic raytracing thorn in the CarpetX framework.
 
-Written by Noelle Feist /<njf4697@rit.edu/> with code adapted from Jhon Sebastián Moreno Triana <github: Jh0mpis> in
+Written by Noelle Feist <njf4697<area>@rit.edu> with code adapted from Jhon Sebastián Moreno Triana <github: Jh0mpis> in
 collaboration with Manuela Campanelli, Yosef Zlochower, Liwei Ji, and Scott Noble.
 
 This thorn creates a grid of mass-less particles (sometimes referred to as photons in the code) set to move in
