@@ -293,6 +293,7 @@ namespace RaytracingX
          *  @param rho RaytracingX: gas density
          *  @param dt Timestep.
          *  @param lev Refinement level.
+         *  @param max_energy RaytracingX: Maximum energy threshold for event horizon detection.
          */
         void evolve(const amrex::MultiFab &lapse,
                     const amrex::MultiFab &shift,
@@ -300,7 +301,7 @@ namespace RaytracingX
                     const amrex::MultiFab &curv,
                     const amrex::MultiFab &rho,
                     const CCTK_REAL &dt, const int &lev,
-                    bool output_final_data, std::string final_data_file_name)
+                    const CCTK_REAL max_energy, bool output_final_data, std::string final_data_file_name) //RaytracingX: Add information for maximum energy for photons defining event horizon and output information.
         {
 
             const auto plo0 = this->Geom(0).ProbLoArray();
@@ -472,12 +473,9 @@ namespace RaytracingX
       amrex::GpuArray<CCTK_REAL, 3> d_lapse_x;
       GInX::d_interpolate_array<5>(lapse_x, d_lapse_x, lapse_array, i0, j0, k0, particles[i].pos(0), particles[i].pos(1),
                                    particles[i].pos(2), dx, plo);
-      if (exp(ln_alphaenergy[i]) / lapse_x > 1.0e9) {
+      if (exp(ln_alphaenergy[i]) / lapse_x > max_energy) {
         out_of_bounds = true;
         tau[i] = -7;
-        write_deleted_particle_data(index[i], particles[i].pos(0), particles[i].pos(1), particles[i].pos(2), vels_x[i], vels_y[i], vels_z[i], tau[i], output_final_data, final_data_file_name);
-        particles[i].id() = -1;
-        return;
       }
 
       if (out_of_bounds) {

@@ -154,7 +154,7 @@ extern "C" void R_ParticlesContainer_evolve(CCTK_ARGUMENTS)
       
       //RaytracingX: Add density to information used in evolution function. Also uses an override for the evolution function that evolves optical depth
       // along geodesic. Information for particle output on deletion also passed. CCTK_DELTA_TIME is inverted to have proper backwards-in-time propogation for raytracing.
-      pc->evolve(lapse, shift, metric, curv, rho, -CCTK_DELTA_TIME, lev, output_final_data, final_data_file_name);
+      pc->evolve(lapse, shift, metric, curv, rho, -CCTK_DELTA_TIME, lev, max_energy, output_final_data, final_data_file_name);
     }
   }
 
