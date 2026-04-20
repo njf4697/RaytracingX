@@ -22,34 +22,34 @@
     if (X > boundarie_hx)        \
     {                            \
         out_of_bounds = true;    \
-        tau[i] = -1;             \
+        deletion_reason = -1;    \
     }                            \
     if (X < boundarie_lx)        \
     {                            \
         out_of_bounds = true;    \
-        tau[i] = -2;             \
+        deletion_reason = -2;    \
     }
 #define CHECK_OUT_OF_BOUNDS_Y(Y) \
     if (Y > boundarie_hy)        \
     {                            \
         out_of_bounds = true;    \
-        tau[i] = -3;             \
+        deletion_reason = -3;    \
     }                            \
     if (Y < boundarie_ly)        \
     {                            \
         out_of_bounds = true;    \
-        tau[i] = -4;             \
+        deletion_reason = -4;    \
     }
 #define CHECK_OUT_OF_BOUNDS_Z(Z) \
     if (Z > boundarie_hz)        \
     {                            \
         out_of_bounds = true;    \
-        tau[i] = -5;             \
+        deletion_reason = -5;    \
     }                            \
     if (Z < boundarie_lz)        \
     {                            \
         out_of_bounds = true;    \
-        tau[i] = -6;             \
+        deletion_reason = -6;    \
     }
 
 namespace RaytracingX
@@ -100,10 +100,10 @@ namespace RaytracingX
         ~RaytracingParticlesContainer() = default;
 
         //RaytracingX: Add method that writes particle information when the particle is deleted.
-        void write_deleted_particle_data(const CCTK_REAL particle_id, const CCTK_REAL x, const CCTK_REAL y, const CCTK_REAL z, const CCTK_REAL vx, const CCTK_REAL vy, const CCTK_REAL vz, const CCTK_REAL tau, bool output_final_data, std::string final_data_file_name) {
+        void write_deleted_particle_data(const CCTK_REAL particle_id, const CCTK_REAL x, const CCTK_REAL y, const CCTK_REAL z, const CCTK_REAL vx, const CCTK_REAL vy, const CCTK_REAL vz, const CCTK_REAL ln_alphaE, const CCTK_REAL tau, const int deletion_reason, bool output_final_data, std::string final_data_file_name) {
             if (!output_final_data) {return; }
             
-            amrex::AllPrintToFile(final_data_file_name) << (int) particle_id << "\t" << x << "\t" << y << "\t" << z << "\t" << vx << "\t" << vy << "\t" << vz << "\t" << (int) tau << std::endl;
+            amrex::AllPrintToFile(final_data_file_name) << (int) particle_id << "\t" << x << "\t" << y << "\t" << z << "\t" << vx << "\t" << vy << "\t" << vz << "\t" << ln_alphaE << "\t" << tau << "\t" << deletion_reason << std::endl;
         }
 
         /**
@@ -303,6 +303,7 @@ namespace RaytracingX
                     const CCTK_REAL &dt, const int &lev,
                     const CCTK_REAL max_energy, bool output_final_data, std::string final_data_file_name) //RaytracingX: Add information for maximum energy for photons defining event horizon and output information.
         {
+            int deletion_reason = -999; //RaytracingX: Keep track of each reason a particle is deleted.
 
             const auto plo0 = this->Geom(0).ProbLoArray();
             const auto phi0 = this->Geom(0).ProbHiArray();
@@ -376,7 +377,7 @@ namespace RaytracingX
 
       if (out_of_bounds) {
         //RaytracingX: Write particle information on deletion.
-        write_deleted_particle_data(index[i], particles[i].pos(0), particles[i].pos(1), particles[i].pos(2), vels_x[i], vels_y[i], vels_z[i], tau[i], output_final_data, final_data_file_name);
+        write_deleted_particle_data(index[i], particles[i].pos(0), particles[i].pos(1), particles[i].pos(2), vels_x[i], vels_y[i], vels_z[i], ln_alphaE[i], tau[i], deletion_reason,, output_final_data, final_data_file_name);
         particles[i].id() = -1;
         return;
       }
@@ -412,7 +413,7 @@ namespace RaytracingX
 
       if (out_of_bounds) {
         //RaytracingX: Write particle information on deletion.
-        write_deleted_particle_data(index[i], particles[i].pos(0), particles[i].pos(1), particles[i].pos(2), vels_x[i], vels_y[i], vels_z[i], tau[i], output_final_data, final_data_file_name);
+        write_deleted_particle_data(index[i], particles[i].pos(0), particles[i].pos(1), particles[i].pos(2), vels_x[i], vels_y[i], vels_z[i], ln_alphaE[i], tau[i], deletion_reason,, output_final_data, final_data_file_name);
         particles[i].id() = -1;
         return;
       }
@@ -437,7 +438,7 @@ namespace RaytracingX
 
       if (out_of_bounds) {
         //RaytracingX: Write particle information on deletion.
-        write_deleted_particle_data(index[i], particles[i].pos(0), particles[i].pos(1), particles[i].pos(2), vels_x[i], vels_y[i], vels_z[i], tau[i], output_final_data, final_data_file_name);
+        write_deleted_particle_data(index[i], particles[i].pos(0), particles[i].pos(1), particles[i].pos(2), vels_x[i], vels_y[i], vels_z[i], ln_alphaE[i], tau[i], deletion_reason,, output_final_data, final_data_file_name);
         particles[i].id() = -1;
         return;
       }
@@ -475,12 +476,12 @@ namespace RaytracingX
                                    particles[i].pos(2), dx, plo);
       if (exp(ln_alphaenergy[i]) / lapse_x > max_energy) {
         out_of_bounds = true;
-        tau[i] = -7;
+        deletion_reason = -7;
       }
 
       if (out_of_bounds) {
         //RaytracingX: Write particle information on deletion.
-        write_deleted_particle_data(index[i], particles[i].pos(0), particles[i].pos(1), particles[i].pos(2), vels_x[i], vels_y[i], vels_z[i], tau[i], output_final_data, final_data_file_name);
+        write_deleted_particle_data(index[i], particles[i].pos(0), particles[i].pos(1), particles[i].pos(2), vels_x[i], vels_y[i], vels_z[i], ln_alphaE[i], tau[i], deletion_reason,, output_final_data, final_data_file_name);
         particles[i].id() = -1;
         return;
       } });
@@ -522,6 +523,7 @@ namespace RaytracingX
                 CCTK_REAL *AMREX_RESTRICT vels_x = attribs[StructType::vx].data();
                 CCTK_REAL *AMREX_RESTRICT vels_y = attribs[StructType::vy].data();
                 CCTK_REAL *AMREX_RESTRICT vels_z = attribs[StructType::vz].data();
+                CCTK_REAL *AMREX_RESTRICT ln_alphaE = attribs[StructType::ln_alphaE].data(); //RaytracingX: Add ln_alphaE.
                 CCTK_REAL *AMREX_RESTRICT tau = attribs[StructType::tau].data(); //RaytracingX: Add optical depth.
                 CCTK_REAL *AMREX_RESTRICT index = attribs[StructType::pixel_number].data(); //RaytracingX: Add pixel number.
 
@@ -541,9 +543,9 @@ namespace RaytracingX
           
           if (r <= (radius[check] + sqrt(radius[check]*radius[check]-4*a[check]*a[check])) / 2.0) {
             particles[i].id() = -1;
-            tau[i] = -check - 7;
+            int deletion_reason = -check - 8;
             //RaytracingX: Write particle information on deletion.
-            write_deleted_particle_data(index[i], particles[i].pos(0), particles[i].pos(1), particles[i].pos(2), vels_x[i], vels_y[i], vels_z[i], tau[i], output_final_data, final_data_file_name);
+            write_deleted_particle_data(index[i], particles[i].pos(0), particles[i].pos(1), particles[i].pos(2), vels_x[i], vels_y[i], vels_z[i], ln_alphaE[i], tau[i], deletion_reason,, output_final_data, final_data_file_name);
           }
         } });
             }
