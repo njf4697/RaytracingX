@@ -377,7 +377,7 @@ namespace RaytracingX
 
       if (out_of_bounds) {
         //RaytracingX: Write particle information on deletion.
-        write_deleted_particle_data(index[i], particles[i].pos(0), particles[i].pos(1), particles[i].pos(2), vels_x[i], vels_y[i], vels_z[i], ln_alphaE[i], tau[i], deletion_reason,, output_final_data, final_data_file_name);
+        write_deleted_particle_data(index[i], particles[i].pos(0), particles[i].pos(1), particles[i].pos(2), vels_x[i], vels_y[i], vels_z[i], ln_alphaenergy[i], tau[i], deletion_reason, output_final_data, final_data_file_name);
         particles[i].id() = -1;
         return;
       }
@@ -413,7 +413,7 @@ namespace RaytracingX
 
       if (out_of_bounds) {
         //RaytracingX: Write particle information on deletion.
-        write_deleted_particle_data(index[i], particles[i].pos(0), particles[i].pos(1), particles[i].pos(2), vels_x[i], vels_y[i], vels_z[i], ln_alphaE[i], tau[i], deletion_reason,, output_final_data, final_data_file_name);
+        write_deleted_particle_data(index[i], particles[i].pos(0), particles[i].pos(1), particles[i].pos(2), vels_x[i], vels_y[i], vels_z[i], ln_alphaenergy[i], tau[i], deletion_reason, output_final_data, final_data_file_name);
         particles[i].id() = -1;
         return;
       }
@@ -438,7 +438,7 @@ namespace RaytracingX
 
       if (out_of_bounds) {
         //RaytracingX: Write particle information on deletion.
-        write_deleted_particle_data(index[i], particles[i].pos(0), particles[i].pos(1), particles[i].pos(2), vels_x[i], vels_y[i], vels_z[i], ln_alphaE[i], tau[i], deletion_reason,, output_final_data, final_data_file_name);
+        write_deleted_particle_data(index[i], particles[i].pos(0), particles[i].pos(1), particles[i].pos(2), vels_x[i], vels_y[i], vels_z[i], ln_alphaenergy[i], tau[i], deletion_reason, output_final_data, final_data_file_name);
         particles[i].id() = -1;
         return;
       }
@@ -481,7 +481,7 @@ namespace RaytracingX
 
       if (out_of_bounds) {
         //RaytracingX: Write particle information on deletion.
-        write_deleted_particle_data(index[i], particles[i].pos(0), particles[i].pos(1), particles[i].pos(2), vels_x[i], vels_y[i], vels_z[i], ln_alphaE[i], tau[i], deletion_reason,, output_final_data, final_data_file_name);
+        write_deleted_particle_data(index[i], particles[i].pos(0), particles[i].pos(1), particles[i].pos(2), vels_x[i], vels_y[i], vels_z[i], ln_alphaenergy[i], tau[i], deletion_reason, output_final_data, final_data_file_name);
         particles[i].id() = -1;
         return;
       } });
@@ -545,7 +545,7 @@ namespace RaytracingX
             particles[i].id() = -1;
             int deletion_reason = -check - 8;
             //RaytracingX: Write particle information on deletion.
-            write_deleted_particle_data(index[i], particles[i].pos(0), particles[i].pos(1), particles[i].pos(2), vels_x[i], vels_y[i], vels_z[i], ln_alphaE[i], tau[i], deletion_reason,, output_final_data, final_data_file_name);
+            write_deleted_particle_data(index[i], particles[i].pos(0), particles[i].pos(1), particles[i].pos(2), vels_x[i], vels_y[i], vels_z[i], ln_alphaenergy[i], tau[i], deletion_reason, output_final_data, final_data_file_name);
           }
         } });
             }
