@@ -523,7 +523,7 @@ namespace RaytracingX
                 CCTK_REAL *AMREX_RESTRICT vels_x = attribs[StructType::vx].data();
                 CCTK_REAL *AMREX_RESTRICT vels_y = attribs[StructType::vy].data();
                 CCTK_REAL *AMREX_RESTRICT vels_z = attribs[StructType::vz].data();
-                CCTK_REAL *AMREX_RESTRICT ln_alphaE = attribs[StructType::ln_alphaE].data(); //RaytracingX: Add ln_alphaE.
+                CCTK_REAL *AMREX_RESTRICT ln_alphaenergy = attribs[StructType::ln_alphaE].data(); //RaytracingX: Add ln_alphaE.
                 CCTK_REAL *AMREX_RESTRICT tau = attribs[StructType::tau].data(); //RaytracingX: Add optical depth.
                 CCTK_REAL *AMREX_RESTRICT index = attribs[StructType::pixel_number].data(); //RaytracingX: Add pixel number.
 
