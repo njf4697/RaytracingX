@@ -303,7 +303,6 @@ namespace RaytracingX
                     const CCTK_REAL &dt, const int &lev,
                     const CCTK_REAL max_energy, bool output_final_data, std::string final_data_file_name) //RaytracingX: Add information for maximum energy for photons defining event horizon and output information.
         {
-            int deletion_reason = -999; //RaytracingX: Keep track of each reason a particle is deleted.
 
             const auto plo0 = this->Geom(0).ProbLoArray();
             const auto phi0 = this->Geom(0).ProbHiArray();
@@ -352,6 +351,7 @@ namespace RaytracingX
           ln_alphaenergy[i], tau[i]}; //RaytracingX: Add density for optical depth.
 
       bool out_of_bounds = false;
+      int deletion_reason = -999; //RaytracingX: Keep track of each reason a particle is deleted.
 
       //RaytracingX: Add optical depth.
       amrex::GpuArray<CCTK_REAL, 8> U_tmp = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
